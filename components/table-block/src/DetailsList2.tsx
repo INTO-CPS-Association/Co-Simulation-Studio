@@ -111,20 +111,20 @@ export class DetailsListBasicExample extends React.Component<{}, IDetailsListBas
       case 0:
         return 'No items selected';
       case 1:
-        return '1 item selected: ' + (this._selection.getSelection()[0] as IDetailsListBasicExampleItem).Type;
+        return '1 item selected: ' + (this._selection.getSelection()[0] as IDetailsListBasicExampleItem).Name;
       default:
         return `${selectionCount} items selected`;
     }
   }
 //changed "text: number " to "type: any" -> fixed bug
-  private _onFilter = (ev: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>,  Type: any): void => {
+  private _onFilter = (ev: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>,  Name: any): void => {
     this.setState({
-      items: Type ? this._allItems.filter(i => i.Type.toLowerCase().indexOf(Type) > -1) : this._allItems,
+      items: Name ? this._allItems.filter(i => i.Name.toLowerCase().indexOf(Name) > -1) : this._allItems,
     });
   };
 
   private _onItemInvoked = (item: IDetailsListBasicExampleItem): void => {
-    alert(`Item invoked: ${item.Type}`);
+    alert(`Item invoked: ${item.Name}`);
   };
 }
 export{}
