@@ -1,8 +1,34 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
 import { Stack, Text, Link, FontWeights, IStackTokens, IStackStyles, ITextStyles } from '@fluentui/react';
-import logo from './logo.svg';
 import './App.css';
+//import {barData, spec} from './BarChart';
+import {Vega, VegaLite, createClassFromSpec} from 'react-vega';
 
+export const spec = {
+  "description": "A simple bar chart with embedded data.",
+  "mark": "bar",
+  "encoding": {
+    "x": {"field": "a", "type": "ordinal"},
+    "y": {"field": "b", "type": "quantitative"}
+  }
+};
+
+export const barData = {
+  "values": [
+    {"a": "A","b": 20}, {"a": "B","b": 34}, {"a": "C","b": 55},
+    {"a": "D","b": 19}, {"a": "E","b": 40}, {"a": "F","b": 34},
+    {"a": "G","b": 91}, {"a": "H","b": 78}, {"a": "I","b": 25}
+  ]
+};
+
+/*
+export const App: React.FC = () => {
+  <Vega spec={spec} data={barData}/>
+};
+*/
+
+/*
 const boldStyle: Partial<ITextStyles> = { root: { fontWeight: FontWeights.semibold } };
 const stackTokens: IStackTokens = { childrenGap: 15 };
 const stackStyles: Partial<IStackStyles> = {
@@ -14,6 +40,9 @@ const stackStyles: Partial<IStackStyles> = {
   },
 };
 
+*/
+
+/*
 export const App: React.FunctionComponent = () => {
   return (
     <Stack horizontalAlign="center" verticalAlign="center" verticalFill styles={stackStyles} tokens={stackTokens}>
@@ -42,3 +71,4 @@ export const App: React.FunctionComponent = () => {
     </Stack>
   );
 };
+*/
