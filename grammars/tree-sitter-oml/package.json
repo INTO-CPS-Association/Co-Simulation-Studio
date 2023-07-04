@@ -1,0 +1,14 @@
+{
+  "name": "tree-sitter-oml",
+  "version": "1.4.1",
+  "main": "bindings/node",
+  "scripts": {
+    "build": "npx tree-sitter-cli generate && npx node-gyp configure && npx node-gyp build && npx tree-sitter-cli build-wasm ."
+  },
+  "dependencies": {
+    "nan": "2.16.0"
+  },
+  "devDependencies": {
+    "tree-sitter-cli": "0.20.6"
+  }
+}

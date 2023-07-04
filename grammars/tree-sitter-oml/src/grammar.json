@@ -1,0 +1,5755 @@
+{
+  "name": "oml",
+  "rules": {
+    "Ontology": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "Ontology",
+          "content": {
+            "type": "SYMBOL",
+            "name": "VocabularyBox"
+          }
+        },
+        {
+          "type": "FIELD",
+          "name": "Ontology",
+          "content": {
+            "type": "SYMBOL",
+            "name": "DescriptionBox"
+          }
+        }
+      ]
+    },
+    "VocabularyBox": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "FIELD",
+            "name": "ownedAnnotations",
+            "content": {
+              "type": "SYMBOL",
+              "name": "Annotation"
+            }
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "FIELD",
+              "name": "VocabularyBox",
+              "content": {
+                "type": "SYMBOL",
+                "name": "Vocabulary"
+              }
+            },
+            {
+              "type": "FIELD",
+              "name": "VocabularyBox",
+              "content": {
+                "type": "SYMBOL",
+                "name": "VocabularyBundle"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "Vocabulary": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "vocabulary"
+        },
+        {
+          "type": "FIELD",
+          "name": "namespace",
+          "content": {
+            "type": "SYMBOL",
+            "name": "Namespace"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "as"
+        },
+        {
+          "type": "FIELD",
+          "name": "prefix",
+          "content": {
+            "type": "SYMBOL",
+            "name": "LocalName"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "{"
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "FIELD",
+            "name": "ownedImports",
+            "content": {
+              "type": "SYMBOL",
+              "name": "VocabularyImport"
+            }
+          }
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "FIELD",
+            "name": "ownedStatements",
+            "content": {
+              "type": "SYMBOL",
+              "name": "VocabularyStatement"
+            }
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "}"
+        }
+      ]
+    },
+    "VocabularyBundle": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "vocabulary"
+        },
+        {
+          "type": "STRING",
+          "value": "bundle"
+        },
+        {
+          "type": "FIELD",
+          "name": "namespace",
+          "content": {
+            "type": "SYMBOL",
+            "name": "Namespace"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "as"
+        },
+        {
+          "type": "FIELD",
+          "name": "prefix",
+          "content": {
+            "type": "SYMBOL",
+            "name": "LocalName"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "{"
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "FIELD",
+            "name": "ownedImports",
+            "content": {
+              "type": "SYMBOL",
+              "name": "VocabularyBundleImport"
+            }
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "}"
+        }
+      ]
+    },
+    "DescriptionBox": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "FIELD",
+            "name": "ownedAnnotations",
+            "content": {
+              "type": "SYMBOL",
+              "name": "Annotation"
+            }
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "FIELD",
+              "name": "DescriptionBox",
+              "content": {
+                "type": "SYMBOL",
+                "name": "Description"
+              }
+            },
+            {
+              "type": "FIELD",
+              "name": "DescriptionBox",
+              "content": {
+                "type": "SYMBOL",
+                "name": "DescriptionBundle"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "Description": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "description"
+        },
+        {
+          "type": "FIELD",
+          "name": "namespace",
+          "content": {
+            "type": "SYMBOL",
+            "name": "Namespace"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "as"
+        },
+        {
+          "type": "FIELD",
+          "name": "prefix",
+          "content": {
+            "type": "SYMBOL",
+            "name": "LocalName"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "{"
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "FIELD",
+            "name": "ownedImports",
+            "content": {
+              "type": "SYMBOL",
+              "name": "DescriptionImport"
+            }
+          }
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "FIELD",
+            "name": "ownedStatements",
+            "content": {
+              "type": "SYMBOL",
+              "name": "DescriptionStatement"
+            }
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "}"
+        }
+      ]
+    },
+    "DescriptionBundle": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "description"
+        },
+        {
+          "type": "STRING",
+          "value": "bundle"
+        },
+        {
+          "type": "FIELD",
+          "name": "namespace",
+          "content": {
+            "type": "SYMBOL",
+            "name": "Namespace"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "as"
+        },
+        {
+          "type": "FIELD",
+          "name": "prefix",
+          "content": {
+            "type": "SYMBOL",
+            "name": "LocalName"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "{"
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "FIELD",
+            "name": "ownedImports",
+            "content": {
+              "type": "SYMBOL",
+              "name": "DescriptionBundleImport"
+            }
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "}"
+        }
+      ]
+    },
+    "VocabularyImport": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "FIELD",
+            "name": "ownedAnnotations",
+            "content": {
+              "type": "SYMBOL",
+              "name": "Annotation"
+            }
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "FIELD",
+              "name": "VocabularyImport",
+              "content": {
+                "type": "SYMBOL",
+                "name": "VocabularyExtension"
+              }
+            },
+            {
+              "type": "FIELD",
+              "name": "VocabularyImport",
+              "content": {
+                "type": "SYMBOL",
+                "name": "VocabularyUsage"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "VocabularyExtension": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "extends"
+        },
+        {
+          "type": "FIELD",
+          "name": "namespace",
+          "content": {
+            "type": "SYMBOL",
+            "name": "Namespace"
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": "as"
+                },
+                {
+                  "type": "FIELD",
+                  "name": "prefix",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "LocalName"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        }
+      ]
+    },
+    "VocabularyUsage": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "uses"
+        },
+        {
+          "type": "FIELD",
+          "name": "namespace",
+          "content": {
+            "type": "SYMBOL",
+            "name": "Namespace"
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": "as"
+                },
+                {
+                  "type": "FIELD",
+                  "name": "prefix",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "LocalName"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        }
+      ]
+    },
+    "VocabularyBundleImport": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "FIELD",
+            "name": "ownedAnnotations",
+            "content": {
+              "type": "SYMBOL",
+              "name": "Annotation"
+            }
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "FIELD",
+              "name": "VocabularyBundleImport",
+              "content": {
+                "type": "SYMBOL",
+                "name": "VocabularyBundleExtension"
+              }
+            },
+            {
+              "type": "FIELD",
+              "name": "VocabularyBundleImport",
+              "content": {
+                "type": "SYMBOL",
+                "name": "VocabularyBundleInclusion"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "VocabularyBundleInclusion": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "includes"
+        },
+        {
+          "type": "FIELD",
+          "name": "namespace",
+          "content": {
+            "type": "SYMBOL",
+            "name": "Namespace"
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": "as"
+                },
+                {
+                  "type": "FIELD",
+                  "name": "prefix",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "LocalName"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        }
+      ]
+    },
+    "VocabularyBundleExtension": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "extends"
+        },
+        {
+          "type": "FIELD",
+          "name": "namespace",
+          "content": {
+            "type": "SYMBOL",
+            "name": "Namespace"
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": "as"
+                },
+                {
+                  "type": "FIELD",
+                  "name": "prefix",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "LocalName"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        }
+      ]
+    },
+    "DescriptionImport": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "FIELD",
+            "name": "ownedAnnotations",
+            "content": {
+              "type": "SYMBOL",
+              "name": "Annotation"
+            }
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "FIELD",
+              "name": "DescriptionImport",
+              "content": {
+                "type": "SYMBOL",
+                "name": "DescriptionExtension"
+              }
+            },
+            {
+              "type": "FIELD",
+              "name": "DescriptionImport",
+              "content": {
+                "type": "SYMBOL",
+                "name": "DescriptionUsage"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "DescriptionUsage": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "uses"
+        },
+        {
+          "type": "FIELD",
+          "name": "namespace",
+          "content": {
+            "type": "SYMBOL",
+            "name": "Namespace"
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": "as"
+                },
+                {
+                  "type": "FIELD",
+                  "name": "prefix",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "LocalName"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        }
+      ]
+    },
+    "DescriptionExtension": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "extends"
+        },
+        {
+          "type": "FIELD",
+          "name": "namespace",
+          "content": {
+            "type": "SYMBOL",
+            "name": "Namespace"
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": "as"
+                },
+                {
+                  "type": "FIELD",
+                  "name": "prefix",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "LocalName"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        }
+      ]
+    },
+    "DescriptionBundleImport": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "FIELD",
+            "name": "ownedAnnotations",
+            "content": {
+              "type": "SYMBOL",
+              "name": "Annotation"
+            }
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "FIELD",
+              "name": "DescriptionBundleImport",
+              "content": {
+                "type": "SYMBOL",
+                "name": "DescriptionBundleExtension"
+              }
+            },
+            {
+              "type": "FIELD",
+              "name": "DescriptionBundleImport",
+              "content": {
+                "type": "SYMBOL",
+                "name": "DescriptionBundleInclusion"
+              }
+            },
+            {
+              "type": "FIELD",
+              "name": "DescriptionBundleImport",
+              "content": {
+                "type": "SYMBOL",
+                "name": "DescriptionBundleUsage"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "DescriptionBundleInclusion": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "includes"
+        },
+        {
+          "type": "FIELD",
+          "name": "namespace",
+          "content": {
+            "type": "SYMBOL",
+            "name": "Namespace"
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": "as"
+                },
+                {
+                  "type": "FIELD",
+                  "name": "prefix",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "LocalName"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        }
+      ]
+    },
+    "DescriptionBundleExtension": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "extends"
+        },
+        {
+          "type": "FIELD",
+          "name": "namespace",
+          "content": {
+            "type": "SYMBOL",
+            "name": "Namespace"
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": "as"
+                },
+                {
+                  "type": "FIELD",
+                  "name": "prefix",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "LocalName"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        }
+      ]
+    },
+    "DescriptionBundleUsage": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "uses"
+        },
+        {
+          "type": "FIELD",
+          "name": "namespace",
+          "content": {
+            "type": "SYMBOL",
+            "name": "Namespace"
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": "as"
+                },
+                {
+                  "type": "FIELD",
+                  "name": "prefix",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "LocalName"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        }
+      ]
+    },
+    "VocabularyStatement": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "FIELD",
+            "name": "ownedAnnotations",
+            "content": {
+              "type": "SYMBOL",
+              "name": "Annotation"
+            }
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "FIELD",
+              "name": "VocabularyStatement",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_SpecializableTerm"
+              }
+            },
+            {
+              "type": "FIELD",
+              "name": "VocabularyStatement",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_SpecializableTermReference"
+              }
+            },
+            {
+              "type": "FIELD",
+              "name": "VocabularyStatement",
+              "content": {
+                "type": "SYMBOL",
+                "name": "Rule"
+              }
+            },
+            {
+              "type": "FIELD",
+              "name": "VocabularyStatement",
+              "content": {
+                "type": "SYMBOL",
+                "name": "RuleReference"
+              }
+            },
+            {
+              "type": "FIELD",
+              "name": "VocabularyStatement",
+              "content": {
+                "type": "SYMBOL",
+                "name": "RelationReference"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "_SpecializableTerm": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "_Type"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "AnnotationProperty"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "ScalarProperty"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "StructuredProperty"
+        }
+      ]
+    },
+    "_Type": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "_Classifier"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_Scalar"
+        }
+      ]
+    },
+    "_Classifier": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "_Entity"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "Structure"
+        }
+      ]
+    },
+    "_Entity": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "Aspect"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "Concept"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "RelationEntity"
+        }
+      ]
+    },
+    "Aspect": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "aspect"
+        },
+        {
+          "type": "FIELD",
+          "name": "name",
+          "content": {
+            "type": "SYMBOL",
+            "name": "LocalName"
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": ":>"
+                },
+                {
+                  "type": "FIELD",
+                  "name": "ownedSpecializations",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "SpecializationAxiom"
+                  }
+                },
+                {
+                  "type": "REPEAT",
+                  "content": {
+                    "type": "SEQ",
+                    "members": [
+                      {
+                        "type": "STRING",
+                        "value": ","
+                      },
+                      {
+                        "type": "FIELD",
+                        "name": "ownedSpecializations",
+                        "content": {
+                          "type": "SYMBOL",
+                          "name": "SpecializationAxiom"
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": "["
+                },
+                {
+                  "type": "REPEAT",
+                  "content": {
+                    "type": "CHOICE",
+                    "members": [
+                      {
+                        "type": "FIELD",
+                        "name": "ownedKeys",
+                        "content": {
+                          "type": "SYMBOL",
+                          "name": "KeyAxiom"
+                        }
+                      },
+                      {
+                        "type": "FIELD",
+                        "name": "ownedPropertyRestrictions",
+                        "content": {
+                          "type": "SYMBOL",
+                          "name": "_PropertyRestrictionAxiom"
+                        }
+                      },
+                      {
+                        "type": "FIELD",
+                        "name": "ownedRelationRestrictions",
+                        "content": {
+                          "type": "SYMBOL",
+                          "name": "_RelationRestrictionAxiom"
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "type": "STRING",
+                  "value": "]"
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        }
+      ]
+    },
+    "Concept": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "concept"
+        },
+        {
+          "type": "FIELD",
+          "name": "name",
+          "content": {
+            "type": "SYMBOL",
+            "name": "LocalName"
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": ":>"
+                },
+                {
+                  "type": "FIELD",
+                  "name": "ownedSpecializations",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "SpecializationAxiom"
+                  }
+                },
+                {
+                  "type": "REPEAT",
+                  "content": {
+                    "type": "SEQ",
+                    "members": [
+                      {
+                        "type": "STRING",
+                        "value": ","
+                      },
+                      {
+                        "type": "FIELD",
+                        "name": "ownedSpecializations",
+                        "content": {
+                          "type": "SYMBOL",
+                          "name": "SpecializationAxiom"
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": "["
+                },
+                {
+                  "type": "REPEAT",
+                  "content": {
+                    "type": "CHOICE",
+                    "members": [
+                      {
+                        "type": "FIELD",
+                        "name": "ownedKeys",
+                        "content": {
+                          "type": "SYMBOL",
+                          "name": "KeyAxiom"
+                        }
+                      },
+                      {
+                        "type": "FIELD",
+                        "name": "ownedPropertyRestrictions",
+                        "content": {
+                          "type": "SYMBOL",
+                          "name": "_PropertyRestrictionAxiom"
+                        }
+                      },
+                      {
+                        "type": "FIELD",
+                        "name": "ownedRelationRestrictions",
+                        "content": {
+                          "type": "SYMBOL",
+                          "name": "_RelationRestrictionAxiom"
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "SEQ",
+                      "members": [
+                        {
+                          "type": "STRING",
+                          "value": "enumerates"
+                        },
+                        {
+                          "type": "FIELD",
+                          "name": "enumeratedInstances",
+                          "content": {
+                            "type": "SYMBOL",
+                            "name": "ConceptInstance"
+                          }
+                        },
+                        {
+                          "type": "REPEAT",
+                          "content": {
+                            "type": "SEQ",
+                            "members": [
+                              {
+                                "type": "STRING",
+                                "value": ","
+                              },
+                              {
+                                "type": "FIELD",
+                                "name": "enumeratedInstances",
+                                "content": {
+                                  "type": "SYMBOL",
+                                  "name": "ConceptInstance"
+                                }
+                              }
+                            ]
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "type": "BLANK"
+                    }
+                  ]
+                },
+                {
+                  "type": "STRING",
+                  "value": "]"
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        }
+      ]
+    },
+    "RelationEntity": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "relation"
+        },
+        {
+          "type": "STRING",
+          "value": "entity"
+        },
+        {
+          "type": "FIELD",
+          "name": "name",
+          "content": {
+            "type": "SYMBOL",
+            "name": "LocalName"
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": ":>"
+                },
+                {
+                  "type": "FIELD",
+                  "name": "ownedSpecializations",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "SpecializationAxiom"
+                  }
+                },
+                {
+                  "type": "REPEAT",
+                  "content": {
+                    "type": "SEQ",
+                    "members": [
+                      {
+                        "type": "STRING",
+                        "value": ","
+                      },
+                      {
+                        "type": "FIELD",
+                        "name": "ownedSpecializations",
+                        "content": {
+                          "type": "SYMBOL",
+                          "name": "SpecializationAxiom"
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "STRING",
+          "value": "["
+        },
+        {
+          "type": "STRING",
+          "value": "from"
+        },
+        {
+          "type": "FIELD",
+          "name": "source",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_Ref"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "to"
+        },
+        {
+          "type": "FIELD",
+          "name": "target",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_Ref"
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "FIELD",
+              "name": "forwardRelation",
+              "content": {
+                "type": "SYMBOL",
+                "name": "ForwardRelation"
+              }
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "FIELD",
+              "name": "reverseRelation",
+              "content": {
+                "type": "SYMBOL",
+                "name": "ReverseRelation"
+              }
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "FIELD",
+              "name": "functional",
+              "content": {
+                "type": "STRING",
+                "value": "functional"
+              }
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "FIELD",
+                  "name": "inverseFunctional",
+                  "content": {
+                    "type": "STRING",
+                    "value": "inverse"
+                  }
+                },
+                {
+                  "type": "STRING",
+                  "value": "functional"
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "FIELD",
+              "name": "symmetric",
+              "content": {
+                "type": "STRING",
+                "value": "symmetric"
+              }
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "FIELD",
+              "name": "asymmetric",
+              "content": {
+                "type": "STRING",
+                "value": "asymmetric"
+              }
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "FIELD",
+              "name": "reflexive",
+              "content": {
+                "type": "STRING",
+                "value": "reflexive"
+              }
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "FIELD",
+              "name": "irreflexive",
+              "content": {
+                "type": "STRING",
+                "value": "irreflexive"
+              }
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "FIELD",
+              "name": "transitive",
+              "content": {
+                "type": "STRING",
+                "value": "transitive"
+              }
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "FIELD",
+                "name": "ownedKeys",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "KeyAxiom"
+                }
+              },
+              {
+                "type": "FIELD",
+                "name": "ownedPropertyRestrictions",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_PropertyRestrictionAxiom"
+                }
+              },
+              {
+                "type": "FIELD",
+                "name": "ownedRelationRestrictions",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_RelationRestrictionAxiom"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "]"
+        }
+      ]
+    },
+    "ForwardRelation": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "FIELD",
+            "name": "ownedAnnotations",
+            "content": {
+              "type": "SYMBOL",
+              "name": "Annotation"
+            }
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "forward"
+        },
+        {
+          "type": "FIELD",
+          "name": "name",
+          "content": {
+            "type": "SYMBOL",
+            "name": "LocalName"
+          }
+        }
+      ]
+    },
+    "ReverseRelation": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "FIELD",
+            "name": "ownedAnnotations",
+            "content": {
+              "type": "SYMBOL",
+              "name": "Annotation"
+            }
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "reverse"
+        },
+        {
+          "type": "FIELD",
+          "name": "name",
+          "content": {
+            "type": "SYMBOL",
+            "name": "LocalName"
+          }
+        }
+      ]
+    },
+    "Structure": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "structure"
+        },
+        {
+          "type": "FIELD",
+          "name": "name",
+          "content": {
+            "type": "SYMBOL",
+            "name": "LocalName"
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": ":>"
+                },
+                {
+                  "type": "FIELD",
+                  "name": "ownedSpecializations",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "SpecializationAxiom"
+                  }
+                },
+                {
+                  "type": "REPEAT",
+                  "content": {
+                    "type": "SEQ",
+                    "members": [
+                      {
+                        "type": "STRING",
+                        "value": ","
+                      },
+                      {
+                        "type": "FIELD",
+                        "name": "ownedSpecializations",
+                        "content": {
+                          "type": "SYMBOL",
+                          "name": "SpecializationAxiom"
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": "["
+                },
+                {
+                  "type": "REPEAT",
+                  "content": {
+                    "type": "FIELD",
+                    "name": "ownedPropertyRestrictions",
+                    "content": {
+                      "type": "SYMBOL",
+                      "name": "_PropertyRestrictionAxiom"
+                    }
+                  }
+                },
+                {
+                  "type": "STRING",
+                  "value": "]"
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        }
+      ]
+    },
+    "_Scalar": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "FacetedScalar"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "EnumeratedScalar"
+        }
+      ]
+    },
+    "FacetedScalar": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "scalar"
+        },
+        {
+          "type": "FIELD",
+          "name": "name",
+          "content": {
+            "type": "SYMBOL",
+            "name": "LocalName"
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": ":>"
+                },
+                {
+                  "type": "FIELD",
+                  "name": "ownedSpecializations",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "SpecializationAxiom"
+                  }
+                },
+                {
+                  "type": "REPEAT",
+                  "content": {
+                    "type": "SEQ",
+                    "members": [
+                      {
+                        "type": "STRING",
+                        "value": ","
+                      },
+                      {
+                        "type": "FIELD",
+                        "name": "ownedSpecializations",
+                        "content": {
+                          "type": "SYMBOL",
+                          "name": "SpecializationAxiom"
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": "["
+                },
+                {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "SEQ",
+                      "members": [
+                        {
+                          "type": "STRING",
+                          "value": "length"
+                        },
+                        {
+                          "type": "FIELD",
+                          "name": "length",
+                          "content": {
+                            "type": "SYMBOL",
+                            "name": "UnsignedInteger"
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "type": "BLANK"
+                    }
+                  ]
+                },
+                {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "SEQ",
+                      "members": [
+                        {
+                          "type": "STRING",
+                          "value": "minLength"
+                        },
+                        {
+                          "type": "FIELD",
+                          "name": "minLength",
+                          "content": {
+                            "type": "SYMBOL",
+                            "name": "UnsignedInteger"
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "type": "BLANK"
+                    }
+                  ]
+                },
+                {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "SEQ",
+                      "members": [
+                        {
+                          "type": "STRING",
+                          "value": "maxLength"
+                        },
+                        {
+                          "type": "FIELD",
+                          "name": "maxLength",
+                          "content": {
+                            "type": "SYMBOL",
+                            "name": "UnsignedInteger"
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "type": "BLANK"
+                    }
+                  ]
+                },
+                {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "SEQ",
+                      "members": [
+                        {
+                          "type": "STRING",
+                          "value": "pattern"
+                        },
+                        {
+                          "type": "FIELD",
+                          "name": "pattern",
+                          "content": {
+                            "type": "SYMBOL",
+                            "name": "STRING"
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "type": "BLANK"
+                    }
+                  ]
+                },
+                {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "SEQ",
+                      "members": [
+                        {
+                          "type": "STRING",
+                          "value": "language"
+                        },
+                        {
+                          "type": "FIELD",
+                          "name": "language",
+                          "content": {
+                            "type": "SYMBOL",
+                            "name": "LocalName"
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "type": "BLANK"
+                    }
+                  ]
+                },
+                {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "SEQ",
+                      "members": [
+                        {
+                          "type": "STRING",
+                          "value": "minInclusive"
+                        },
+                        {
+                          "type": "FIELD",
+                          "name": "minInclusive",
+                          "content": {
+                            "type": "SYMBOL",
+                            "name": "_Literal"
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "type": "BLANK"
+                    }
+                  ]
+                },
+                {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "SEQ",
+                      "members": [
+                        {
+                          "type": "STRING",
+                          "value": "minExclusive"
+                        },
+                        {
+                          "type": "FIELD",
+                          "name": "minExclusive",
+                          "content": {
+                            "type": "SYMBOL",
+                            "name": "_Literal"
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "type": "BLANK"
+                    }
+                  ]
+                },
+                {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "SEQ",
+                      "members": [
+                        {
+                          "type": "STRING",
+                          "value": "maxInclusive"
+                        },
+                        {
+                          "type": "FIELD",
+                          "name": "maxInclusive",
+                          "content": {
+                            "type": "SYMBOL",
+                            "name": "_Literal"
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "type": "BLANK"
+                    }
+                  ]
+                },
+                {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "SEQ",
+                      "members": [
+                        {
+                          "type": "STRING",
+                          "value": "maxExclusive"
+                        },
+                        {
+                          "type": "FIELD",
+                          "name": "maxExclusive",
+                          "content": {
+                            "type": "SYMBOL",
+                            "name": "_Literal"
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "type": "BLANK"
+                    }
+                  ]
+                },
+                {
+                  "type": "STRING",
+                  "value": "]"
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        }
+      ]
+    },
+    "EnumeratedScalar": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "enumerated"
+        },
+        {
+          "type": "STRING",
+          "value": "scalar"
+        },
+        {
+          "type": "FIELD",
+          "name": "name",
+          "content": {
+            "type": "SYMBOL",
+            "name": "LocalName"
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": ":>"
+                },
+                {
+                  "type": "FIELD",
+                  "name": "ownedSpecializations",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "SpecializationAxiom"
+                  }
+                },
+                {
+                  "type": "REPEAT",
+                  "content": {
+                    "type": "SEQ",
+                    "members": [
+                      {
+                        "type": "STRING",
+                        "value": ","
+                      },
+                      {
+                        "type": "FIELD",
+                        "name": "ownedSpecializations",
+                        "content": {
+                          "type": "SYMBOL",
+                          "name": "SpecializationAxiom"
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": "["
+                },
+                {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "SEQ",
+                      "members": [
+                        {
+                          "type": "FIELD",
+                          "name": "literals",
+                          "content": {
+                            "type": "SYMBOL",
+                            "name": "_Literal"
+                          }
+                        },
+                        {
+                          "type": "REPEAT",
+                          "content": {
+                            "type": "SEQ",
+                            "members": [
+                              {
+                                "type": "STRING",
+                                "value": ","
+                              },
+                              {
+                                "type": "FIELD",
+                                "name": "literals",
+                                "content": {
+                                  "type": "SYMBOL",
+                                  "name": "_Literal"
+                                }
+                              }
+                            ]
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "type": "BLANK"
+                    }
+                  ]
+                },
+                {
+                  "type": "STRING",
+                  "value": "]"
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        }
+      ]
+    },
+    "AnnotationProperty": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "annotation"
+        },
+        {
+          "type": "STRING",
+          "value": "property"
+        },
+        {
+          "type": "FIELD",
+          "name": "name",
+          "content": {
+            "type": "SYMBOL",
+            "name": "LocalName"
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": ":>"
+                },
+                {
+                  "type": "FIELD",
+                  "name": "ownedSpecializations",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "SpecializationAxiom"
+                  }
+                },
+                {
+                  "type": "REPEAT",
+                  "content": {
+                    "type": "SEQ",
+                    "members": [
+                      {
+                        "type": "STRING",
+                        "value": ","
+                      },
+                      {
+                        "type": "FIELD",
+                        "name": "ownedSpecializations",
+                        "content": {
+                          "type": "SYMBOL",
+                          "name": "SpecializationAxiom"
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        }
+      ]
+    },
+    "ScalarProperty": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "scalar"
+        },
+        {
+          "type": "STRING",
+          "value": "property"
+        },
+        {
+          "type": "FIELD",
+          "name": "name",
+          "content": {
+            "type": "SYMBOL",
+            "name": "LocalName"
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": ":>"
+                },
+                {
+                  "type": "FIELD",
+                  "name": "ownedSpecializations",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "SpecializationAxiom"
+                  }
+                },
+                {
+                  "type": "REPEAT",
+                  "content": {
+                    "type": "SEQ",
+                    "members": [
+                      {
+                        "type": "STRING",
+                        "value": ","
+                      },
+                      {
+                        "type": "FIELD",
+                        "name": "ownedSpecializations",
+                        "content": {
+                          "type": "SYMBOL",
+                          "name": "SpecializationAxiom"
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": "["
+                },
+                {
+                  "type": "STRING",
+                  "value": "domain"
+                },
+                {
+                  "type": "FIELD",
+                  "name": "domain",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "_Ref"
+                  }
+                },
+                {
+                  "type": "STRING",
+                  "value": "range"
+                },
+                {
+                  "type": "FIELD",
+                  "name": "range",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "_Ref"
+                  }
+                },
+                {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "FIELD",
+                      "name": "functional",
+                      "content": {
+                        "type": "STRING",
+                        "value": "functional"
+                      }
+                    },
+                    {
+                      "type": "BLANK"
+                    }
+                  ]
+                },
+                {
+                  "type": "STRING",
+                  "value": "]"
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        }
+      ]
+    },
+    "StructuredProperty": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "structured"
+        },
+        {
+          "type": "STRING",
+          "value": "property"
+        },
+        {
+          "type": "FIELD",
+          "name": "name",
+          "content": {
+            "type": "SYMBOL",
+            "name": "LocalName"
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": ":>"
+                },
+                {
+                  "type": "FIELD",
+                  "name": "ownedSpecializations",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "SpecializationAxiom"
+                  }
+                },
+                {
+                  "type": "REPEAT",
+                  "content": {
+                    "type": "SEQ",
+                    "members": [
+                      {
+                        "type": "STRING",
+                        "value": ","
+                      },
+                      {
+                        "type": "FIELD",
+                        "name": "ownedSpecializations",
+                        "content": {
+                          "type": "SYMBOL",
+                          "name": "SpecializationAxiom"
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": "["
+                },
+                {
+                  "type": "STRING",
+                  "value": "domain"
+                },
+                {
+                  "type": "FIELD",
+                  "name": "domain",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "_Ref"
+                  }
+                },
+                {
+                  "type": "STRING",
+                  "value": "range"
+                },
+                {
+                  "type": "FIELD",
+                  "name": "range",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "_Ref"
+                  }
+                },
+                {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "FIELD",
+                      "name": "functional",
+                      "content": {
+                        "type": "STRING",
+                        "value": "functional"
+                      }
+                    },
+                    {
+                      "type": "BLANK"
+                    }
+                  ]
+                },
+                {
+                  "type": "STRING",
+                  "value": "]"
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        }
+      ]
+    },
+    "Rule": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "rule"
+        },
+        {
+          "type": "FIELD",
+          "name": "name",
+          "content": {
+            "type": "SYMBOL",
+            "name": "LocalName"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "["
+        },
+        {
+          "type": "FIELD",
+          "name": "antecedents",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_Predicate"
+          }
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "STRING",
+                "value": "^"
+              },
+              {
+                "type": "FIELD",
+                "name": "antecedents",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_Predicate"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "->"
+        },
+        {
+          "type": "FIELD",
+          "name": "consequents",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_Predicate"
+          }
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "STRING",
+                "value": "^"
+              },
+              {
+                "type": "FIELD",
+                "name": "consequents",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_Predicate"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "]"
+        }
+      ]
+    },
+    "_Predicate": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "_UnaryPredicate"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_BinaryPredicate"
+        }
+      ]
+    },
+    "_UnaryPredicate": {
+      "type": "SYMBOL",
+      "name": "TypePredicate"
+    },
+    "TypePredicate": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "type",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_Ref"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "("
+        },
+        {
+          "type": "FIELD",
+          "name": "variable",
+          "content": {
+            "type": "SYMBOL",
+            "name": "LocalName"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": ")"
+        }
+      ]
+    },
+    "_BinaryPredicate": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "RelationEntityPredicate"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "FeaturePredicate"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "SameAsPredicate"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "DifferentFromPredicate"
+        }
+      ]
+    },
+    "RelationEntityPredicate": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "entity",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_Ref"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "("
+        },
+        {
+          "type": "FIELD",
+          "name": "variable1",
+          "content": {
+            "type": "SYMBOL",
+            "name": "LocalName"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": ","
+        },
+        {
+          "type": "FIELD",
+          "name": "entityVariable",
+          "content": {
+            "type": "SYMBOL",
+            "name": "LocalName"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": ","
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "FIELD",
+              "name": "variable2",
+              "content": {
+                "type": "SYMBOL",
+                "name": "LocalName"
+              }
+            },
+            {
+              "type": "FIELD",
+              "name": "instance2",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_CrossRef"
+              }
+            }
+          ]
+        },
+        {
+          "type": "STRING",
+          "value": ")"
+        }
+      ]
+    },
+    "FeaturePredicate": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "feature",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_Ref"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "("
+        },
+        {
+          "type": "FIELD",
+          "name": "variable1",
+          "content": {
+            "type": "SYMBOL",
+            "name": "LocalName"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": ","
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "FIELD",
+              "name": "literal2",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_Literal"
+              }
+            },
+            {
+              "type": "FIELD",
+              "name": "variable2",
+              "content": {
+                "type": "SYMBOL",
+                "name": "LocalName"
+              }
+            },
+            {
+              "type": "FIELD",
+              "name": "instance2",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_CrossRef"
+              }
+            }
+          ]
+        },
+        {
+          "type": "STRING",
+          "value": ")"
+        }
+      ]
+    },
+    "SameAsPredicate": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "sameAs"
+        },
+        {
+          "type": "STRING",
+          "value": "("
+        },
+        {
+          "type": "FIELD",
+          "name": "variable1",
+          "content": {
+            "type": "SYMBOL",
+            "name": "LocalName"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": ","
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "FIELD",
+              "name": "variable2",
+              "content": {
+                "type": "SYMBOL",
+                "name": "LocalName"
+              }
+            },
+            {
+              "type": "FIELD",
+              "name": "instance2",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_CrossRef"
+              }
+            }
+          ]
+        },
+        {
+          "type": "STRING",
+          "value": ")"
+        }
+      ]
+    },
+    "DifferentFromPredicate": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "differentFrom"
+        },
+        {
+          "type": "STRING",
+          "value": "("
+        },
+        {
+          "type": "FIELD",
+          "name": "variable1",
+          "content": {
+            "type": "SYMBOL",
+            "name": "LocalName"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": ","
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "FIELD",
+              "name": "variable2",
+              "content": {
+                "type": "SYMBOL",
+                "name": "LocalName"
+              }
+            },
+            {
+              "type": "FIELD",
+              "name": "instance2",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_CrossRef"
+              }
+            }
+          ]
+        },
+        {
+          "type": "STRING",
+          "value": ")"
+        }
+      ]
+    },
+    "DescriptionStatement": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "FIELD",
+            "name": "ownedAnnotations",
+            "content": {
+              "type": "SYMBOL",
+              "name": "Annotation"
+            }
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "FIELD",
+              "name": "DescriptionStatement",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_NamedInstance"
+              }
+            },
+            {
+              "type": "FIELD",
+              "name": "DescriptionStatement",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_NamedInstanceReference"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "_NamedInstance": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "ConceptInstance"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "RelationInstance"
+        }
+      ]
+    },
+    "ConceptInstance": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "ci"
+        },
+        {
+          "type": "FIELD",
+          "name": "name",
+          "content": {
+            "type": "SYMBOL",
+            "name": "LocalName"
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": ":"
+                },
+                {
+                  "type": "FIELD",
+                  "name": "ownedTypes",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "ConceptTypeAssertion"
+                  }
+                },
+                {
+                  "type": "REPEAT",
+                  "content": {
+                    "type": "SEQ",
+                    "members": [
+                      {
+                        "type": "STRING",
+                        "value": ","
+                      },
+                      {
+                        "type": "FIELD",
+                        "name": "ownedTypes",
+                        "content": {
+                          "type": "SYMBOL",
+                          "name": "ConceptTypeAssertion"
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": "["
+                },
+                {
+                  "type": "REPEAT",
+                  "content": {
+                    "type": "CHOICE",
+                    "members": [
+                      {
+                        "type": "FIELD",
+                        "name": "ownedPropertyValues",
+                        "content": {
+                          "type": "SYMBOL",
+                          "name": "_PropertyValueAssertion"
+                        }
+                      },
+                      {
+                        "type": "FIELD",
+                        "name": "ownedLinks",
+                        "content": {
+                          "type": "SYMBOL",
+                          "name": "LinkAssertion"
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "type": "STRING",
+                  "value": "]"
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        }
+      ]
+    },
+    "RelationInstance": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "ri"
+        },
+        {
+          "type": "FIELD",
+          "name": "name",
+          "content": {
+            "type": "SYMBOL",
+            "name": "LocalName"
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": ":"
+                },
+                {
+                  "type": "FIELD",
+                  "name": "ownedTypes",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "RelationTypeAssertion"
+                  }
+                },
+                {
+                  "type": "REPEAT",
+                  "content": {
+                    "type": "SEQ",
+                    "members": [
+                      {
+                        "type": "STRING",
+                        "value": ","
+                      },
+                      {
+                        "type": "FIELD",
+                        "name": "ownedTypes",
+                        "content": {
+                          "type": "SYMBOL",
+                          "name": "RelationTypeAssertion"
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": "["
+                },
+                {
+                  "type": "STRING",
+                  "value": "from"
+                },
+                {
+                  "type": "FIELD",
+                  "name": "sources",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "_Ref"
+                  }
+                },
+                {
+                  "type": "REPEAT",
+                  "content": {
+                    "type": "SEQ",
+                    "members": [
+                      {
+                        "type": "STRING",
+                        "value": ","
+                      },
+                      {
+                        "type": "FIELD",
+                        "name": "sources",
+                        "content": {
+                          "type": "SYMBOL",
+                          "name": "_Ref"
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "type": "STRING",
+                  "value": "to"
+                },
+                {
+                  "type": "FIELD",
+                  "name": "targets",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "_Ref"
+                  }
+                },
+                {
+                  "type": "REPEAT",
+                  "content": {
+                    "type": "SEQ",
+                    "members": [
+                      {
+                        "type": "STRING",
+                        "value": ","
+                      },
+                      {
+                        "type": "FIELD",
+                        "name": "targets",
+                        "content": {
+                          "type": "SYMBOL",
+                          "name": "_Ref"
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "type": "REPEAT",
+                  "content": {
+                    "type": "CHOICE",
+                    "members": [
+                      {
+                        "type": "FIELD",
+                        "name": "ownedPropertyValues",
+                        "content": {
+                          "type": "SYMBOL",
+                          "name": "_PropertyValueAssertion"
+                        }
+                      },
+                      {
+                        "type": "FIELD",
+                        "name": "ownedLinks",
+                        "content": {
+                          "type": "SYMBOL",
+                          "name": "LinkAssertion"
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "type": "STRING",
+                  "value": "]"
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        }
+      ]
+    },
+    "StructureInstance": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "type",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_Ref"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "["
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "FIELD",
+            "name": "ownedPropertyValues",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_PropertyValueAssertion"
+            }
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "]"
+        }
+      ]
+    },
+    "_SpecializableTermReference": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "_ClassifierReference"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "FacetedScalarReference"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "EnumeratedScalarReference"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "AnnotationPropertyReference"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "ScalarPropertyReference"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "StructuredPropertyReference"
+        }
+      ]
+    },
+    "_ClassifierReference": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "_EntityReference"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "StructureReference"
+        }
+      ]
+    },
+    "_EntityReference": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "AspectReference"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "ConceptReference"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "RelationEntityReference"
+        }
+      ]
+    },
+    "AspectReference": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "ref"
+        },
+        {
+          "type": "STRING",
+          "value": "aspect"
+        },
+        {
+          "type": "FIELD",
+          "name": "aspect",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_Ref"
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": ":>"
+                },
+                {
+                  "type": "FIELD",
+                  "name": "ownedSpecializations",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "SpecializationAxiom"
+                  }
+                },
+                {
+                  "type": "REPEAT",
+                  "content": {
+                    "type": "SEQ",
+                    "members": [
+                      {
+                        "type": "STRING",
+                        "value": ","
+                      },
+                      {
+                        "type": "FIELD",
+                        "name": "ownedSpecializations",
+                        "content": {
+                          "type": "SYMBOL",
+                          "name": "SpecializationAxiom"
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": "["
+                },
+                {
+                  "type": "REPEAT",
+                  "content": {
+                    "type": "CHOICE",
+                    "members": [
+                      {
+                        "type": "FIELD",
+                        "name": "ownedKeys",
+                        "content": {
+                          "type": "SYMBOL",
+                          "name": "KeyAxiom"
+                        }
+                      },
+                      {
+                        "type": "FIELD",
+                        "name": "ownedPropertyRestrictions",
+                        "content": {
+                          "type": "SYMBOL",
+                          "name": "_PropertyRestrictionAxiom"
+                        }
+                      },
+                      {
+                        "type": "FIELD",
+                        "name": "ownedRelationRestrictions",
+                        "content": {
+                          "type": "SYMBOL",
+                          "name": "_RelationRestrictionAxiom"
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "type": "STRING",
+                  "value": "]"
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        }
+      ]
+    },
+    "ConceptReference": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "ref"
+        },
+        {
+          "type": "STRING",
+          "value": "concept"
+        },
+        {
+          "type": "FIELD",
+          "name": "concept",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_Ref"
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": ":>"
+                },
+                {
+                  "type": "FIELD",
+                  "name": "ownedSpecializations",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "SpecializationAxiom"
+                  }
+                },
+                {
+                  "type": "REPEAT",
+                  "content": {
+                    "type": "SEQ",
+                    "members": [
+                      {
+                        "type": "STRING",
+                        "value": ","
+                      },
+                      {
+                        "type": "FIELD",
+                        "name": "ownedSpecializations",
+                        "content": {
+                          "type": "SYMBOL",
+                          "name": "SpecializationAxiom"
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": "["
+                },
+                {
+                  "type": "REPEAT",
+                  "content": {
+                    "type": "CHOICE",
+                    "members": [
+                      {
+                        "type": "FIELD",
+                        "name": "ownedKeys",
+                        "content": {
+                          "type": "SYMBOL",
+                          "name": "KeyAxiom"
+                        }
+                      },
+                      {
+                        "type": "FIELD",
+                        "name": "ownedPropertyRestrictions",
+                        "content": {
+                          "type": "SYMBOL",
+                          "name": "_PropertyRestrictionAxiom"
+                        }
+                      },
+                      {
+                        "type": "FIELD",
+                        "name": "ownedRelationRestrictions",
+                        "content": {
+                          "type": "SYMBOL",
+                          "name": "_RelationRestrictionAxiom"
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "type": "STRING",
+                  "value": "]"
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        }
+      ]
+    },
+    "RelationEntityReference": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "ref"
+        },
+        {
+          "type": "STRING",
+          "value": "relation"
+        },
+        {
+          "type": "STRING",
+          "value": "entity"
+        },
+        {
+          "type": "FIELD",
+          "name": "entity",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_Ref"
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": ":>"
+                },
+                {
+                  "type": "FIELD",
+                  "name": "ownedSpecializations",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "SpecializationAxiom"
+                  }
+                },
+                {
+                  "type": "REPEAT",
+                  "content": {
+                    "type": "SEQ",
+                    "members": [
+                      {
+                        "type": "STRING",
+                        "value": ","
+                      },
+                      {
+                        "type": "FIELD",
+                        "name": "ownedSpecializations",
+                        "content": {
+                          "type": "SYMBOL",
+                          "name": "SpecializationAxiom"
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": "["
+                },
+                {
+                  "type": "REPEAT",
+                  "content": {
+                    "type": "CHOICE",
+                    "members": [
+                      {
+                        "type": "FIELD",
+                        "name": "ownedKeys",
+                        "content": {
+                          "type": "SYMBOL",
+                          "name": "KeyAxiom"
+                        }
+                      },
+                      {
+                        "type": "FIELD",
+                        "name": "ownedPropertyRestrictions",
+                        "content": {
+                          "type": "SYMBOL",
+                          "name": "_PropertyRestrictionAxiom"
+                        }
+                      },
+                      {
+                        "type": "FIELD",
+                        "name": "ownedRelationRestrictions",
+                        "content": {
+                          "type": "SYMBOL",
+                          "name": "_RelationRestrictionAxiom"
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "type": "STRING",
+                  "value": "]"
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        }
+      ]
+    },
+    "StructureReference": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "ref"
+        },
+        {
+          "type": "STRING",
+          "value": "structure"
+        },
+        {
+          "type": "FIELD",
+          "name": "structure",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_Ref"
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": ":>"
+                },
+                {
+                  "type": "FIELD",
+                  "name": "ownedSpecializations",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "SpecializationAxiom"
+                  }
+                },
+                {
+                  "type": "REPEAT",
+                  "content": {
+                    "type": "SEQ",
+                    "members": [
+                      {
+                        "type": "STRING",
+                        "value": ","
+                      },
+                      {
+                        "type": "FIELD",
+                        "name": "ownedSpecializations",
+                        "content": {
+                          "type": "SYMBOL",
+                          "name": "SpecializationAxiom"
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": "["
+                },
+                {
+                  "type": "REPEAT",
+                  "content": {
+                    "type": "FIELD",
+                    "name": "ownedPropertyRestrictions",
+                    "content": {
+                      "type": "SYMBOL",
+                      "name": "_PropertyRestrictionAxiom"
+                    }
+                  }
+                },
+                {
+                  "type": "STRING",
+                  "value": "]"
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        }
+      ]
+    },
+    "AnnotationPropertyReference": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "ref"
+        },
+        {
+          "type": "STRING",
+          "value": "annotation"
+        },
+        {
+          "type": "STRING",
+          "value": "property"
+        },
+        {
+          "type": "FIELD",
+          "name": "property",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_Ref"
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": ":>"
+                },
+                {
+                  "type": "FIELD",
+                  "name": "ownedSpecializations",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "SpecializationAxiom"
+                  }
+                },
+                {
+                  "type": "REPEAT",
+                  "content": {
+                    "type": "SEQ",
+                    "members": [
+                      {
+                        "type": "STRING",
+                        "value": ","
+                      },
+                      {
+                        "type": "FIELD",
+                        "name": "ownedSpecializations",
+                        "content": {
+                          "type": "SYMBOL",
+                          "name": "SpecializationAxiom"
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        }
+      ]
+    },
+    "ScalarPropertyReference": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "ref"
+        },
+        {
+          "type": "STRING",
+          "value": "scalar"
+        },
+        {
+          "type": "STRING",
+          "value": "property"
+        },
+        {
+          "type": "FIELD",
+          "name": "property",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_Ref"
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": ":>"
+                },
+                {
+                  "type": "FIELD",
+                  "name": "ownedSpecializations",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "SpecializationAxiom"
+                  }
+                },
+                {
+                  "type": "REPEAT",
+                  "content": {
+                    "type": "SEQ",
+                    "members": [
+                      {
+                        "type": "STRING",
+                        "value": ","
+                      },
+                      {
+                        "type": "FIELD",
+                        "name": "ownedSpecializations",
+                        "content": {
+                          "type": "SYMBOL",
+                          "name": "SpecializationAxiom"
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        }
+      ]
+    },
+    "StructuredPropertyReference": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "ref"
+        },
+        {
+          "type": "STRING",
+          "value": "structured"
+        },
+        {
+          "type": "STRING",
+          "value": "property"
+        },
+        {
+          "type": "FIELD",
+          "name": "property",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_Ref"
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": ":>"
+                },
+                {
+                  "type": "FIELD",
+                  "name": "ownedSpecializations",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "SpecializationAxiom"
+                  }
+                },
+                {
+                  "type": "REPEAT",
+                  "content": {
+                    "type": "SEQ",
+                    "members": [
+                      {
+                        "type": "STRING",
+                        "value": ","
+                      },
+                      {
+                        "type": "FIELD",
+                        "name": "ownedSpecializations",
+                        "content": {
+                          "type": "SYMBOL",
+                          "name": "SpecializationAxiom"
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        }
+      ]
+    },
+    "FacetedScalarReference": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "ref"
+        },
+        {
+          "type": "STRING",
+          "value": "scalar"
+        },
+        {
+          "type": "FIELD",
+          "name": "scalar",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_Ref"
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": ":>"
+                },
+                {
+                  "type": "FIELD",
+                  "name": "ownedSpecializations",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "SpecializationAxiom"
+                  }
+                },
+                {
+                  "type": "REPEAT",
+                  "content": {
+                    "type": "SEQ",
+                    "members": [
+                      {
+                        "type": "STRING",
+                        "value": ","
+                      },
+                      {
+                        "type": "FIELD",
+                        "name": "ownedSpecializations",
+                        "content": {
+                          "type": "SYMBOL",
+                          "name": "SpecializationAxiom"
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        }
+      ]
+    },
+    "EnumeratedScalarReference": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "ref"
+        },
+        {
+          "type": "STRING",
+          "value": "enumerated"
+        },
+        {
+          "type": "STRING",
+          "value": "scalar"
+        },
+        {
+          "type": "FIELD",
+          "name": "scalar",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_Ref"
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": ":>"
+                },
+                {
+                  "type": "FIELD",
+                  "name": "ownedSpecializations",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "SpecializationAxiom"
+                  }
+                },
+                {
+                  "type": "REPEAT",
+                  "content": {
+                    "type": "SEQ",
+                    "members": [
+                      {
+                        "type": "STRING",
+                        "value": ","
+                      },
+                      {
+                        "type": "FIELD",
+                        "name": "ownedSpecializations",
+                        "content": {
+                          "type": "SYMBOL",
+                          "name": "SpecializationAxiom"
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        }
+      ]
+    },
+    "RelationReference": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "ref"
+        },
+        {
+          "type": "STRING",
+          "value": "relation"
+        },
+        {
+          "type": "FIELD",
+          "name": "relation",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_Ref"
+          }
+        }
+      ]
+    },
+    "RuleReference": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "ref"
+        },
+        {
+          "type": "STRING",
+          "value": "rule"
+        },
+        {
+          "type": "FIELD",
+          "name": "rule",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_Ref"
+          }
+        }
+      ]
+    },
+    "_NamedInstanceReference": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "ConceptInstanceReference"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "RelationInstanceReference"
+        }
+      ]
+    },
+    "ConceptInstanceReference": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "ref"
+        },
+        {
+          "type": "STRING",
+          "value": "ci"
+        },
+        {
+          "type": "FIELD",
+          "name": "instance",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_Ref"
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": ":"
+                },
+                {
+                  "type": "FIELD",
+                  "name": "ownedTypes",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "ConceptTypeAssertion"
+                  }
+                },
+                {
+                  "type": "REPEAT",
+                  "content": {
+                    "type": "SEQ",
+                    "members": [
+                      {
+                        "type": "STRING",
+                        "value": ","
+                      },
+                      {
+                        "type": "FIELD",
+                        "name": "ownedTypes",
+                        "content": {
+                          "type": "SYMBOL",
+                          "name": "ConceptTypeAssertion"
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": "["
+                },
+                {
+                  "type": "REPEAT",
+                  "content": {
+                    "type": "FIELD",
+                    "name": "ownedPropertyValues",
+                    "content": {
+                      "type": "SYMBOL",
+                      "name": "_PropertyValueAssertion"
+                    }
+                  }
+                },
+                {
+                  "type": "REPEAT",
+                  "content": {
+                    "type": "FIELD",
+                    "name": "ownedLinks",
+                    "content": {
+                      "type": "SYMBOL",
+                      "name": "LinkAssertion"
+                    }
+                  }
+                },
+                {
+                  "type": "STRING",
+                  "value": "]"
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        }
+      ]
+    },
+    "RelationInstanceReference": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "ref"
+        },
+        {
+          "type": "STRING",
+          "value": "ri"
+        },
+        {
+          "type": "FIELD",
+          "name": "instance",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_Ref"
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": ":"
+                },
+                {
+                  "type": "FIELD",
+                  "name": "ownedTypes",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "RelationTypeAssertion"
+                  }
+                },
+                {
+                  "type": "REPEAT",
+                  "content": {
+                    "type": "SEQ",
+                    "members": [
+                      {
+                        "type": "STRING",
+                        "value": ","
+                      },
+                      {
+                        "type": "FIELD",
+                        "name": "ownedTypes",
+                        "content": {
+                          "type": "SYMBOL",
+                          "name": "RelationTypeAssertion"
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": "["
+                },
+                {
+                  "type": "REPEAT",
+                  "content": {
+                    "type": "FIELD",
+                    "name": "ownedPropertyValues",
+                    "content": {
+                      "type": "SYMBOL",
+                      "name": "_PropertyValueAssertion"
+                    }
+                  }
+                },
+                {
+                  "type": "REPEAT",
+                  "content": {
+                    "type": "FIELD",
+                    "name": "ownedLinks",
+                    "content": {
+                      "type": "SYMBOL",
+                      "name": "LinkAssertion"
+                    }
+                  }
+                },
+                {
+                  "type": "STRING",
+                  "value": "]"
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        }
+      ]
+    },
+    "SpecializationAxiom": {
+      "type": "FIELD",
+      "name": "specializedTerm",
+      "content": {
+        "type": "SYMBOL",
+        "name": "_Ref"
+      }
+    },
+    "_PropertyRestrictionAxiom": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "_ScalarPropertyRestrictionAxiom"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_StructuredPropertyRestrictionAxiom"
+        }
+      ]
+    },
+    "_ScalarPropertyRestrictionAxiom": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "ScalarPropertyRangeRestrictionAxiom"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "ScalarPropertyCardinalityRestrictionAxiom"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "ScalarPropertyValueRestrictionAxiom"
+        }
+      ]
+    },
+    "ScalarPropertyRangeRestrictionAxiom": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "restricts"
+        },
+        {
+          "type": "FIELD",
+          "name": "kind",
+          "content": {
+            "type": "SYMBOL",
+            "name": "RangeRestrictionKind"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "scalar"
+        },
+        {
+          "type": "STRING",
+          "value": "property"
+        },
+        {
+          "type": "FIELD",
+          "name": "property",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_Ref"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "to"
+        },
+        {
+          "type": "FIELD",
+          "name": "range",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_Ref"
+          }
+        }
+      ]
+    },
+    "ScalarPropertyCardinalityRestrictionAxiom": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "restricts"
+        },
+        {
+          "type": "STRING",
+          "value": "scalar"
+        },
+        {
+          "type": "STRING",
+          "value": "property"
+        },
+        {
+          "type": "FIELD",
+          "name": "property",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_Ref"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "to"
+        },
+        {
+          "type": "FIELD",
+          "name": "kind",
+          "content": {
+            "type": "SYMBOL",
+            "name": "CardinalityRestrictionKind"
+          }
+        },
+        {
+          "type": "FIELD",
+          "name": "cardinality",
+          "content": {
+            "type": "SYMBOL",
+            "name": "UnsignedInteger"
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "FIELD",
+              "name": "range",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_Ref"
+              }
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        }
+      ]
+    },
+    "ScalarPropertyValueRestrictionAxiom": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "restricts"
+        },
+        {
+          "type": "STRING",
+          "value": "scalar"
+        },
+        {
+          "type": "STRING",
+          "value": "property"
+        },
+        {
+          "type": "FIELD",
+          "name": "property",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_Ref"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "to"
+        },
+        {
+          "type": "FIELD",
+          "name": "value",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_Literal"
+          }
+        }
+      ]
+    },
+    "_StructuredPropertyRestrictionAxiom": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "StructuredPropertyRangeRestrictionAxiom"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "StructuredPropertyCardinalityRestrictionAxiom"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "StructuredPropertyValueRestrictionAxiom"
+        }
+      ]
+    },
+    "StructuredPropertyRangeRestrictionAxiom": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "restricts"
+        },
+        {
+          "type": "FIELD",
+          "name": "kind",
+          "content": {
+            "type": "SYMBOL",
+            "name": "RangeRestrictionKind"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "structured"
+        },
+        {
+          "type": "STRING",
+          "value": "property"
+        },
+        {
+          "type": "FIELD",
+          "name": "property",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_Ref"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "to"
+        },
+        {
+          "type": "FIELD",
+          "name": "range",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_Ref"
+          }
+        }
+      ]
+    },
+    "StructuredPropertyCardinalityRestrictionAxiom": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "restricts"
+        },
+        {
+          "type": "STRING",
+          "value": "structured"
+        },
+        {
+          "type": "STRING",
+          "value": "property"
+        },
+        {
+          "type": "FIELD",
+          "name": "property",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_Ref"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "to"
+        },
+        {
+          "type": "FIELD",
+          "name": "kind",
+          "content": {
+            "type": "SYMBOL",
+            "name": "CardinalityRestrictionKind"
+          }
+        },
+        {
+          "type": "FIELD",
+          "name": "cardinality",
+          "content": {
+            "type": "SYMBOL",
+            "name": "UnsignedInteger"
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "FIELD",
+              "name": "range",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_Ref"
+              }
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        }
+      ]
+    },
+    "StructuredPropertyValueRestrictionAxiom": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "restricts"
+        },
+        {
+          "type": "STRING",
+          "value": "structured"
+        },
+        {
+          "type": "STRING",
+          "value": "property"
+        },
+        {
+          "type": "FIELD",
+          "name": "property",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_Ref"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "to"
+        },
+        {
+          "type": "FIELD",
+          "name": "value",
+          "content": {
+            "type": "SYMBOL",
+            "name": "StructureInstance"
+          }
+        }
+      ]
+    },
+    "_RelationRestrictionAxiom": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "RelationRangeRestrictionAxiom"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "RelationCardinalityRestrictionAxiom"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "RelationTargetRestrictionAxiom"
+        }
+      ]
+    },
+    "RelationRangeRestrictionAxiom": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "restricts"
+        },
+        {
+          "type": "FIELD",
+          "name": "kind",
+          "content": {
+            "type": "SYMBOL",
+            "name": "RangeRestrictionKind"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "relation"
+        },
+        {
+          "type": "FIELD",
+          "name": "relation",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_Ref"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "to"
+        },
+        {
+          "type": "FIELD",
+          "name": "range",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_Ref"
+          }
+        }
+      ]
+    },
+    "RelationCardinalityRestrictionAxiom": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "restricts"
+        },
+        {
+          "type": "STRING",
+          "value": "relation"
+        },
+        {
+          "type": "FIELD",
+          "name": "relation",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_Ref"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "to"
+        },
+        {
+          "type": "FIELD",
+          "name": "kind",
+          "content": {
+            "type": "SYMBOL",
+            "name": "CardinalityRestrictionKind"
+          }
+        },
+        {
+          "type": "FIELD",
+          "name": "cardinality",
+          "content": {
+            "type": "SYMBOL",
+            "name": "UnsignedInteger"
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "FIELD",
+              "name": "range",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_Ref"
+              }
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        }
+      ]
+    },
+    "RelationTargetRestrictionAxiom": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "restricts"
+        },
+        {
+          "type": "STRING",
+          "value": "relation"
+        },
+        {
+          "type": "FIELD",
+          "name": "relation",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_Ref"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "to"
+        },
+        {
+          "type": "FIELD",
+          "name": "target",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_Ref"
+          }
+        }
+      ]
+    },
+    "KeyAxiom": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "key"
+        },
+        {
+          "type": "FIELD",
+          "name": "properties",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_Ref"
+          }
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "STRING",
+                "value": ","
+              },
+              {
+                "type": "FIELD",
+                "name": "properties",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_Ref"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "ConceptTypeAssertion": {
+      "type": "FIELD",
+      "name": "type",
+      "content": {
+        "type": "SYMBOL",
+        "name": "_Ref"
+      }
+    },
+    "RelationTypeAssertion": {
+      "type": "FIELD",
+      "name": "type",
+      "content": {
+        "type": "SYMBOL",
+        "name": "_Ref"
+      }
+    },
+    "_PropertyValueAssertion": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "ScalarPropertyValueAssertion"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "StructuredPropertyValueAssertion"
+        }
+      ]
+    },
+    "ScalarPropertyValueAssertion": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "property",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_Ref"
+          }
+        },
+        {
+          "type": "FIELD",
+          "name": "value",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_Literal"
+          }
+        }
+      ]
+    },
+    "StructuredPropertyValueAssertion": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "property",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_Ref"
+          }
+        },
+        {
+          "type": "FIELD",
+          "name": "value",
+          "content": {
+            "type": "SYMBOL",
+            "name": "StructureInstance"
+          }
+        }
+      ]
+    },
+    "LinkAssertion": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "relation",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_Ref"
+          }
+        },
+        {
+          "type": "FIELD",
+          "name": "target",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_Ref"
+          }
+        }
+      ]
+    },
+    "Annotation": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "@"
+        },
+        {
+          "type": "FIELD",
+          "name": "property",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_Ref"
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "FIELD",
+                  "name": "value",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "_Literal"
+                  }
+                },
+                {
+                  "type": "FIELD",
+                  "name": "referenceValue",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "_Ref"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        }
+      ]
+    },
+    "_Literal": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "IntegerLiteral"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "DecimalLiteral"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "DoubleLiteral"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "BooleanLiteral"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "QuotedLiteral"
+        }
+      ]
+    },
+    "IntegerLiteral": {
+      "type": "SYMBOL",
+      "name": "Integer"
+    },
+    "DecimalLiteral": {
+      "type": "SYMBOL",
+      "name": "Decimal"
+    },
+    "DoubleLiteral": {
+      "type": "SYMBOL",
+      "name": "Double"
+    },
+    "BooleanLiteral": {
+      "type": "SYMBOL",
+      "name": "Boolean"
+    },
+    "QuotedLiteral": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "value",
+          "content": {
+            "type": "SYMBOL",
+            "name": "STRING"
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "SEQ",
+                  "members": [
+                    {
+                      "type": "STRING",
+                      "value": "^^"
+                    },
+                    {
+                      "type": "FIELD",
+                      "name": "type",
+                      "content": {
+                        "type": "SYMBOL",
+                        "name": "_Ref"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "type": "SEQ",
+                  "members": [
+                    {
+                      "type": "STRING",
+                      "value": "$"
+                    },
+                    {
+                      "type": "FIELD",
+                      "name": "langTag",
+                      "content": {
+                        "type": "SYMBOL",
+                        "name": "LocalName"
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        }
+      ]
+    },
+    "_Ref": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "LocalName"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "QualifiedName"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "ResourceIdentifier"
+        }
+      ]
+    },
+    "_CrossRef": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "QualifiedName"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "ResourceIdentifier"
+        }
+      ]
+    },
+    "Namespace": {
+      "type": "SYMBOL",
+      "name": "NAMESPACE"
+    },
+    "LocalName": {
+      "type": "SYMBOL",
+      "name": "ID"
+    },
+    "QualifiedName": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "prefix",
+          "content": {
+            "type": "SYMBOL",
+            "name": "LocalName"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": ":"
+        },
+        {
+          "type": "FIELD",
+          "name": "localName",
+          "content": {
+            "type": "SYMBOL",
+            "name": "LocalName"
+          }
+        }
+      ]
+    },
+    "ResourceIdentifier": {
+      "type": "SYMBOL",
+      "name": "IRI"
+    },
+    "RangeRestrictionKind": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "all"
+        },
+        {
+          "type": "STRING",
+          "value": "some"
+        }
+      ]
+    },
+    "CardinalityRestrictionKind": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "exactly"
+        },
+        {
+          "type": "STRING",
+          "value": "min"
+        },
+        {
+          "type": "STRING",
+          "value": "max"
+        }
+      ]
+    },
+    "Boolean": {
+      "type": "SYMBOL",
+      "name": "BOOLEAN_STR"
+    },
+    "UnsignedInteger": {
+      "type": "SYMBOL",
+      "name": "UNSIGNED_INTEGER_STR"
+    },
+    "Integer": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "UNSIGNED_INTEGER_STR"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "INTEGER_STR"
+        }
+      ]
+    },
+    "Decimal": {
+      "type": "SYMBOL",
+      "name": "DECIMAL_STR"
+    },
+    "Double": {
+      "type": "SYMBOL",
+      "name": "DOUBLE_STR"
+    },
+    "BOOLEAN_STR": {
+      "type": "TOKEN",
+      "content": {
+        "type": "CHOICE",
+        "members": [
+          {
+            "type": "STRING",
+            "value": "false"
+          },
+          {
+            "type": "STRING",
+            "value": "true"
+          }
+        ]
+      }
+    },
+    "UNSIGNED_INTEGER_STR": {
+      "type": "TOKEN",
+      "content": {
+        "type": "REPEAT1",
+        "content": {
+          "type": "PATTERN",
+          "value": "[0-9]"
+        }
+      }
+    },
+    "INTEGER_STR": {
+      "type": "TOKEN",
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "STRING",
+                    "value": "+"
+                  },
+                  {
+                    "type": "STRING",
+                    "value": "-"
+                  }
+                ]
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
+          },
+          {
+            "type": "REPEAT1",
+            "content": {
+              "type": "PATTERN",
+              "value": "[0-9]"
+            }
+          }
+        ]
+      }
+    },
+    "DECIMAL_STR": {
+      "type": "TOKEN",
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "STRING",
+                    "value": "+"
+                  },
+                  {
+                    "type": "STRING",
+                    "value": "-"
+                  }
+                ]
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
+          },
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SEQ",
+                "members": [
+                  {
+                    "type": "REPEAT1",
+                    "content": {
+                      "type": "PATTERN",
+                      "value": "[0-9]"
+                    }
+                  },
+                  {
+                    "type": "CHOICE",
+                    "members": [
+                      {
+                        "type": "SEQ",
+                        "members": [
+                          {
+                            "type": "STRING",
+                            "value": "."
+                          },
+                          {
+                            "type": "REPEAT",
+                            "content": {
+                              "type": "PATTERN",
+                              "value": "[0-9]"
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "type": "BLANK"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "SEQ",
+                "members": [
+                  {
+                    "type": "STRING",
+                    "value": "."
+                  },
+                  {
+                    "type": "REPEAT1",
+                    "content": {
+                      "type": "PATTERN",
+                      "value": "[0-9]"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "DOUBLE_STR": {
+      "type": "TOKEN",
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "STRING",
+                    "value": "+"
+                  },
+                  {
+                    "type": "STRING",
+                    "value": "-"
+                  }
+                ]
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
+          },
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SEQ",
+                "members": [
+                  {
+                    "type": "REPEAT1",
+                    "content": {
+                      "type": "PATTERN",
+                      "value": "[0-9]"
+                    }
+                  },
+                  {
+                    "type": "CHOICE",
+                    "members": [
+                      {
+                        "type": "SEQ",
+                        "members": [
+                          {
+                            "type": "STRING",
+                            "value": "."
+                          },
+                          {
+                            "type": "REPEAT",
+                            "content": {
+                              "type": "PATTERN",
+                              "value": "[0-9]"
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "type": "BLANK"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "SEQ",
+                "members": [
+                  {
+                    "type": "STRING",
+                    "value": "."
+                  },
+                  {
+                    "type": "REPEAT1",
+                    "content": {
+                      "type": "PATTERN",
+                      "value": "[0-9]"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SEQ",
+                "members": [
+                  {
+                    "type": "CHOICE",
+                    "members": [
+                      {
+                        "type": "STRING",
+                        "value": "e"
+                      },
+                      {
+                        "type": "STRING",
+                        "value": "E"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "CHOICE",
+                    "members": [
+                      {
+                        "type": "CHOICE",
+                        "members": [
+                          {
+                            "type": "STRING",
+                            "value": "+"
+                          },
+                          {
+                            "type": "STRING",
+                            "value": "-"
+                          }
+                        ]
+                      },
+                      {
+                        "type": "BLANK"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "REPEAT1",
+                    "content": {
+                      "type": "PATTERN",
+                      "value": "[0-9]"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "STRING": {
+      "type": "TOKEN",
+      "content": {
+        "type": "CHOICE",
+        "members": [
+          {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "STRING",
+                "value": "\""
+              },
+              {
+                "type": "REPEAT",
+                "content": {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "PATTERN",
+                      "value": "[^\\\\\"]"
+                    },
+                    {
+                      "type": "PATTERN",
+                      "value": "\\\\[^\\n]"
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "STRING",
+                "value": "\""
+              }
+            ]
+          },
+          {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "STRING",
+                "value": "'"
+              },
+              {
+                "type": "REPEAT",
+                "content": {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "PATTERN",
+                      "value": "[^\\\\']"
+                    },
+                    {
+                      "type": "PATTERN",
+                      "value": "\\\\[^\\n]"
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "STRING",
+                "value": "'"
+              }
+            ]
+          },
+          {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "STRING",
+                "value": "\"\"\""
+              },
+              {
+                "type": "REPEAT",
+                "content": {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "PATTERN",
+                      "value": "[^\\\\\"]"
+                    },
+                    {
+                      "type": "PATTERN",
+                      "value": "\\\\[^\\n]"
+                    },
+                    {
+                      "type": "PATTERN",
+                      "value": "\"{1,2}[^\"]"
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "STRING",
+                "value": "\"\"\""
+              }
+            ]
+          },
+          {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "STRING",
+                "value": "'''"
+              },
+              {
+                "type": "REPEAT",
+                "content": {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "PATTERN",
+                      "value": "[^\\\\']"
+                    },
+                    {
+                      "type": "PATTERN",
+                      "value": "\\\\[^\\n]"
+                    },
+                    {
+                      "type": "PATTERN",
+                      "value": "'{1,2}[^']"
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "STRING",
+                "value": "'''"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "NAMESPACE": {
+      "type": "TOKEN",
+      "content": {
+        "type": "PATTERN",
+        "value": "<([^>\\s#])*(#|\\/)>"
+      }
+    },
+    "IRI": {
+      "type": "TOKEN",
+      "content": {
+        "type": "PATTERN",
+        "value": "<([^>\\s#])*>"
+      }
+    },
+    "ID": {
+      "type": "TOKEN",
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "STRING",
+                "value": "^"
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
+          },
+          {
+            "type": "PATTERN",
+            "value": "[a-zA-Z0-9_]"
+          },
+          {
+            "type": "REPEAT",
+            "content": {
+              "type": "PATTERN",
+              "value": "[a-zA-Z0-9_\\-.$]"
+            }
+          }
+        ]
+      }
+    },
+    "ML_COMMENT": {
+      "type": "TOKEN",
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "STRING",
+            "value": "/*"
+          },
+          {
+            "type": "PATTERN",
+            "value": "[^*]*\\*+([^/*][^*]*\\*+)*"
+          },
+          {
+            "type": "STRING",
+            "value": "/"
+          }
+        ]
+      }
+    },
+    "SL_COMMENT": {
+      "type": "TOKEN",
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "STRING",
+            "value": "//"
+          },
+          {
+            "type": "PATTERN",
+            "value": "[^\\n]*"
+          }
+        ]
+      }
+    }
+  },
+  "extras": [
+    {
+      "type": "SYMBOL",
+      "name": "SL_COMMENT"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "ML_COMMENT"
+    },
+    {
+      "type": "PATTERN",
+      "value": "\\s"
+    }
+  ],
+  "conflicts": [
+    [
+      "_Ref",
+      "QualifiedName"
+    ],
+    [
+      "ConceptInstance"
+    ]
+  ],
+  "precedences": [],
+  "externals": [],
+  "inline": [],
+  "supertypes": []
+}
+
