@@ -2,11 +2,11 @@ import React, { useEffect, useState } from 'react';
 import images from './example-template.json';
 import { ChoiceGroup, IChoiceGroupOption } from '@fluentui/react';
 
-//Missing comment
+//create component
 const ChoiceGroupComponent = () => {
     const [options, setOptions] = useState<IChoiceGroupOption[]>([]);
 
-    //Missing comment
+    //maps the images to the options
     useEffect(() => {
         const newOptions = images.map((item: any, index: number) => ({
                 key: index.toString(),
@@ -31,5 +31,5 @@ const ChoiceGroupComponent = () => {
     );
 };
 
-//Missing comment
+//export component
 export default ChoiceGroupComponent;
