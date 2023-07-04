@@ -1,0 +1,4 @@
+mkdir -p build
+pushd build
+cmake -DCMAKE_INSTALL_PREFIX=../FaCT++.WASM/dist -DBUILD_WASM=ON .. && make -j8 && make install
+popd
