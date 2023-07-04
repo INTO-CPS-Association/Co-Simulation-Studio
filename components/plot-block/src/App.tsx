@@ -1,20 +1,29 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 import { Stack, Text, Link, FontWeights, IStackTokens, IStackStyles, ITextStyles } from '@fluentui/react';
 import './App.css';
+//import BarChart from './BarChart.js';
+import { VegaLite } from 'react-vega';
+import { VisualizationSpec } from "react-vega";
 //import {barData, spec} from './BarChart';
-import {Vega, VegaLite, createClassFromSpec} from 'react-vega';
+//import {Vega, VegaLite, createClassFromSpec} from 'react-vega';
 
-export const spec = {
-  "description": "A simple bar chart with embedded data.",
-  "mark": "bar",
-  "encoding": {
+
+//const spec = createClassFromSpec
+
+
+const spec: VisualizationSpec = {
+  width: 400,
+  height: 200,
+  description: "A simple bar chart with embedded data.",
+  mark: 'bar',
+  encoding: {
     "x": {"field": "a", "type": "ordinal"},
     "y": {"field": "b", "type": "quantitative"}
-  }
+  },
+  data: { name: 'values' },
 };
 
-export const barData = {
+const barData = {
   "values": [
     {"a": "A","b": 20}, {"a": "B","b": 34}, {"a": "C","b": 55},
     {"a": "D","b": 19}, {"a": "E","b": 40}, {"a": "F","b": 34},
@@ -22,9 +31,31 @@ export const barData = {
   ]
 };
 
+export const App: React.FunctionComponent = () => {
+  return (
+    <div>
+      <script>
+        ReactDOM.render(<VegaLite spec={spec} data={barData}/>, document.getElementById('bar-container')); 
+      </script>
+    </div>
+  )
+};
+
+
+
+
+
+
 /*
-export const App: React.FC = () => {
-  <Vega spec={spec} data={barData}/>
+export const App: React.FunctionComponent = () => {
+ 
+  return (
+    <div>
+      <script>
+        ReactDOM.render(<BarChart data={barData}/>, document.getElementById('bar-container')); 
+      </script>
+    </div>
+  );
 };
 */
 
@@ -39,7 +70,6 @@ const stackStyles: Partial<IStackStyles> = {
     color: '#605e5c',
   },
 };
-
 */
 
 /*
@@ -71,4 +101,5 @@ export const App: React.FunctionComponent = () => {
     </Stack>
   );
 };
+
 */

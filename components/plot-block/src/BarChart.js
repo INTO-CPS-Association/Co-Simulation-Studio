@@ -1,11 +1,11 @@
 import React, { PropTypes } from 'react';
-import {createClassFromLiteSpec} from 'react-vega-lite';
+import {createClassFromSpec} from 'react-vega';
 
-export default createClassFromLiteSpec('BarChart', {
+export default createClassFromSpec('BarChart', {
   "description": "A simple bar chart with embedded data.",
   "mark": "bar",
   "encoding": {
-    "x": {"field": "a", "type": "nominal", "axis": {"labelAngle": 0}},
+    "x": {"field": "a", "type": "ordinal"},
     "y": {"field": "b", "type": "quantitative"}
   }
 });
