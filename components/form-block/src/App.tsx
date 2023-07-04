@@ -35,7 +35,13 @@ export const App: React.FunctionComponent = () => {
           <TextField label="Name" defaultValue={data[0].name} styles={boldStyle}/>
         </Stack.Item>
         <Stack.Item>
-          <SpinButton label="PPU" defaultValue={data[0].ppu} styles={styles}/>
+          <SpinButton 
+            label="PPU" 
+            defaultValue={data[0].ppu} 
+            styles={styles} min={0}
+            max={1}
+            step={0.05}
+          />
         </Stack.Item>
       </Stack>
       <Separator></Separator>
