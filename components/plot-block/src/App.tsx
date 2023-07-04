@@ -1,74 +1,153 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import { action } from '@storybook/addon-actions';
 import { Stack, Text, Link, FontWeights, IStackTokens, IStackStyles, ITextStyles } from '@fluentui/react';
+import { VegaLite, createClassFromSpec, VisualizationSpec } from 'react-vega';
 import './App.css';
-//import {barData, spec} from './BarChart';
-import {Vega, VegaLite, createClassFromSpec} from 'react-vega';
 
-export const spec = {
-  "description": "A simple bar chart with embedded data.",
-  "mark": "bar",
-  "encoding": {
-    "x": {"field": "a", "type": "ordinal"},
-    "y": {"field": "b", "type": "quantitative"}
-  }
+const data1 = {
+  myData: [
+    { a: 'A', b: 20 },
+    { a: 'B', b: 34 },
+    { a: 'C', b: 55 },
+    { a: 'D', b: 19 },
+    { a: 'E', b: 40 },
+    { a: 'F', b: 34 },
+    { a: 'G', b: 91 },
+    { a: 'H', b: 78 },
+    { a: 'I', b: 25 },
+  ],
 };
 
-export const barData = {
-  "values": [
-    {"a": "A","b": 20}, {"a": "B","b": 34}, {"a": "C","b": 55},
-    {"a": "D","b": 19}, {"a": "E","b": 40}, {"a": "F","b": 34},
-    {"a": "G","b": 91}, {"a": "H","b": 78}, {"a": "I","b": 25}
-  ]
+const data2 = {
+  myData: [
+    { a: 'A', b: 28 },
+    { a: 'B', b: 55 },
+    { a: 'C', b: 43 },
+    { a: 'D', b: 91 },
+    { a: 'E', b: 81 },
+    { a: 'F', b: 53 },
+    { a: 'G', b: 19 },
+    { a: 'H', b: 87 },
+    { a: 'I', b: 52 },
+  ],
 };
 
-/*
-export const App: React.FC = () => {
-  <Vega spec={spec} data={barData}/>
-};
-*/
-
-/*
-const boldStyle: Partial<ITextStyles> = { root: { fontWeight: FontWeights.semibold } };
-const stackTokens: IStackTokens = { childrenGap: 15 };
-const stackStyles: Partial<IStackStyles> = {
-  root: {
-    width: '960px',
-    margin: '0 auto',
-    textAlign: 'center',
-    color: '#605e5c',
+const spec1: VisualizationSpec = {
+  data: { name: 'myData' },
+  description: 'A simple bar chart with embedded data.',
+  encoding: {
+    x: { field: 'a', type: 'ordinal' },
+    y: { field: 'b', type: 'quantitative' },
   },
+  mark: 'bar',
 };
 
-*/
-
-/*
-export const App: React.FunctionComponent = () => {
-  return (
-    <Stack horizontalAlign="center" verticalAlign="center" verticalFill styles={stackStyles} tokens={stackTokens}>
-      <img className="App-logo" src={logo} alt="logo" />
-      <Text variant="xxLarge" styles={boldStyle}>
-        Welcome to your Fluent UI app
-      </Text>
-      <Text variant="large">For a guide on how to customize this project, check out the Fluent UI documentation.</Text>
-      <Text variant="large" styles={boldStyle}>
-        Essential links
-      </Text>
-      <Stack horizontal tokens={stackTokens} horizontalAlign="center">
-        <Link href="https://developer.microsoft.com/en-us/fluentui#/get-started/web">Docs</Link>
-        <Link href="https://stackoverflow.com/questions/tagged/office-ui-fabric">Stack Overflow</Link>
-        <Link href="https://github.com/microsoft/fluentui/">Github</Link>
-        <Link href="https://twitter.com/fluentui">Twitter</Link>
-      </Stack>
-      <Text variant="large" styles={boldStyle}>
-        Design system
-      </Text>
-      <Stack horizontal tokens={stackTokens} horizontalAlign="center">
-        <Link href="https://developer.microsoft.com/en-us/fluentui#/styles/web/icons">Icons</Link>
-        <Link href="https://developer.microsoft.com/en-us/fluentui#/styles/web">Styles</Link>
-        <Link href="https://aka.ms/themedesigner">Theme designer</Link>
-      </Stack>
-    </Stack>
-  );
+const spec2: VisualizationSpec = {
+  data: { name: 'myData' },
+  description: 'A simple bar chart with embedded data.',
+  encoding: {
+    x: { field: 'b', type: 'quantitative' },
+    y: { field: 'a', type: 'ordinal' },
+  },
+  mark: 'bar',
 };
-*/
+
+const BarChart = createClassFromSpec({ mode: 'vega-lite', spec: spec1 });
+
+const code1 = `<VegaLite data={this.state.data} spec={this.state.spec} />`;
+
+const code2 = `const BarChart = ReactVegaLite.createClassFromLiteSpec(spec1);
+<BarChart data={this.state.data} />`;
+
+type State = {
+  data: Record<string, unknown>;
+  info: string;
+  spec: VisualizationSpec;
+};
+
+export default class Demo extends React.PureComponent<{}, State> {
+  handlers: {
+    hover: (...args: unknown[]) => void;
+  };
+
+  constructor(props: any) {
+    super(props);
+    this.state = {
+      data: data1,
+      info: '',
+      spec: spec1,
+    };
+
+    this.handleHover = this.handleHover.bind(this);
+    this.handleToggleSpec = this.handleToggleSpec.bind(this);
+    this.handleUpdateData = this.handleUpdateData.bind(this);
+    this.handlers = { hover: this.handleHover };
+  }
+
+  handleHover(...args: any[]) {
+    action('hover', {
+      limit: 5,
+    })(args);
+    this.setState({
+      info: JSON.stringify(args),
+    });
+  }
+
+  handleToggleSpec() {
+    const { spec } = this.state;
+    action('toggle spec')(spec);
+    if (spec === spec1) {
+      this.setState({ spec: spec2 });
+    } else {
+      this.setState({ spec: spec1 });
+    }
+  }
+
+  handleUpdateData() {
+    const { data } = this.state;
+    action('update data')(data);
+    if (data === data1) {
+      this.setState({ data: data2 });
+    } else if (data === data2) {
+      this.setState({ data: data1 });
+    }
+  }
+
+  render() {
+    const { data, spec, info } = this.state;
+
+    return (
+      <div>
+        <div style={{ float: 'right' }}>
+          <iframe
+            title="star"
+            src="https://ghbtns.com/github-btn.html?user=vega&repo=react-vega&type=star&count=true"
+            frameBorder="0"
+            scrolling="0"
+            width="100px"
+            height="20px"
+          />
+        </div>
+        <button type="button" onClick={this.handleToggleSpec}>
+          Toggle Spec
+        </button>
+        <button type="button" onClick={this.handleUpdateData}>
+          Update data
+        </button>
+        <h3>
+          <code>&lt;VegaLite&gt;</code> React Component
+        </h3>
+        Will recompile when spec changes and update when data changes.
+        <pre>{code1}</pre>
+        <VegaLite data={data} spec={spec} signalListeners={this.handlers} />
+        <h3>
+          <code>ReactVegaLite.createClassFromLiteSpec()</code>
+        </h3>
+        Use the given spec to create a reusable component.
+        <pre>{code2}</pre>
+        <BarChart data={data} signalListeners={this.handlers} />
+        {info}
+      </div>
+    );
+  }
+}
