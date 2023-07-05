@@ -1,6 +1,6 @@
 import React from 'react';
-import { action } from '@storybook/addon-actions';
-import { Stack, Text, Link, FontWeights, IStackTokens, IStackStyles, ITextStyles } from '@fluentui/react';
+//import { action } from '@storybook/addon-actions';
+//import { Stack, Text, Link, FontWeights, IStackTokens, IStackStyles, ITextStyles } from '@fluentui/react';
 import { VegaLite, createClassFromSpec, VisualizationSpec } from 'react-vega';
 import './App.css';
 
@@ -18,6 +18,7 @@ const data1 = {
   ],
 };
 
+/* Second data set to illustrate how data can be updated using buttons
 const data2 = {
   myData: [
     { a: 'A', b: 28 },
@@ -31,7 +32,8 @@ const data2 = {
     { a: 'I', b: 52 },
   ],
 };
-
+*/
+//Vertical bar plot
 const spec1: VisualizationSpec = {
   data: { name: 'myData' },
   description: 'A simple bar chart with embedded data.',
@@ -42,6 +44,7 @@ const spec1: VisualizationSpec = {
   mark: 'bar',
 };
 
+/*Horizontal bar plot
 const spec2: VisualizationSpec = {
   data: { name: 'myData' },
   description: 'A simple bar chart with embedded data.',
@@ -50,7 +53,7 @@ const spec2: VisualizationSpec = {
     y: { field: 'a', type: 'ordinal' },
   },
   mark: 'bar',
-};
+};*/
 
 const BarChart = createClassFromSpec({ mode: 'vega-lite', spec: spec1 });
 
@@ -66,10 +69,11 @@ type State = {
 };
 
 export default class Demo extends React.PureComponent<{}, State> {
+  /*
   handlers: {
     hover: (...args: unknown[]) => void;
   };
-
+  */
   constructor(props: any) {
     super(props);
     this.state = {
@@ -77,13 +81,14 @@ export default class Demo extends React.PureComponent<{}, State> {
       info: '',
       spec: spec1,
     };
-
+    /*
     this.handleHover = this.handleHover.bind(this);
     this.handleToggleSpec = this.handleToggleSpec.bind(this);
     this.handleUpdateData = this.handleUpdateData.bind(this);
     this.handlers = { hover: this.handleHover };
+    */
   }
-
+  /*
   handleHover(...args: any[]) {
     action('hover', {
       limit: 5,
@@ -112,6 +117,7 @@ export default class Demo extends React.PureComponent<{}, State> {
       this.setState({ data: data1 });
     }
   }
+  */
 
   render() {
     const { data, spec, info } = this.state;
@@ -128,26 +134,28 @@ export default class Demo extends React.PureComponent<{}, State> {
             height="20px"
           />
         </div>
+        {/*
         <button type="button" onClick={this.handleToggleSpec}>
           Toggle Spec
         </button>
         <button type="button" onClick={this.handleUpdateData}>
           Update data
         </button>
+        */}
         <h3>
           <code>&lt;VegaLite&gt;</code> React Component
         </h3>
-        Will recompile when spec changes and update when data changes.
+        Compiled bar plot:
         <pre>{code1}</pre>
-        <VegaLite data={data} spec={spec} signalListeners={this.handlers} />
+        <VegaLite data={data} spec={spec} />
         <h3>
           <code>ReactVegaLite.createClassFromLiteSpec()</code>
         </h3>
-        Use the given spec to create a reusable component.
+        A reusable component created using:
         <pre>{code2}</pre>
-        <BarChart data={data} signalListeners={this.handlers} />
+        <BarChart data={data}/>
         {info}
       </div>
     );
   }
-}
+}/*signalListeners={this.handlers} This is inserted after the creation of the plots in line 147 & 153 to enable the buttons*/ 
