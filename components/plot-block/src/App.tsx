@@ -1,6 +1,7 @@
 import React from 'react';
 import { VegaLite, createClassFromSpec, VisualizationSpec } from 'react-vega';
 import './App.css';
+import { IndividualCommandBarButtonWrapper } from './CommandBar';
 
 const data1 = {
   myData: [
@@ -140,12 +141,20 @@ export default class Demo extends React.PureComponent<{}, State> {
           Update data
         </button>
         */}
+
+
         <h3>
           <code>&lt;VegaLite&gt;</code> React Component
         </h3>
         Compiled bar plot:
         <pre>{code1}</pre>
         <VegaLite data={data} spec={spec} />
+        <IndividualCommandBarButtonWrapper>
+        </IndividualCommandBarButtonWrapper> 
+
+
+
+
         <h3>
           <code>ReactVegaLite.createClassFromLiteSpec()</code>
         </h3>
