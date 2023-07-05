@@ -1,6 +1,4 @@
 import React from 'react';
-//import { action } from '@storybook/addon-actions';
-//import { Stack, Text, Link, FontWeights, IStackTokens, IStackStyles, ITextStyles } from '@fluentui/react';
 import { VegaLite, createClassFromSpec, VisualizationSpec } from 'react-vega';
 import './App.css';
 
