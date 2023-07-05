@@ -109,7 +109,7 @@ function getType(p: any): Type {
 
 let selectedConcept: number = 0;
 
-export const App: React.FunctionComponent = () => {
+export const Form: React.FunctionComponent = () => {
 
   const concepts: Array<Concept> = getConcepts(conceptData)
 
@@ -117,14 +117,24 @@ export const App: React.FunctionComponent = () => {
     <div>
       <ConceptChoiceGroup />
       <Separator></Separator>
-      <ConceptProperty {...concepts[0][0]}/>
+      <ConceptView {...concepts[0]}/>
       <Separator></Separator>
     </div>
   );
 };
 
-function ConceptPanel(c: Concept) {
-
+function ConceptView(c: Concept) {
+  let stackItems: Array<JSX.Element> = [];
+  for (let i = 0; i < Object.keys(c).length; i++) {
+    const p = c[i];
+    stackItems.push(<ConceptProperty key={p.name} {...p}/>)
+  }
+  console.log(stackItems)
+  return (
+    <Stack enableScopedSelectors tokens={stackTokens} styles={stackStyles}>
+      { stackItems }
+    </Stack>
+  );
 }
 
 function ConceptProperty(p: Property, isReadOnly: boolean = true) {
@@ -143,6 +153,8 @@ function ConceptProperty(p: Property, isReadOnly: boolean = true) {
   )
 }
 
+// function 
+
 function ConceptChoiceGroup() {
   const [selectedKey, setSelectedKey] = React.useState<string>('1');
 
@@ -155,7 +167,7 @@ function ConceptChoiceGroup() {
   return (
   <ChoiceGroup
       selectedKey={selectedKey} 
-      options={options} 
+      options={options}
       onChange={handleConceptChange} 
       label={"Select a concept " + selectedConcept}
   />
