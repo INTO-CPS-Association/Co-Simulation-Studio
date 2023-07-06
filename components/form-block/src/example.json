@@ -48,6 +48,32 @@
     },
     {
         "name": "Example 3",
+        "type": "Simulation",
+        "properties": [
+            {
+                "name": "Algorithm",
+                "type": "algorithm",
+                "value": "Fixed Step"
+            },
+            {
+                "name": "Start time",
+                "type": "float",
+                "value": 0
+            },
+            {
+                "name": "Step size",
+                "type": "float",
+                "value": 0.01
+            },
+            {
+                "name": "Stop time",
+                "type": "float",
+                "value": 40
+            }
+        ]
+    },
+    {
+        "name": "Example 4",
         "type": "C",
         "properties": [
             {
