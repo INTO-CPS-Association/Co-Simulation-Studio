@@ -66,7 +66,7 @@ class CSVGraph extends Graph {
 
   // Delete CSV data from the levelgraph
   // Problem: Also problem with indexing allways starts at 0
-  delete (csvData) {
+  delete(csvData) {
     return new Promise<void>((resolve, reject) => {
       //Truns the cvsData into Papa.parse type
       Papa.parse(csvData, {
