@@ -36,5 +36,24 @@
     "webpack": "^5.88.1",
     "webpack-cli": "^5.1.4",
     "webpack-dev-server": "4.13.3"
+  },
+  "dependencies": {
+    "@comunica/query-sparql": "^2.8.0",
+    "@types/papaparse": "^5.3.7",
+    "browserify": "^17.0.0",
+    "buffer": "^6.0.3",
+    "buffer-browserify": "^0.2.5",
+    "crypto": "^1.0.1",
+    "crypto-browserify": "^3.12.0",
+    "level": "^5.0.1",
+    "levelgraph": "^2.1.1",
+    "n3": "^0.11.3",
+    "papaparse": "^5.4.1",
+    "process": "^0.11.10",
+    "put": "^0.0.6",
+    "sparql-engine": "file:../../../sparql-engine",
+    "stream": "^0.0.2",
+    "stream-browserify": "^3.0.0",
+    "util": "^0.12.5"
   }
 }
