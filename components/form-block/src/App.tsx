@@ -10,7 +10,7 @@ const boldStyle: Partial<ITextStyles> = {
     fontWeight: FontWeights.semibold,
   }
 };
-const stackTokens: IStackTokens = { childrenGap: 15 };
+const stackTokens: IStackTokens = { childrenGap: 10 };
 const stackStyles: Partial<IStackStyles> = {
   root: {
     width: '960px',
@@ -123,15 +123,14 @@ export const Form: React.FunctionComponent = () => {
   }, [])
 
   function ConceptView(c: Concept) {
-    let isReadOnly = true
     let stackItems: Array<JSX.Element> = [];
-    for (let i = 0; i < Object.keys(c).length; i++) {
+    for (let i = 0; i < Object.keys(c.properties).length; i++) {
       const p: Property = c.properties[i];
       stackItems.push(<ConceptProperty key={p.name} {...p}/>)
     }
     return (
       <div>
-        <TextField readOnly={isReadOnly} borderless value={ c.name + ": " + c.type }/>
+        <TextField readOnly borderless value={ c.name + ": " + c.type }/>
         <Stack enableScopedSelectors tokens={stackTokens} styles={stackStyles}>
           { stackItems }
         </Stack>
@@ -171,7 +170,7 @@ export const Form: React.FunctionComponent = () => {
   return (
     <div>
       <ConceptChoiceGroup />
-      <p></p>
+      <p>{selectedConcept.properties.length}</p>
       <Separator></Separator>
       <ConceptView {...selectedConcept}/>
       <Separator></Separator>
