@@ -22,17 +22,7 @@ const stackStyles: Partial<IStackStyles> = {
 };
 const styles: Partial<ISpinButtonStyles> = { spinButtonWrapper: { width: 75 } };
 
-const options: IChoiceGroupOption[] = [
-  { key: '1', text: 'Concept 1' },
-  { key: '2', text: 'Concept 2' },
-  { key: '3', text: 'Concept 3'},
-];
-
-let conceptData = [
-  require("./example.json"),
-  require("./example.json"),
-  require("./example.json")
-];
+let conceptData = require("./example.json");
 
 export enum Type {
   INT,
@@ -70,12 +60,16 @@ let typeLookUp: { [key: string]: Type } = {
 
 interface Property {
   name: string,
-  typeName: string
+  typeName: string,
   type: Type,
   value: any
 };
 
-type Concept = Array<Property>;
+interface Concept {
+  name: string,
+  type: string,
+  properties: Property[]
+}
 
 function ciEquals(a: string, b: string) {
   return typeof a === 'string' && typeof b === 'string'
@@ -107,72 +101,83 @@ function getType(p: any): Type {
 // add remove/insert property
 // type dropdown?
 
-let selectedConcept: number = 0;
-
 export const Form: React.FunctionComponent = () => {
 
-  const concepts: Array<Concept> = getConcepts(conceptData)
-
-  return (
-    <div>
-      <ConceptChoiceGroup />
-      <Separator></Separator>
-      <ConceptView {...concepts[0]}/>
-      <Separator></Separator>
-    </div>
-  );
-};
-
-function ConceptView(c: Concept) {
-  let stackItems: Array<JSX.Element> = [];
-  for (let i = 0; i < Object.keys(c).length; i++) {
-    const p = c[i];
-    stackItems.push(<ConceptProperty key={p.name} {...p}/>)
-  }
-  console.log(stackItems)
-  return (
-    <Stack enableScopedSelectors tokens={stackTokens} styles={stackStyles}>
-      { stackItems }
-    </Stack>
-  );
-}
-
-function ConceptProperty(p: Property, isReadOnly: boolean = true) {
-  return (
-    <Stack enableScopedSelectors tokens={stackTokens} styles={stackStyles} horizontal>
-      <Stack.Item>
-        <TextField readOnly={isReadOnly} borderless value={p.typeName}/>
-      </Stack.Item>
-      <Stack.Item>
-        <TextField readOnly={isReadOnly} borderless value={p.name}/>
-      </Stack.Item>
-      <Stack.Item>
-        <TextField readOnly={isReadOnly} borderless value={p.value}/>
-      </Stack.Item>
-    </Stack>
-  )
-}
-
-// function 
-
-function ConceptChoiceGroup() {
+  const [concepts, setConcepts] = React.useState<Concept[]>(getConcepts(conceptData))
+  const [selectedConcept, setSelectedConcept] = React.useState<Concept>(concepts[0])
+  const [conceptOptions, setConceptOptions] = React.useState<IChoiceGroupOption[]>([]);
   const [selectedKey, setSelectedKey] = React.useState<string>('1');
+
+  React.useEffect(() => {
+    let options: IChoiceGroupOption[] = []
+    for (let i = 0; i < concepts.length; i++) {
+      options.push({ key: (i+1).toString(), text: ('Concept ' + (i+1).toString()) })    
+    }
+    setConceptOptions([...options])
+  }, [])
 
   const handleConceptChange = React.useCallback((ev?: React.SyntheticEvent<HTMLElement>, option?: IChoiceGroupOption) => {
     if (option === undefined) { return }
     setSelectedKey(option.key)
-    selectedConcept = +option.key - 1
+    setSelectedConcept(concepts[+option.key - 1])
   }, [])
 
+  function ConceptView(c: Concept) {
+    let isReadOnly = true
+    let stackItems: Array<JSX.Element> = [];
+    for (let i = 0; i < Object.keys(c).length; i++) {
+      const p: Property = c.properties[i];
+      stackItems.push(<ConceptProperty key={p.name} {...p}/>)
+    }
+    return (
+      <div>
+        <TextField readOnly={isReadOnly} borderless value={ c.name + ": " + c.type }/>
+        <Stack enableScopedSelectors tokens={stackTokens} styles={stackStyles}>
+          { stackItems }
+        </Stack>
+      </div>
+    );
+  }
+  
+  function ConceptProperty(p: Property, isReadOnly: boolean = true) {
+    return (
+      <Stack enableScopedSelectors tokens={stackTokens} styles={stackStyles} horizontal>
+        <Stack.Item>
+          <TextField readOnly={isReadOnly} borderless value={p.typeName}/>
+        </Stack.Item>
+        <Stack.Item>
+          <TextField readOnly={isReadOnly} borderless value={p.name}/>
+        </Stack.Item>
+        <Stack.Item>
+          <TextField readOnly={isReadOnly} borderless value={p.value}/>
+        </Stack.Item>
+      </Stack>
+    )
+  }
+  
+  function ConceptChoiceGroup() {  
+    return (
+      <div>
+        <ChoiceGroup
+            selectedKey={selectedKey} 
+            options={conceptOptions}
+            onChange={handleConceptChange} 
+            label={"Select a component to view"}
+        />
+      </div>
+    )
+  }
+
   return (
-  <ChoiceGroup
-      selectedKey={selectedKey} 
-      options={options}
-      onChange={handleConceptChange} 
-      label={"Select a concept " + selectedConcept}
-  />
-  )
-}
+    <div>
+      <ConceptChoiceGroup />
+      <p></p>
+      <Separator></Separator>
+      <ConceptView {...selectedConcept}/>
+      <Separator></Separator>
+    </div>
+  );
+};
 
 function getProperty(p: any): Property {
   let property = {} as Property
@@ -180,27 +185,26 @@ function getProperty(p: any): Property {
   property.typeName = p.type
   property.type = getType(p)
   property.value = p.value
-  return property
+  return property 
 }
 
-function getConcept(c: Array<any>): Concept {
-  let concept: Array<Property> = []
-  c.forEach((p: any) => {
+function getProperties(ps: Array<any>): Property[] {
+  let properties: Property[] = []
+  ps.forEach((p: any) => {
     const property = getProperty(p)
-    concept.push(property)
+    properties.push(property)
   });
-  return concept
+  return properties
 }
 
-function getConcepts(JSONObjects: Array<any>): Array<Concept> {
-  let concepts: Array<Concept> = []
+function getConcepts(JSONObjects: Array<any>): Concept[] {
+  let concepts: Concept[] = []
   JSONObjects.forEach(c => {
-    const concept = getConcept(c)
+    const concept = {} as Concept
+    concept.name = c.name
+    concept.type = c.type
+    concept.properties = getProperties(c.properties) 
     concepts.push(concept)
   });
   return concepts
 };
-
-function getConceptMarkUp() {
-  return
-}

@@ -1,17 +1,70 @@
 [
     {
-        "name": "Time step",
-        "type": "number",
-        "value": 0.5
+        "name": "Example 1",
+        "type": "C",
+        "properties": [
+            {
+                "name": "Time step",
+                "type": "number",
+                "value": 0.5
+            },
+            {
+                "name": "Simulation time",
+                "type": "number",
+                "value": 30.0
+            },
+            {
+                "name": "Date",
+                "type": "date",
+                "value": "23/07/2023"
+            }
+        ]
     },
     {
-        "name": "Simulation time",
-        "type": "number",
-        "value": 30.0
+        "name": "Example 2",
+        "type": "C",
+        "properties": [
+            {
+                "name": "Time step",
+                "type": "number",
+                "value": 0.1
+            },
+            {
+                "name": "Simulation time",
+                "type": "number",
+                "value": 10.0
+            },
+            {
+                "name": "Date",
+                "type": "date",
+                "value": "24/07/2023"
+            },
+            {
+                "name": "Include breakfast?",
+                "type": "bool",
+                "value": false
+            }
+        ]
     },
     {
-        "name": "Date",
-        "type": "date",
-        "value": "23/07/2023"
+        "name": "Example 3",
+        "type": "C",
+        "properties": [
+            {
+                "name": "Time step",
+                "type": "number",
+                "value": 0.5
+            },
+            {
+                "name": "Simulation time",
+                "type": "number",
+                "value": 120.0
+            },
+            {
+                "name": "Date",
+                "type": "date",
+                "value": "25/07/2023"
+            }
+        ]
     }
 ]
