@@ -239,11 +239,8 @@ export const Form: React.FunctionComponent = () => {
     (ev: React.FormEvent<HTMLInputElement | HTMLElement> | undefined, key: number, checked?: boolean) => 
   {
     if (ev === undefined) { return }
-    ev.preventDefault()
-    if (checked === undefined) { return }
-    console.log(checked)
-    // const newValue = (ev.currentTarget as HTMLTextAreaElement).value
-    const modifiedConcepts = getModifiedConceptsNewValue(checked, key)
+    const state = (ev.target as HTMLInputElement).checked
+    const modifiedConcepts = getModifiedConceptsNewValue(state, key)
     setConcepts(modifiedConcepts)
   }, [getModifiedConceptsNewValue]);
 
@@ -273,7 +270,7 @@ export const Form: React.FunctionComponent = () => {
         <Stack enableScopedSelectors tokens={conceptStackTokens} styles={stackStyles}>
           {(concepts[selectedConcept].properties).map(p => (
             <div key={p.id}>
-              <Stack enableScopedSelectors tokens={propertyStackTokens} styles={horizontalStackStyles} horizontal>
+              <Stack enableScopedSelectors tokens={propertyStackTokens} styles={horizontalStackStyles} horizontal verticalAlign='center'>
                 <StackItem>
                   <FontIcon
                     aria-label={getTypeIcon(p.type)}
@@ -350,7 +347,7 @@ export const Form: React.FunctionComponent = () => {
         case Type.BOOL:
           return (
             <Checkbox
-              checked={p.value}
+              defaultChecked={p.value}
               onChange={ (ev, checked) => handleCheckboxPropertyValueChange(
                 ev, concepts[selectedConcept].properties.findIndex((element) => { return (element.name === p.name) }, checked)
               ) }
