@@ -1,6 +1,8 @@
 import * as React from 'react';
-import { Stack, TextField, Separator, SpinButton, StackItem, ITextProps, Label, ILabelStyles, PartialTheme, Checkbox, DatePicker } from '@fluentui/react';
-import { FontWeights, IStackTokens, IStackStyles, ITextStyles, ISpinButtonStyles } from '@fluentui/react';
+import { Stack, TextField, Separator, SpinButton, StackItem, ITextProps, Label, ILabelStyles } from '@fluentui/react';
+import { DatePicker, IDatePickerStyles } from '@fluentui/react';
+import { Checkbox, ICheckboxStyles } from '@fluentui/react';
+import { FontWeights, IStackTokens, IStackStyles, ITextStyles, ITextFieldStyles, ISpinButtonStyles } from '@fluentui/react';
 import { ChoiceGroup, IChoiceGroupOption } from '@fluentui/react/lib/ChoiceGroup';
 import { FontIcon, IIconProps } from '@fluentui/react/lib/Icon';
 import { initializeIcons } from '@fluentui/react/lib/Icons';
@@ -10,21 +12,49 @@ import './App.css';
 
 initializeIcons();
 
+const propertyFieldHeight: number = 40
+const propertyFieldWidth: number = 250
+
+const propertyTypeIconClass = mergeStyles({
+  fontSize: 16,
+  height: 16,
+  width: 16,
+  margin: '8px 2px',
+});
+const conceptTypeIconClass = mergeStyles({
+  fontSize: 20,
+  height: 20,
+  width: 20,
+  margin: '8px 2px',
+});
+const classNames = mergeStyleSets({
+  property: [{ color: '#a5a4a1' }, propertyTypeIconClass],
+  concept: [{ color: '#202020' }, conceptTypeIconClass]
+});
+const editIcon: IIconProps = { iconName: 'Edit' };
+const downloadIcon: IIconProps = { iconName: 'Download' };
 const boldStyle: Partial<ITextStyles> = { 
   root: { 
     fontWeight: FontWeights.semibold,
   }
 };
-const grayStyle: Partial<ITextStyles> = { 
-  root: { 
+const textFieldStyles: Partial<ITextFieldStyles> = {
+  root: {
     fontWeight: FontWeights.semibold,
-    opacity: 0.7
+    width: propertyFieldWidth,
+    height: propertyFieldHeight,
   }
 };
-
+const nameFieldStyle: Partial<ITextFieldStyles> = { 
+  root: { 
+    fontWeight: FontWeights.semibold,
+    opacity: 0.7,
+    width: propertyFieldWidth,
+    height: propertyFieldHeight,
+  }
+};
 const propertyStackTokens: IStackTokens = { childrenGap: 5 };
 const conceptStackTokens: IStackTokens = { childrenGap: 5 };
-
 const stackStyles: Partial<IStackStyles> = {
   root: {
     width: '960px',
@@ -32,6 +62,16 @@ const stackStyles: Partial<IStackStyles> = {
     textAlign: 'center',
     color: '#605e5c',
     maxwidth: '200px',
+  },
+};
+const propertyStackStyles: Partial<IStackStyles> = {
+  root: {
+    width: '960px',
+    margin: '10 auto',
+    textAlign: 'center',
+    color: '#605e5c',
+    maxwidth: '200px',
+    minHeight: '60px'
   },
 };
 const horizontalStackStyles: Partial<IStackStyles> = {
@@ -43,21 +83,35 @@ const horizontalStackStyles: Partial<IStackStyles> = {
     maxwidth: '200px',
   },
 };
-const spinButtonStyles: Partial<ISpinButtonStyles> = { spinButtonWrapper: { width: 75 } };
+const spinButtonStyles: Partial<ISpinButtonStyles> = { 
+  root: { 
+    width: propertyFieldWidth,
+    height: propertyFieldHeight
+  } 
+};
 const editButtonStyles: Partial<IButtonStyles> = {
   root: {
     color: '#4c4c4c',
     fontWeight: 'semibold'
   }
 };
+const datePickerStyles: Partial<IDatePickerStyles> = {
+  root: {
+    width: propertyFieldWidth,
+    height: propertyFieldHeight
+  }
+}
 const conceptLabelStyles: Partial<ILabelStyles> = {
   root: {
     fontSize: 18
   }
 };
-// const editButtonTheme: PartialTheme = {
-//   font: {''}
-// };
+const checkboxStyle: Partial<ICheckboxStyles> = {
+  root: {
+    height: 27,
+    boxSizing: 'border-box'
+  }
+}
 
 const conceptData = require("./example.json");
 
@@ -81,6 +135,7 @@ const typeLookUp: { [key: string]: Type } = {
   'INTEGER'     : Type.INT,
   'NAT'         : Type.NAT,
   'POSITIVE INT': Type.NAT,
+  'NAT1'         : Type.NAT1,
   'FLOAT'       : Type.FLOAT,
   'REAL'        : Type.FLOAT,
   'NUMBER'      : Type.FLOAT,
@@ -100,34 +155,21 @@ const typeLookUp: { [key: string]: Type } = {
   ''            : Type.UNDEFINED,
 };
 
-const iconClass = mergeStyles({
-  fontSize: 16,
-  height: 16,
-  width: 16,
-  margin: '8px 2px',
-});
-
-const classNames = mergeStyleSets({
-  grey: [{ color: '#a5a4a1' }, iconClass],
-});
-
-const editIcon: IIconProps = { iconName: 'Edit' };
-
 // For available icons:
 // https://developer.microsoft.com/en-us/fluentui#/styles/web/icons
-const iconLookUp: { [key in Type]: string } = {
-  [Type.INT]          : "NumberSymbol",
-  [Type.NAT]          : "NumberSymbol",
-  [Type.NAT1]         : "NumberSymbol",
-  [Type.FLOAT]        : "NumberSymbol",
-  [Type.CHAR]         : "FontColorA",
-  [Type.STRING]       : "FontColorA",
-  [Type.BOOL]         : "CheckMark",
-  [Type.DATE]         : "DateTime",
-  [Type.LIST]         : "CheckListText",
-  [Type.SIMULATION]   : "Play",
-  [Type.ALGORITHM]    : "DrillDown",
-  [Type.UNDEFINED]    : "StatusCircleQuestionMark",
+const iconLookUp: { [key in Type]: IIconProps } = {
+  [Type.INT]          : { iconName: 'NumberSymbol' },
+  [Type.NAT]          : { iconName: 'NumberSymbol' },
+  [Type.NAT1]         : { iconName: 'NumberSymbol' },
+  [Type.FLOAT]        : { iconName: 'NumberSymbol' },
+  [Type.CHAR]         : { iconName: 'FontColorA' },
+  [Type.STRING]       : { iconName: 'FontColorA' },
+  [Type.BOOL]         : { iconName: 'CheckMark' },
+  [Type.DATE]         : { iconName: 'DateTime' },
+  [Type.LIST]         : { iconName: 'CheckListText' },
+  [Type.SIMULATION]   : { iconName: 'BoxPlaySolid' },
+  [Type.ALGORITHM]    : { iconName: 'DrillDown' },
+  [Type.UNDEFINED]    : { iconName: 'UnknownSolid' },
 };
 
 interface Property {
@@ -140,14 +182,13 @@ interface Property {
 
 interface Concept {
   name: string,
+  typeName: string,
   type: Type,
   properties: Property[]
 }
 
-// listen for changes
 // update output json
 // add remove/insert property
-// type dropdown?
 
 // Main function component for the Form Block
 export const Form: React.FunctionComponent = () => {
@@ -178,20 +219,15 @@ export const Form: React.FunctionComponent = () => {
     setInEditMode(!inEditMode)
   }, [inEditMode]);
 
-  const getModifiedConceptsNewName = React.useCallback((newName: string, key: number) => {
-    const modifiedConcepts = concepts.map((c) => {
-      if (c === concepts[selectedConcept]) {
-        c.properties.map((p) => {
-          if (p.name === concepts[selectedConcept].properties[key].name) {
-            p.name = newName
-          }
-          return p
-      })
-      }
-      return c
-    })
-    return modifiedConcepts
-  }, [concepts, selectedConcept])
+  const handleDownloadClicked = React.useCallback(() => {
+    const conceptJSON = JSON.stringify(conceptToJSON(concepts[selectedConcept]), null, 2);
+    const file = new Blob([conceptJSON], {type: 'application/json'});
+    const element = document.createElement("a");
+    element.href = URL.createObjectURL(file);
+    element.download = (concepts[selectedConcept].name).replace(" ", "_") + ".json";
+    document.body.appendChild(element);
+    element.click();
+  }, [concepts, selectedConcept]);
 
   const getModifiedConceptsNewValue = React.useCallback((newValue: any, key: number) => {
     const modifiedConcepts = concepts.map((c) => {
@@ -208,15 +244,7 @@ export const Form: React.FunctionComponent = () => {
     return modifiedConcepts
   }, [concepts, selectedConcept])
 
-  const handlePropertyNameChange = React.useCallback(
-    (ev: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, key: number) => 
-  {
-    ev.preventDefault()
-    const newValue = (ev.currentTarget as HTMLTextAreaElement).value
-    const modifiedConcepts = getModifiedConceptsNewName(newValue, key)
-    setConcepts(modifiedConcepts)
-  }, [getModifiedConceptsNewName]);
-  
+  // TODO: Convert handlers to a single one if possible  
   const handleTextPropertyValueChange = React.useCallback(
     (ev: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, key: number) => 
   {
@@ -231,7 +259,11 @@ export const Form: React.FunctionComponent = () => {
   {
     ev.preventDefault()
     if (newValue === undefined) { return }
-    const modifiedConcepts = getModifiedConceptsNewValue(+newValue, key)
+    let newNumberValue: number = Number(newValue)
+    if (concepts[selectedConcept].properties[key].type !== Type.FLOAT) {
+      newNumberValue = Number(newNumberValue.toPrecision(1))
+    }
+    const modifiedConcepts = getModifiedConceptsNewValue(newNumberValue, key)
     setConcepts(modifiedConcepts)
   }, [getModifiedConceptsNewValue]);
 
@@ -255,15 +287,15 @@ export const Form: React.FunctionComponent = () => {
   function ConceptView() {
     return (
       <div>
-        <Stack enableScopedSelectors tokens={propertyStackTokens} styles={stackStyles} horizontal>
-          <StackItem>
+        <Stack enableScopedSelectors tokens={propertyStackTokens} styles={propertyStackStyles} horizontal>
+          <StackItem align='center'>
             <FontIcon 
-              aria-label={getTypeIcon(concepts[selectedConcept].type)}
-              iconName={getTypeIcon(concepts[selectedConcept].type)}
-              className={classNames.grey}
+              aria-label={getTypeIcon(concepts[selectedConcept].type).iconName}
+              iconName={getTypeIcon(concepts[selectedConcept].type).iconName}
+              className={classNames.concept}
             />
           </StackItem>
-          <StackItem>
+          <StackItem align='center'>
             <Label styles={conceptLabelStyles}>{concepts[selectedConcept].name}</Label>
           </StackItem>
         </Stack>
@@ -271,25 +303,22 @@ export const Form: React.FunctionComponent = () => {
           {(concepts[selectedConcept].properties).map(p => (
             <div key={p.id}>
               <Stack enableScopedSelectors tokens={propertyStackTokens} styles={horizontalStackStyles} horizontal verticalAlign='center'>
-                <StackItem>
+                <StackItem align='baseline'>
                   <FontIcon
-                    aria-label={getTypeIcon(p.type)}
-                    iconName={getTypeIcon(p.type)}
-                    className={classNames.grey}
+                    aria-label={getTypeIcon(p.type).iconName}
+                    iconName={getTypeIcon(p.type).iconName}
+                    className={classNames.property}
                   />
                 </StackItem>
-                <StackItem>
+                <StackItem align='center'>
                   <TextField
-                    readOnly={!inEditMode}
-                    borderless={!inEditMode}
+                    readOnly
+                    borderless
                     value={p.name}
-                    styles={grayStyle}
-                    onChange={ (ev) => handlePropertyNameChange(
-                      ev, concepts[selectedConcept].properties.findIndex((element) => { return (element.name === p.name) })
-                    ) }
+                    styles={nameFieldStyle} 
                   />
                 </StackItem>
-                <StackItem>
+                <StackItem align='center'>
                   {ValueField(p)}
                 </StackItem>
               </Stack>
@@ -306,37 +335,42 @@ export const Form: React.FunctionComponent = () => {
         case Type.INT:
           return (
             <SpinButton
+              styles={spinButtonStyles}
               defaultValue={p.value}
-              step={1.0}
+              step={1}
               onChange={ (ev, newValue) => handleSpinButtonPropertyValueChange(
-                ev, concepts[selectedConcept].properties.findIndex((element) => { return (element.name === p.name) }, newValue)
+                ev, concepts[selectedConcept].properties.findIndex((element) => { return (element.name === p.name) }), newValue
               ) }
             />
           )
         case Type.NAT:
           return (
             <SpinButton
+              styles={spinButtonStyles}
               defaultValue={p.value}
-              step={1.0}
+              step={1}
+              min={0}
               onChange={ (ev, newValue) => handleSpinButtonPropertyValueChange(
-                ev, concepts[selectedConcept].properties.findIndex((element) => { return (element.name === p.name) }, newValue)
+                ev, concepts[selectedConcept].properties.findIndex((element) => { return (element.name === p.name) }), newValue
               ) }
             />
           )
         case Type.NAT1:
           return (
             <SpinButton
+              styles={spinButtonStyles}
               defaultValue={p.value}
-              step={1.0}
-              min={0}
+              step={1}
+              min={1}
               onChange={ (ev, newValue) => handleSpinButtonPropertyValueChange(
-                ev, concepts[selectedConcept].properties.findIndex((element) => { return (element.name === p.name) }, newValue)
+                ev, concepts[selectedConcept].properties.findIndex((element) => { return (element.name === p.name) }), newValue
               ) }
             />
           )
         case Type.FLOAT:
           return (
             <SpinButton
+              styles={spinButtonStyles}
               defaultValue={p.value}
               step={0.1}
               onChange={ (ev, newValue) => handleSpinButtonPropertyValueChange(
@@ -347,6 +381,7 @@ export const Form: React.FunctionComponent = () => {
         case Type.BOOL:
           return (
             <Checkbox
+              styles={checkboxStyle}
               defaultChecked={p.value}
               onChange={ (ev, checked) => handleCheckboxPropertyValueChange(
                 ev, concepts[selectedConcept].properties.findIndex((element) => { return (element.name === p.name) }, checked)
@@ -356,19 +391,17 @@ export const Form: React.FunctionComponent = () => {
         case Type.DATE:
           return (
             <DatePicker
-              // dateTimeFormatter={}
+              styles={datePickerStyles}
               value={p.value}
               onSelectDate={ (date) => handleDatePickerPropertyValueChange(
                 date, concepts[selectedConcept].properties.findIndex((element) => { return (element.name === p.name) })
               ) }
-              // onChange={ (ev) => handleDatePickerPropertyValueChange(
-              //   ev, concepts[selectedConcept].properties.findIndex((element) => { return (element.name === p.name) })
-              // ) }
             />
           )
         default:
           return (
             <TextField
+              styles={textFieldStyles}
               readOnly={!inEditMode}
               borderless={!inEditMode}
               value={p.value}
@@ -385,6 +418,7 @@ export const Form: React.FunctionComponent = () => {
           const dateMDY: string = [date[1], date[2], date[3]].join(" ")
           return (
             <TextField
+              styles={textFieldStyles}
               readOnly={!inEditMode}
               borderless={!inEditMode}
               value={dateMDY}
@@ -393,6 +427,7 @@ export const Form: React.FunctionComponent = () => {
         default:
           return (
             <TextField
+              styles={textFieldStyles}
               readOnly={!inEditMode}
               borderless={!inEditMode}
               value={(p.value).toString()}
@@ -428,15 +463,30 @@ export const Form: React.FunctionComponent = () => {
           { ConceptView() }
         </StackItem>
         <StackItem align='end'>
-          <ActionButton 
-            iconProps={editIcon} 
-            onClick={handleEditClicked}
-            marginWidth={100}
-            marginHeight={100}
-            styles={editButtonStyles}
-          >
-            {inEditMode ? 'Save changes' : 'Edit properties'}
-          </ActionButton>
+          <Stack enableScopedSelectors tokens={conceptStackTokens} styles={stackStyles} horizontal horizontalAlign='end'>
+            <StackItem align='end'>
+              <ActionButton 
+                iconProps={editIcon} 
+                onClick={handleEditClicked}
+                marginWidth={100}
+                marginHeight={100}
+                styles={editButtonStyles}
+              >
+                {inEditMode ? 'Save changes' : 'Edit properties'}
+              </ActionButton>
+            </StackItem>
+            <StackItem align='end'>
+              <ActionButton 
+                iconProps={downloadIcon} 
+                onClick={handleDownloadClicked}
+                marginWidth={100}
+                marginHeight={100}
+                styles={editButtonStyles}
+              >
+                Download .json
+              </ActionButton>
+            </StackItem>
+          </Stack>
         </StackItem>
         <Separator></Separator>
       </Stack>
@@ -449,6 +499,7 @@ function getConcepts(JSONObjects: Array<any>): Concept[] {
   JSONObjects.forEach(c => {
     const concept = {} as Concept
     concept.name = c.name
+    concept.typeName = c.type
     concept.type = getConceptType(c.type)
     concept.properties = getProperties(c.properties) 
     concepts.push(concept)
@@ -507,10 +558,31 @@ function getConceptType(t: string): Type {
   return type
 };
 
-function getTypeIcon(t: Type): string {
+function getTypeIcon(t: Type): IIconProps {
   let icon = iconLookUp[t]
   if (icon === undefined) {
-    icon = 'StatusCircleQuestionMark'
+    icon = iconLookUp[Type.UNDEFINED]
   }
   return icon;
+}
+
+function conceptToJSON(c: Concept): any {
+  const conceptJSON = {
+    name: c.name,
+    type: c.typeName,
+    properties: [] as any[]
+  }
+  
+  c.properties.forEach(p => {
+    const propertyJSON = {
+      name: p.name,
+      type: p.typeName,
+      value: p.value
+    }
+    conceptJSON.properties.push(propertyJSON)
+  });
+
+  console.log(JSON.stringify(conceptJSON))
+
+  return conceptJSON
 }

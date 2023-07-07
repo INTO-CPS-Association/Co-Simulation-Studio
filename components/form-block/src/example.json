@@ -17,6 +17,11 @@
                 "name": "Date",
                 "type": "date",
                 "value": "07/22/2023"
+            },
+            {
+                "name": "Name",
+                "type": "string",
+                "value": "EX-1"
             }
         ]
     },
@@ -50,6 +55,11 @@
         "name": "Example 3",
         "type": "Simulation",
         "properties": [
+            {
+                "name": "ID",
+                "type": "nat",
+                "value": 3
+            },
             {
                 "name": "Algorithm",
                 "type": "algorithm",
@@ -92,7 +102,11 @@
         "name": "Example 5",
         "type": "C",
         "properties": [
-
+            {
+                "name": "ID",
+                "type": "nat",
+                "value": 5
+            }
         ]
     }
 ]
