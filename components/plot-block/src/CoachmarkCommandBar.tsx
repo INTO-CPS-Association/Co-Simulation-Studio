@@ -5,7 +5,7 @@ import { Coachmark } from '@fluentui/react/lib/Coachmark';
 import { IComponentAsProps, IComponentAs } from '@fluentui/react/lib/Utilities';
 import { TeachingBubbleContent } from '@fluentui/react/lib/TeachingBubble';
 import { CommandBarButton, IButtonProps } from '@fluentui/react/lib/Button';
-import { OPENPANEL } from './PlotPanel';
+import { AiOutlineSetting } from 'react-icons/ai'
 
 interface IIndividualCommandBarButtonProps {
   onDismissCoachmark: () => void;
@@ -75,10 +75,10 @@ const IndividualCommandBarButton: React.FunctionComponent<
       {
         key: 'Settings',
         text: 'Settings',
-        iconProps: { iconName: 'SettingsIcon' },
+        iconProps: { iconName: 'AiOutlineSetting' },
         // The Settings button will have a coachmark
         commandBarButtonAs: CoachmarkButtonWrapper,
-        onClick: () => OPENPANEL() /*console.log('Settings')*/,
+        onClick: () => /*OPENPANEL()*/ console.log('Settings')
       },
     ];
   }, [onDismissCoachmark, isCoachmarkVisible]);

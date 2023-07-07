@@ -3,7 +3,6 @@ import ReactDOM from 'react-dom';
 import App from "./App";
 import { mergeStyles } from '@fluentui/react';
 import reportWebVitals from './reportWebVitals';
-import {Vega, VegaLite, createClassFromSpec} from 'react-vega';
 
 
 
