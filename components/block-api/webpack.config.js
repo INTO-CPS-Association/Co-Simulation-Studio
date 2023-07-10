@@ -45,6 +45,12 @@ module.exports = {
     })
   ],
   resolve: {
-    extensions: ['.ts', '.js', '.json']
+    extensions: ['.ts', '.js', '.json'],
+    fallback: {
+      "crypto": false,
+      "assert": false,
+      "process":false,
+      "util": require.resolve("util/")
+    }
   }
 };
