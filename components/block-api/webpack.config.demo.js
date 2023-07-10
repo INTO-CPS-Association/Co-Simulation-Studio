@@ -1,5 +1,6 @@
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const webpack = require('webpack')
 
 module.exports = {
   mode: "development",
@@ -40,8 +41,22 @@ module.exports = {
       filename: 'css/index.css'
     }),
     new HtmlWebpackPlugin(),
+    new webpack.ProvidePlugin({
+      process: 'process/browser',
+    }),
+    new webpack.ProvidePlugin({
+      Buffer: ['buffer', 'Buffer'],
+  }),
   ],
   resolve: {
-    extensions: ['.ts', '.js', '.json']
+    extensions: ['.ts', '.js', '.json'],
+    fallback: {
+      "crypto": false,
+      "assert": false,
+      "process": false,
+      "buffer": require.resolve("buffer-browserify"),
+      "stream": require.resolve("stream-browserify"),
+      "util": require.resolve("util/")
+    }
   }
 };
