@@ -1,7 +1,6 @@
 import MyLibrary from "../lib";
 import * as Papa from 'papaparse';
 import {testData} from "./test-data";
-
 const myLibraryInstance = new MyLibrary();
 
 document.querySelector("body").innerHTML = `<h1>Hello World!</h1>`;
@@ -134,5 +133,3 @@ graph.delete(testData)
 const test8 = await graph.find({ subject: '?', predicate: 'time', object: '?' })
 //test to see if data is deleted
 console.log("Test8", test8)
-
-
