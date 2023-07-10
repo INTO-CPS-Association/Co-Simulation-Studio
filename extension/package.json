@@ -1,0 +1,20 @@
+{
+	"name": "gitworks-workbench-extension",
+	"description": "GitWorks Workbench Extension",
+	"author": "Perpetual Labs, Ltd.",
+	"version": "0.0.0",
+	"publisher": "perpetual-labs",
+	"private": true,
+	"engines": {
+		"vscode": "^1.77.0"
+	},
+	"scripts": {},
+	"dependencies": {
+		"@estruyf/vscode": "^1.1.0",
+		"vscode-languageclient": "^7.0.0"
+	},
+	"devDependencies": {
+		"@types/vscode": "^1.77.0",
+		"@vscode/test-web": "^0.0.22"
+	}
+}
