@@ -104,8 +104,10 @@ class CSVGraph extends Graph {
   }
 }
 
+/*
 //creat levelgraph
 const db = levelgraph(level('2db'))
+
 
 // test cases
 const graph = new CSVGraph(db)
@@ -133,3 +135,127 @@ graph.delete(testData)
 const test8 = await graph.find({ subject: '?', predicate: 'time', object: '?' })
 //test to see if data is deleted
 console.log("Test8", test8)
+*/
+
+//data sturtue for the example.json
+interface TableRow {
+  Id: number
+  Type: string
+  Ppu: number
+  Name: string
+}
+
+//create types for sort filter and callback
+type SortOrder = "ASC" | "DESC";
+type FilterCriteria = {column: keyof TableRow, value: any};
+type Callback = (data?: any) => void;
+
+// Maybe change name
+export class GitWorkDataBlock {
+  //data is the data that is stored in the table
+  data: TableRow[];
+  //eventListeners is a list of all the eventListeners
+  private eventListeners: { [key: string]: Callback[] };
+
+  //constructor
+  constructor(data: TableRow[] = []) {
+    this.data = data;
+    this.eventListeners = {};
+  }
+
+  //add event listener
+  on(eventName: string, callback: Callback): void {
+    if (!this.eventListeners[eventName]) {
+      this.eventListeners[eventName] = [];
+    }
+    this.eventListeners[eventName].push(callback);
+  }
+
+  //emit event
+  private emit(eventName: string, data?: any): void {
+    if (this.eventListeners[eventName]) {
+      this.eventListeners[eventName].forEach(callback => callback(data));
+    }
+  }
+
+  //As a test it just loads the example.json
+  getData(): void {
+    const items = require("./example.json")
+
+    const GetItemsLength = (items: any) => {
+      return items.length
+    }
+    for (let i = 0; i < GetItemsLength(items); i++) {
+      //adds items to collu
+      let item = {} as TableRow;
+      item.Id = items[i].id;
+      item.Type = items[i].type;
+      item.Name = items[i].name;
+      item.Ppu = items[i].ppu;
+      this.data.push(item);
+    }
+    this.emit('update', this.data);
+  }
+
+  //delete row from the table
+  deleteRow(id: number): void {
+    this.data = this.data.filter(row => row.Id !== id);
+    this.emit('update', this.data);
+  }
+
+  //update row in the table
+  displayRows(sortColumn: keyof TableRow, sortOrder: SortOrder = "ASC", filter: FilterCriteria | null = null): TableRow[] {
+    let result = [...this.data];
+    //filter the data
+    if (filter) {
+      result = result.filter(row => row[filter.column] === filter.value);
+    }
+    //sort the data
+    result.sort((a, b) => {
+      if (a[sortColumn] < b[sortColumn]) {
+        return sortOrder === "ASC" ? -1 : 1;
+      } else if (a[sortColumn] > b[sortColumn]) {
+        return sortOrder === "ASC" ? 1 : -1;
+      } else {
+        return 0;
+      }
+    });
+    // return the result
+    return result;
+  }
+  //For the table front end to get the column names of the TableRow
+  getColumnNames(): (keyof TableRow)[] {
+    // If data is empty, return an empty array
+    if (this.data.length === 0) { return []; }
+    // If data is guaranteed to be non-empty, you can take the first element
+    let firstElement = this.data[0];
+
+    // Extract keys
+    let keys = Object.keys(firstElement);
+
+    // You might need to cast these keys back to (keyof TableRow)[]
+    return keys as (keyof TableRow)[];
+  }
+}
+
+//test cases
+// create a new table
+let table = new GitWorkDataBlock();
+
+// register a callback to log whenever the table data is updated
+table.on('update', (data) => {
+  console.log('Table data updated: ', data);
+});
+
+table.getData();
+
+// test the table sorting
+console.log("Ask for table data ASC:", table.displayRows("Id", "ASC"))
+console.log("Ask for table data DESC:", table.displayRows("Id", "DESC"))
+// test the table with delete
+table.deleteRow(1)
+console.log("Ask for table data ASC after delet of id 0001:", table.displayRows("Id", "ASC"))
+// test the table with filter
+console.log("Ask for table data filter for id 0003:", table.displayRows("Id", "ASC", {column: "Id", value: "0003"}))
+console.log("Ask for table data filter for name Old Fashioned:", table.displayRows("Id", "ASC", {column: "Name", value: "Old Fashioned"}))
+
