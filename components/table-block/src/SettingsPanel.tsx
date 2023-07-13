@@ -111,7 +111,9 @@ export const CommandBar_: React.FunctionComponent = () => {
     },
   ];
   const DigalogProps: IDialogContentProps = {
-    title: "Add"
+    title: "Add",
+    styles: {
+      content: '1 0 0'}
 
   }
   return (
@@ -124,7 +126,7 @@ export const CommandBar_: React.FunctionComponent = () => {
           onDismiss={toggleHideDialog}
         >
           <DialogFooter>
-          <Stack tokens={stackTokens} horizontalAlign="baseline">
+          <Stack tokens={stackTokens} horizontalAlign="space-evenly" verticalAlign='space-evenly'>
             <ComboBox_type/>
             <ComboBox_URL/>
             <TextField_prefix/>
@@ -183,10 +185,10 @@ const API_RequestData_Viewlist = (path: any) => {
 
 type PanelProps = {
   handleClick: (index: number) => void
-  colums: any
+  columns: any
 };
 //colums and handleClick is passed as probs to the PanelLight component.
-export const PanelLight: React.FunctionComponent<PanelProps> = ( {handleClick, colums}) => {
+export const PanelLight: React.FunctionComponent<PanelProps> = ( {handleClick, columns}) => {
     const [isOpen, { setTrue: openPanel, setFalse: dismissPanel }] = useBoolean(false);
     let _columns: IColumn[] = [
       { key: 'ColumnHeader', name: 'ColumnHeader', fieldName: 'ColumnHeader', minWidth: 100, maxWidth: 200, isResizable: true },
@@ -209,16 +211,16 @@ export const PanelLight: React.FunctionComponent<PanelProps> = ( {handleClick, c
     const GetColunmsHeader = (item: any) => {
       return item.ColumnHeader
     }
-    const GetColunmsLength = (colums: any) => {
-      return colums.length;
+    const GetColunmsLength = (columns: any) => {
+      return columns.length;
     }
-    const GetColunmssKey = (colums: any) => {
-      return colums.key;
+    const GetColunmssKey = (columns: any) => {
+      return columns.key;
     }
 
     const GetIndex = (name: any):number => {
-      for (let i = 0; i < GetColunmsLength(colums); i++) {
-        if(GetColunmssKey(colums[i]) === name)
+      for (let i = 0; i < GetColunmsLength(columns); i++) {
+        if(GetColunmssKey(columns[i]) === name)
           return i
       }
       return -1

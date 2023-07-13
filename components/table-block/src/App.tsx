@@ -3,7 +3,6 @@ import { Stack, Text, Link, FontWeights, IStackTokens, IStackStyles, ITextStyles
 import logo from './logo.svg';
 import './App.css';
 import { DetailsListBasicExample} from './DetailsList';
-import { PanelLight } from './SettingsPanel';
 
 
 const boldStyle: Partial<ITextStyles> = { root: { fontWeight: FontWeights.semibold } };
@@ -21,7 +20,7 @@ const stackStyles: Partial<IStackStyles> = {
   export const App: React.FunctionComponent = () => {
     return (
       <div>
-       <DetailsListBasicExample/>
+        <DetailsListBasicExample/>
       </div>
     );
   };

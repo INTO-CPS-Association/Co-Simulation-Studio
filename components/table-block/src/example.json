@@ -1,6 +1,6 @@
 [
     {
-        "id": "0001",
+        "id": "1",
         "type": "donut",
         "name": "Cake",
         "ppu": 0.55,
@@ -56,7 +56,7 @@
         ]
     },
     {
-        "id": "0002",
+        "id": "2",
         "type": "donut",
         "name": "Raised",
         "ppu": 0.55,
@@ -92,7 +92,7 @@
         ]
     },
     {
-        "id": "0003",
+        "id": "3",
         "type": "donut",
         "name": "Old Fashioned",
         "ppu": 0.55,
