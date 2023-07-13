@@ -111,7 +111,7 @@
 		"watch": "webpack --watch",
 		"package": "webpack --mode production --devtool hidden-source-map",
 		"lint": "eslint ./extension/src ./language-server/src --ext .ts,.tsx",
-		"postinstall": "cd extension && npm install && cd ../language-server && npm install && cd ..",
+		"postinstall": "cd grammars/tree-sitter-oml && npm install && cd ../../extension && npm install && cd ../language-server && npm install && cd ..",
 		"chrome": "vscode-test-web --host=0.0.0.0 --quality=insiders --extensionDevelopmentPath=. --extensionId=vscode-icons-team.vscode-icons"
 	},
 	"devDependencies": {
