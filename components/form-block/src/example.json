@@ -1,34 +1,37 @@
 [
     {
-        "name": "Example 1",
-        "type": "C",
+        "name": "Alarm",
         "properties": [
             {
-                "name": "Time step",
-                "type": "number",
-                "value": 0.5
-            },
-            {
-                "name": "Simulation time",
-                "type": "number",
-                "value": 30.0
-            },
-            {
-                "name": "Date",
-                "type": "date",
-                "value": "07/22/2023"
-            },
-            {
-                "name": "Name",
+                "name": "ID",
                 "type": "string",
-                "value": "EX-1"
+                "value": "1"
+            },
+            {
+                "name": "Volume db",
+                "type": "number",
+                "value": 5.0
+            },
+            {
+                "name": "Expert",
+                "type": "string",
+                "value": "John"
+            },
+            {
+                "name": "Activated",
+                "type": "bool",
+                "value": true
             }
         ]
     },
     {
-        "name": "Example 2",
-        "type": "Simulation",
+        "name": "Experiment-3D",
         "properties": [
+            {
+                "name": "ID",
+                "type": "string",
+                "value": "1"
+            },
             {
                 "name": "Time step",
                 "type": "number",
@@ -38,6 +41,11 @@
                 "name": "Simulation time",
                 "type": "number",
                 "value": 10.0
+            },
+            {
+                "name": "Algorithm",
+                "type": "algorithm",
+                "value": "Fixed Step"
             },
             {
                 "name": "Date",
@@ -53,12 +61,11 @@
     },
     {
         "name": "Example 3",
-        "type": "Simulation",
         "properties": [
             {
                 "name": "ID",
-                "type": "nat",
-                "value": 3
+                "type": "string",
+                "value": "3"
             },
             {
                 "name": "Algorithm",
@@ -79,33 +86,6 @@
                 "name": "Stop time",
                 "type": "float",
                 "value": 40
-            }
-        ]
-    },
-    {
-        "name": "Example 4",
-        "type": "C",
-        "properties": [
-            {
-                "name": "Something unkown",
-                "type": "cool type",
-                "value": "grizzly"
-            },
-            {
-                "name": "Date",
-                "type": "date",
-                "value": "07/24/2023"
-            }
-        ]
-    },
-    {
-        "name": "Example 5",
-        "type": "C",
-        "properties": [
-            {
-                "name": "ID",
-                "type": "nat",
-                "value": 5
             }
         ]
     }

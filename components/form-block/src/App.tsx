@@ -1,14 +1,18 @@
 import * as React from 'react';
-import { Stack, TextField, Separator, SpinButton, StackItem, ITextProps, Label, ILabelStyles } from '@fluentui/react';
+import { Stack, TextField, Separator, SpinButton, StackItem, Label, ILabelStyles } from '@fluentui/react';
 import { DatePicker, IDatePickerStyles } from '@fluentui/react';
 import { Checkbox, ICheckboxStyles } from '@fluentui/react';
-import { FontWeights, IStackTokens, IStackStyles, ITextStyles, ITextFieldStyles, ISpinButtonStyles } from '@fluentui/react';
+import { FontWeights, IStackTokens, IStackStyles, ITextFieldStyles, ISpinButtonStyles } from '@fluentui/react';
 import { ChoiceGroup, IChoiceGroupOption } from '@fluentui/react/lib/ChoiceGroup';
 import { FontIcon, IIconProps } from '@fluentui/react/lib/Icon';
 import { initializeIcons } from '@fluentui/react/lib/Icons';
 import { mergeStyles, mergeStyleSets } from '@fluentui/react/lib/Styling';
 import { ActionButton, IButtonStyles } from '@fluentui/react/lib/Button';
 import './App.css';
+
+/*
+ * Styling, icons, etc.
+ */
 
 initializeIcons();
 
@@ -33,11 +37,6 @@ const classNames = mergeStyleSets({
 });
 const editIcon: IIconProps = { iconName: 'Edit' };
 const downloadIcon: IIconProps = { iconName: 'Download' };
-const boldStyle: Partial<ITextStyles> = { 
-  root: { 
-    fontWeight: FontWeights.semibold,
-  }
-};
 const textFieldStyles: Partial<ITextFieldStyles> = {
   root: {
     fontWeight: FontWeights.semibold,
@@ -106,7 +105,7 @@ const conceptLabelStyles: Partial<ILabelStyles> = {
     fontSize: 18
   }
 };
-const checkboxStyle: Partial<ICheckboxStyles> = {
+const checkboxStyles: Partial<ICheckboxStyles> = {
   root: {
     height: 27,
     boxSizing: 'border-box'
@@ -187,13 +186,23 @@ interface Concept {
   properties: Property[]
 }
 
-// update output json
-// add remove/insert property
+// Concept instance interface
+// Uses string array for owner concept name of properties to allow for multiple concepts to own an identical property 
+interface ConceptInstance {
+  conceptName: string,
+  properties: {names: string[], property: Property}[]
+}
+
+// TODO: Change implementation to differentiate between concept and a concept instance
+// Have drop down to change concept type on the instance
+// Update the properties in the instance to the properties in the schema, but keep the
+// data of the properties not present in the new schema
 
 // Main function component for the Form Block
 export const Form: React.FunctionComponent = () => {
   const [concepts, setConcepts] = React.useState<Concept[]>(getConcepts(conceptData))
   const [selectedConcept, setSelectedConcept] = React.useState<number>(0)
+  const [conceptInstance, setConceptInstance] = React.useState<ConceptInstance>(getConceptInstance(concepts[selectedConcept]))
   const [conceptOptions, setConceptOptions] = React.useState<IChoiceGroupOption[]>([]);
   const [selectedKey, setSelectedKey] = React.useState<string>('1');
   const [inEditMode, setInEditMode] = React.useState<boolean>(false);
@@ -213,75 +222,114 @@ export const Form: React.FunctionComponent = () => {
     setSelectedKey(option.key)
     setSelectedConcept(+option.key - 1)
     setInEditMode(false)
-  }, []);
 
+    const c = concepts[+option.key - 1]
+    let modifiedConceptInstance = conceptInstance
+    modifiedConceptInstance.conceptName = c.name
+    // Check if the properties already exist 
+    if (
+      (modifiedConceptInstance.properties !== undefined) && (Object.values(modifiedConceptInstance.properties).some(
+        p => {
+          return p.names.some(
+            n => n === c.name  // Returns true if the concept was already loaded
+          )
+        }))
+    ) {
+      // Do nothing if the concept has already been loaded before
+    } else {
+      let pis = modifiedConceptInstance.properties;
+      // If not, load the concept properties to the instance
+      for (let i = 0; i < c.properties.length; i++) {
+        const p = c.properties[i];
+
+        // Check if a property with same name and type already exists in another loaded concept
+        const existingIndex = Object.values(pis).findIndex(
+          pi => {
+            return (pi.property.name === p.name && pi.property.type === p.type)
+          })
+        if (existingIndex !== -1) {
+          // If it does, append the concept name to the owner names of the property 
+          pis[existingIndex].names.push(c.name)
+        } else {
+          // If not, add the property separately
+          pis.push({names: [c.name], property: p})
+        }
+      }
+      modifiedConceptInstance.properties = pis
+    }
+    setConceptInstance(modifiedConceptInstance)
+  }, [conceptInstance, concepts]);
+
+  // Handle switching between read and write
   const handleEditClicked = React.useCallback(() => {
     setInEditMode(!inEditMode)
   }, [inEditMode]);
 
+  // Handle download
   const handleDownloadClicked = React.useCallback(() => {
-    const conceptJSON = JSON.stringify(conceptToJSON(concepts[selectedConcept]), null, 2);
+    const instanceFilteredProperties = conceptInstance.properties.filter(p => p.names.some(n => n === conceptInstance.conceptName))
+    const ci = conceptInstance
+    ci.properties = instanceFilteredProperties
+    const conceptJSON = JSON.stringify(conceptToJSON(ci), null, 2);
     const file = new Blob([conceptJSON], {type: 'application/json'});
     const element = document.createElement("a");
     element.href = URL.createObjectURL(file);
-    element.download = (concepts[selectedConcept].name).replace(" ", "_") + ".json";
+    element.download = (conceptInstance.conceptName).replace(" ", "_") + ".json";
     document.body.appendChild(element);
     element.click();
-  }, [concepts, selectedConcept]);
+  }, [conceptInstance]);
 
-  const getModifiedConceptsNewValue = React.useCallback((newValue: any, key: number) => {
-    const modifiedConcepts = concepts.map((c) => {
-      if (c === concepts[selectedConcept]) {
-        c.properties.map((p) => {
-          if (p.name === concepts[selectedConcept].properties[key].name) {
-            p.value = newValue
-          }
-          return p
-      })
+  // Handle updating value of concept instance
+  const setModifiedConceptInstance = React.useCallback((newValue: any, key: number) => {
+    const modifiedConceptInstanceProperties = conceptInstance.properties.map((p) => {
+      if (p.property.name === conceptInstance.properties[key].property.name) {
+        p.property.value = newValue
       }
-      return c
+      return p
     })
-    return modifiedConcepts
-  }, [concepts, selectedConcept])
+    let modifiedConceptInstance = conceptInstance
+    modifiedConceptInstance.properties = modifiedConceptInstanceProperties
+    setConceptInstance(modifiedConceptInstance)
 
-  // TODO: Convert handlers to a single one if possible  
-  const handleTextPropertyValueChange = React.useCallback(
+  }, [conceptInstance])
+
+  // Handler for change in Text Fields
+  const handleTextValueChange = React.useCallback(
     (ev: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, key: number) => 
   {
     ev.preventDefault()
     const newValue = (ev.currentTarget as HTMLTextAreaElement).value
-    const modifiedConcepts = getModifiedConceptsNewValue(newValue, key)
-    setConcepts(modifiedConcepts)
-  }, [getModifiedConceptsNewValue]);
+    setModifiedConceptInstance(newValue, key)
+  }, [setModifiedConceptInstance]);
 
-  const handleSpinButtonPropertyValueChange = React.useCallback(
+  // Handler for change in Spin Buttons
+  const handleSpinButtonValueChange = React.useCallback(
     (ev: React.SyntheticEvent<HTMLElement, Event>, key: number, newValue?: string) => 
   {
     ev.preventDefault()
     if (newValue === undefined) { return }
     let newNumberValue: number = Number(newValue)
-    if (concepts[selectedConcept].properties[key].type !== Type.FLOAT) {
+    if (conceptInstance.properties[key].property.type !== Type.FLOAT) {
       newNumberValue = Number(newNumberValue.toPrecision(1))
     }
-    const modifiedConcepts = getModifiedConceptsNewValue(newNumberValue, key)
-    setConcepts(modifiedConcepts)
-  }, [getModifiedConceptsNewValue]);
+    setModifiedConceptInstance(newNumberValue, key)
+  }, [setModifiedConceptInstance, conceptInstance]);
 
-  const handleCheckboxPropertyValueChange = React.useCallback(
+  // Handler for change in Checkboxes
+  const handleCheckboxValueChange = React.useCallback(
     (ev: React.FormEvent<HTMLInputElement | HTMLElement> | undefined, key: number, checked?: boolean) => 
   {
     if (ev === undefined) { return }
     const state = (ev.target as HTMLInputElement).checked
-    const modifiedConcepts = getModifiedConceptsNewValue(state, key)
-    setConcepts(modifiedConcepts)
-  }, [getModifiedConceptsNewValue]);
+    setModifiedConceptInstance(state, key)
+  }, [setModifiedConceptInstance]);
 
-  const handleDatePickerPropertyValueChange = React.useCallback((date: Date | null | undefined, key: number) => 
+  // Handler for change in Date Pickers
+  const handleDatePickerValueChange = React.useCallback((date: Date | null | undefined, key: number) => 
   {
     if (date === undefined) { return }
-    const modifiedConcepts = getModifiedConceptsNewValue(date, key)
-    setConcepts(modifiedConcepts)
-  }, [getModifiedConceptsNewValue]);
+    setModifiedConceptInstance(date, key)
+  }, [setModifiedConceptInstance]);
 
   // Returns the item stack for the selected concept
   function ConceptView() {
@@ -290,39 +338,42 @@ export const Form: React.FunctionComponent = () => {
         <Stack enableScopedSelectors tokens={propertyStackTokens} styles={propertyStackStyles} horizontal>
           <StackItem align='center'>
             <FontIcon 
-              aria-label={getTypeIcon(concepts[selectedConcept].type).iconName}
-              iconName={getTypeIcon(concepts[selectedConcept].type).iconName}
+              // TODO: Make types and icons specifically for concepts (temporarily set to SIMULATION)
+              aria-label={getTypeIcon(Type.SIMULATION).iconName}
+              iconName={getTypeIcon(Type.SIMULATION).iconName}
               className={classNames.concept}
             />
           </StackItem>
           <StackItem align='center'>
-            <Label styles={conceptLabelStyles}>{concepts[selectedConcept].name}</Label>
+            <Label styles={conceptLabelStyles}>{conceptInstance.conceptName}</Label>
           </StackItem>
         </Stack>
         <Stack enableScopedSelectors tokens={conceptStackTokens} styles={stackStyles}>
-          {(concepts[selectedConcept].properties).map(p => (
-            <div key={p.id}>
-              <Stack enableScopedSelectors tokens={propertyStackTokens} styles={horizontalStackStyles} horizontal verticalAlign='center'>
-                <StackItem align='baseline'>
-                  <FontIcon
-                    aria-label={getTypeIcon(p.type).iconName}
-                    iconName={getTypeIcon(p.type).iconName}
-                    className={classNames.property}
-                  />
-                </StackItem>
-                <StackItem align='center'>
-                  <TextField
-                    readOnly
-                    borderless
-                    value={p.name}
-                    styles={nameFieldStyle} 
-                  />
-                </StackItem>
-                <StackItem align='center'>
-                  {ValueField(p)}
-                </StackItem>
-              </Stack>
-            </div>
+          {(conceptInstance.properties.filter(
+            p => p.names.some(n => n === conceptInstance.conceptName))).map(
+              p => (
+                <div key={conceptInstance.conceptName + "_" + p.property.name}>
+                  <Stack enableScopedSelectors tokens={propertyStackTokens} styles={horizontalStackStyles} horizontal verticalAlign='center'>
+                    <StackItem align='baseline'>
+                      <FontIcon
+                        aria-label={getTypeIcon(p.property.type).iconName}
+                        iconName={getTypeIcon(p.property.type).iconName}
+                        className={classNames.property}
+                      />
+                    </StackItem>
+                    <StackItem align='center'>
+                      <TextField
+                        readOnly
+                        borderless
+                        value={p.property.name}
+                        styles={nameFieldStyle} 
+                      />
+                    </StackItem>
+                    <StackItem align='center'>
+                      {ValueField(p.property)}
+                    </StackItem>
+                  </Stack>
+                </div>
           ))}
         </Stack>
       </div>
@@ -338,8 +389,8 @@ export const Form: React.FunctionComponent = () => {
               styles={spinButtonStyles}
               defaultValue={p.value}
               step={1}
-              onChange={ (ev, newValue) => handleSpinButtonPropertyValueChange(
-                ev, concepts[selectedConcept].properties.findIndex((element) => { return (element.name === p.name) }), newValue
+              onChange={ (ev, newValue) => handleSpinButtonValueChange(
+                ev, conceptInstance.properties.findIndex((element) => { return (element.property.name === p.name) }), newValue
               ) }
             />
           )
@@ -350,8 +401,8 @@ export const Form: React.FunctionComponent = () => {
               defaultValue={p.value}
               step={1}
               min={0}
-              onChange={ (ev, newValue) => handleSpinButtonPropertyValueChange(
-                ev, concepts[selectedConcept].properties.findIndex((element) => { return (element.name === p.name) }), newValue
+              onChange={ (ev, newValue) => handleSpinButtonValueChange(
+                ev, conceptInstance.properties.findIndex((element) => { return (element.property.name === p.name) }), newValue
               ) }
             />
           )
@@ -362,8 +413,8 @@ export const Form: React.FunctionComponent = () => {
               defaultValue={p.value}
               step={1}
               min={1}
-              onChange={ (ev, newValue) => handleSpinButtonPropertyValueChange(
-                ev, concepts[selectedConcept].properties.findIndex((element) => { return (element.name === p.name) }), newValue
+              onChange={ (ev, newValue) => handleSpinButtonValueChange(
+                ev, conceptInstance.properties.findIndex((element) => { return (element.property.name === p.name) }), newValue
               ) }
             />
           )
@@ -373,18 +424,18 @@ export const Form: React.FunctionComponent = () => {
               styles={spinButtonStyles}
               defaultValue={p.value}
               step={0.1}
-              onChange={ (ev, newValue) => handleSpinButtonPropertyValueChange(
-                ev, concepts[selectedConcept].properties.findIndex((element) => { return (element.name === p.name) }), newValue
+              onChange={ (ev, newValue) => handleSpinButtonValueChange(
+                ev, conceptInstance.properties.findIndex((element) => { return (element.property.name === p.name) }), newValue
               ) }
             />
           )
         case Type.BOOL:
           return (
             <Checkbox
-              styles={checkboxStyle}
+              styles={checkboxStyles}
               defaultChecked={p.value}
-              onChange={ (ev, checked) => handleCheckboxPropertyValueChange(
-                ev, concepts[selectedConcept].properties.findIndex((element) => { return (element.name === p.name) }, checked)
+              onChange={ (ev, checked) => handleCheckboxValueChange(
+                ev, conceptInstance.properties.findIndex((element) => { return (element.property.name === p.name) }, checked)
               ) }
             />
           )
@@ -393,8 +444,8 @@ export const Form: React.FunctionComponent = () => {
             <DatePicker
               styles={datePickerStyles}
               value={p.value}
-              onSelectDate={ (date) => handleDatePickerPropertyValueChange(
-                date, concepts[selectedConcept].properties.findIndex((element) => { return (element.name === p.name) })
+              onSelectDate={ (date) => handleDatePickerValueChange(
+                date, conceptInstance.properties.findIndex((element) => { return (element.property.name === p.name) })
               ) }
             />
           )
@@ -404,9 +455,9 @@ export const Form: React.FunctionComponent = () => {
               styles={textFieldStyles}
               readOnly={!inEditMode}
               borderless={!inEditMode}
-              value={p.value}
-              onChange={ (ev) => handleTextPropertyValueChange(
-                ev, concepts[selectedConcept].properties.findIndex((element) => { return (element.name === p.name) })
+              defaultValue={p.value}
+              onChange={ (ev) => handleTextValueChange(
+                ev, conceptInstance.properties.findIndex((element) => { return (element.property.name === p.name) })
               ) }
             />
           )
@@ -421,7 +472,7 @@ export const Form: React.FunctionComponent = () => {
               styles={textFieldStyles}
               readOnly={!inEditMode}
               borderless={!inEditMode}
-              value={dateMDY}
+              defaultValue={dateMDY}
             />
           )
         default:
@@ -430,7 +481,7 @@ export const Form: React.FunctionComponent = () => {
               styles={textFieldStyles}
               readOnly={!inEditMode}
               borderless={!inEditMode}
-              value={(p.value).toString()}
+              defaultValue={(p.value).toString()}
             />
           )
       }
@@ -494,13 +545,31 @@ export const Form: React.FunctionComponent = () => {
   );
 };
 
+/*
+ * Utility functions for reading the concepts and their properties
+*/
+
+function getConceptInstance(c: Concept): ConceptInstance {
+  let ci = {} as ConceptInstance
+  ci.conceptName = c.name
+  ci.properties = []
+
+  for (let i = 0; i < c.properties.length; i++) {
+    const p = c.properties[i];
+    const pi: {names: string[], property: Property} = {names: [c.name], property: p}
+    ci.properties.push(pi)
+  }
+  return ci
+}
+
 function getConcepts(JSONObjects: Array<any>): Concept[] {
   let concepts: Concept[] = []
   JSONObjects.forEach(c => {
     const concept = {} as Concept
     concept.name = c.name
     concept.typeName = c.type
-    concept.type = getConceptType(c.type)
+    // concept.type = getConceptType(c.type)
+    concept.type = Type.SIMULATION
     concept.properties = getProperties(c.properties) 
     concepts.push(concept)
   });
@@ -566,23 +635,21 @@ function getTypeIcon(t: Type): IIconProps {
   return icon;
 }
 
-function conceptToJSON(c: Concept): any {
+// Function for converting the concept instance to JSON
+function conceptToJSON(c: ConceptInstance): any {
   const conceptJSON = {
-    name: c.name,
-    type: c.typeName,
+    name: c.conceptName,
     properties: [] as any[]
   }
   
   c.properties.forEach(p => {
     const propertyJSON = {
-      name: p.name,
-      type: p.typeName,
-      value: p.value
+      name: p.property.name,
+      type: p.property.typeName,
+      value: p.property.value
     }
     conceptJSON.properties.push(propertyJSON)
   });
-
-  console.log(JSON.stringify(conceptJSON))
 
   return conceptJSON
 }
