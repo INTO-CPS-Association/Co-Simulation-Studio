@@ -1,0 +1,45 @@
+
+[
+    {
+        "id": 1,
+        "title": "Page Template 1",
+        "image": "https://vega.github.io/vega-lite/examples/bar.svg",
+        "description": "Page 1 description."
+    },
+    {
+        "id": 2,
+        "title": "Page Template 2",
+        "image": "https://vega.github.io/vega-lite/examples/bar_size_responsive.svg",
+        "description": "Page 2 description."
+    },
+    {        
+        "id": 3,
+        "title": "Page Template 3",
+        "image": "https://vega.github.io/vega-lite/examples/bar_grouped.svg",
+        "description": "Page 3 description"
+    },
+    {
+        "id": 4,
+        "title": "Page Template 4",
+        "image": "https://vega.github.io/vega-lite/examples/stacked_bar_h.svg",
+        "description": "Page 4 description"
+    },
+    {
+        "id": 5,
+        "title": "Page Template 5",
+        "image": "https://vega.github.io/vega-lite/examples/bar_layered_transparent.svg",
+        "description": "Page 5 description"
+    },
+    {
+        "id": 6,
+        "title": "Page Template  Page 6",
+        "image": "https://vega.github.io/vega-lite/examples/point_color_with_shape.svg",
+        "description": "Page 6 description"
+    },
+    {
+        "id": 7,
+        "title": "Page Template Page 7",
+        "image": "https://vega.github.io/vega-lite/examples/line_overlay.svg",
+        "description": "Page 7 description"
+    }
+]
