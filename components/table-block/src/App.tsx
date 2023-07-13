@@ -2,8 +2,7 @@ import React from 'react';
 import { Stack, Text, Link, FontWeights, IStackTokens, IStackStyles, ITextStyles } from '@fluentui/react';
 import logo from './logo.svg';
 import './App.css';
-import { DetailsListBasicExample} from './DetailsList2';
-import { PanelLight } from './PlotPanel';
+import { DetailsListBasicExample} from './DetailsList';
 
 
 const boldStyle: Partial<ITextStyles> = { root: { fontWeight: FontWeights.semibold } };
@@ -21,7 +20,7 @@ const stackStyles: Partial<IStackStyles> = {
   export const App: React.FunctionComponent = () => {
     return (
       <div>
-       <DetailsListBasicExample/>
+        <DetailsListBasicExample/>
       </div>
     );
   };

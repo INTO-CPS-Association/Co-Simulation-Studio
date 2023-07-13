@@ -1,14 +1,14 @@
 [
     {
-        "CollumHeader": "Id"
+        "ColumnHeader": "Id"
     },
     {
-        "CollumHeader": "Type"
+        "ColumnHeader": "Type"
     },
     {
-        "CollumHeader": "Name"
+        "ColumnHeader": "Name"
     },
     {
-        "CollumHeader": "ppu"
+        "ColumnHeader": "ppu"
     }
 ]
