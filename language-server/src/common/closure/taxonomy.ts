@@ -31,6 +31,123 @@ export class Taxonomy {
 		this.#graph = new Graph({ type: 'directed' });
 	}
 
+	#ancestorsOf(node: string): string[] {
+
+		const ancestors = new Set<string>();
+
+		bfs(this.#graph, (node) => {
+			ancestors.add(node);
+		}, {
+			mode: 'in'
+		});
+
+		return [...ancestors];
+
+	}
+
+	#substitute(oldNode: string, newNode: string) {
+
+		const sources: string[] = [];
+		const targets: string[] = [];
+
+		this.#graph.directedEdges(oldNode).forEach(edge => {
+			const source = this.#graph.source(edge);
+			const target = this.#graph.target(edge);
+			if (source == oldNode && target != oldNode)
+				targets.push(target);
+			else if (target == oldNode && source != oldNode)
+				sources.push(source);
+			this.#graph.dropDirectedEdge(source, target);
+		});
+
+		this.#graph.mergeNode(newNode);
+
+		for (const source of sources)
+			this.#graph.addDirectedEdge(source, newNode);
+
+		for (const target of targets)
+			this.#graph.addDirectedEdge(newNode, target);
+
+	}
+
+	#bypassIsolate(node: string) {
+
+		const ce = ClassExpression.fromJsonString(node);
+		const parents = this.#parentsOf(node);
+		const grandparents = parents.flatMap(p => this.#parentsOf(p));
+		const replace = new Map<string, string>();
+
+		// replacement map from parents to isolated parents
+		parents.forEach(parent => replace.set(parent, ClassExpression.fromJsonString(parent).minus(ce).toJsonString()));
+
+		replace.forEach((parent, isolatedParent) => {
+
+			// drop parent edge
+			this.#graph.dropDirectedEdge(parent, node);
+
+			// substitute isolated parents for parents
+			this.#substitute(parent, isolatedParent);
+
+		});
+
+		// move child up to grandparents
+		grandparents.forEach(gp => this.#graph.mergeEdge(gp, node));
+
+
+	}
+
+	*childrenOf(node: ClassExpression): IterableIterator<ClassExpression> {
+		for (const child of this.#childrenOf(node.toJsonString()))
+			yield ClassExpression.fromJsonString(child);
+	}
+
+	#childrenOf(node: string): string[] {
+		return this.#graph.outEdges(node).map(edge => this.#graph.target(edge));
+	}
+
+	*descendantsOf(node: ClassExpression): IterableIterator<ClassExpression> {
+		for (const descendant of this.#descendantsOf(node.toJsonString()))
+			yield ClassExpression.fromJsonString(descendant);
+	}
+
+	#descendantsOf(node: string): string[] {
+
+		const descendants = new Set<string>();
+
+		bfs(this.#graph, (node) => {
+			descendants.add(node);
+		}, {
+			mode: 'out'
+		});
+
+		return [...descendants];
+
+	}
+
+	*directChildrenOf(node: ClassExpression): IterableIterator<ClassExpression> {
+		for (const child of this.#directChildrenOf(node.toJsonString()))
+			yield ClassExpression.fromJsonString(child);
+	}
+
+	#directChildrenOf(node: string): string[] {
+		const c = this.#childrenOf(node);
+		const cd = new Set<string>();
+		c.forEach(e => this.#descendantsOf(e).forEach(d => cd.add(d)));
+		return c.filter(e => !cd.has(e));
+	}
+
+	*directParentsOf(node: ClassExpression): IterableIterator<ClassExpression> {
+		for (const parent of this.#directParentsOf(node.toJsonString()))
+			yield ClassExpression.fromJsonString(parent);
+	}
+
+	#directParentsOf(node: string): string[] {
+		const p = this.#parentsOf(node);
+		const pa = new Set<string>();
+		p.forEach(e => this.#ancestorsOf(e).forEach(a => pa.add(a)));
+		return p.filter(e => !pa.has(e));
+	}
+
 	generateClosureAxioms(axiomType: AxiomType): Axiom[] {
 
 		this.#populate();
@@ -69,84 +186,6 @@ export class Taxonomy {
 
 	}
 
-	#populate() {
-		this.#graph.clear();
-		for (const concept of this.#reasoner.getSubConcepts(this.#reasoner.top())) {
-			if (!this.#graph.hasNode(concept))
-				this.#graph.addNode(concept);
-			for (const supConcept of this.#reasoner.getSupConcepts(this.#reasoner.concept(concept), true))
-				if (!this.#graph.hasEdge(concept, supConcept))
-					this.#graph.addEdge(concept, supConcept);
-		}
-	}
-
-	#bypassIsolate(node: string) {
-		// TODO
-	}
-
-	#childrenOf(node: string): string[] {
-		return this.#graph.outEdges(node).map(edge => this.#graph.target(edge));
-	}
-
-	#descendantsOf(node: string): string[] {
-
-		const descendants = new Set<string>();
-
-		bfs(this.#graph, (node) => {
-			descendants.add(node);
-		}, {
-			mode: 'in'
-		});
-
-		return [...descendants];
-
-	}
-
-	#directChildrenOf(node: string): string[] {
-		const c = this.#childrenOf(node);
-		const cd = new Set<string>();
-		c.forEach(e => this.#descendantsOf(e).forEach(d => cd.add(d)));
-		return c.filter(e => !cd.has(e));
-	}
-
-	#parentsOf(node: string): string[] {
-		return this.#graph.inEdges(node).map(edge => this.#graph.source(edge));
-	}
-
-	#ancestorsOf(node: string): string[] {
-
-		const ancestors = new Set<string>();
-
-		bfs(this.#graph, (node) => {
-			ancestors.add(node);
-		}, {
-			mode: 'out'
-		});
-
-		return [...ancestors];
-
-	}
-
-	#directParentsOf(node: string): string[] {
-		const p = this.#parentsOf(node);
-		const pa = new Set<string>();
-		p.forEach(e => this.#ancestorsOf(e).forEach(a => pa.add(a)));
-		return p.filter(e => !pa.has(e));
-	}
-
-	#reduceChild(node: string) {
-
-		const parents = this.#parentsOf(node);
-		const directParents = this.#directParentsOf(node);
-
-		for (const parent of parents)
-			this.#graph.dropDirectedEdge(node, parent);
-
-		for (const directParent of directParents)
-			this.#graph.addDirectedEdge(node, directParent);
-
-	}
-
 	#multiParentChild(): string | null {
 
 		let multiParentChild = null;
@@ -164,13 +203,47 @@ export class Taxonomy {
 
 	}
 
-	#treeify() {
+	*parentsOf(node: ClassExpression): IterableIterator<ClassExpression> {
+		for (const parent of this.#parentsOf(node.toJsonString()))
+			yield ClassExpression.fromJsonString(parent);
+	}
 
-		let node = null;
+	#parentsOf(node: string): string[] {
+		return this.#graph.inEdges(node).map(edge => this.#graph.source(edge));
+	}
 
-		while ((node = this.#multiParentChild()) != null) {
-			this.#bypassIsolate(node);
-			this.#reduceChild(node);
+	#populate() {
+		this.#graph.clear();
+		for (const concept of this.#reasoner.getSubConcepts(this.#reasoner.top())) {
+			this.#graph.mergeNode(concept);
+			for (const supConcept of this.#reasoner.getSupConcepts(this.#reasoner.concept(concept), true))
+				this.#graph.mergeEdge(supConcept, concept);
+		}
+	}
+
+	#reduceChild(node: string) {
+
+		const parents = this.#parentsOf(node);
+		const directParents = this.#directParentsOf(node);
+
+		for (const parent of parents)
+			this.#graph.dropDirectedEdge(parent, node);
+
+		for (const directParent of directParents)
+			this.#graph.mergeDirectedEdge(directParent, node);
+
+	}
+
+	#rootTaxonomy() {
+
+		const root = Class.THING.toJsonString();
+
+		this.#graph.mergeNode(root);
+
+		for (const node of this.#graph.nodes()) {
+			if (this.#graph.inDegreeWithoutSelfLoops(node) > 0)
+				continue;
+			this.#graph.mergeDirectedEdge(root, node);
 		}
 
 	}
@@ -195,21 +268,6 @@ export class Taxonomy {
 		}
 
 		return siblingMap;
-
-	}
-
-	#rootTaxonomy() {
-
-		const root = Class.THING.toJsonString();
-
-		if (!this.#graph.hasNode(root))
-			this.#graph.addNode(root);
-
-		for (const node of this.#graph.nodes()) {
-			if (this.#graph.inDegreeWithoutSelfLoops(node) > 0)
-				continue;
-			this.#graph.addDirectedEdge(root, node);
-		}
 
 	}
 
@@ -257,6 +315,17 @@ export class Taxonomy {
 			for (let j = 0; j < n; j++)
 				if (!matrix[i].get(j))
 					this.#graph.dropDirectedEdge(nodes[i], nodes[j]);
+
+	}
+
+	#treeify() {
+
+		let node = null;
+
+		while ((node = this.#multiParentChild()) != null) {
+			this.#bypassIsolate(node);
+			this.#reduceChild(node);
+		}
 
 	}
 
