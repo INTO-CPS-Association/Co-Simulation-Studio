@@ -94,9 +94,6 @@ const CommandBar_: React.FunctionComponent<CommandbarProps> = ({_deleteRow}) => 
         />
     );
   };
-   
- 
-
   //dialog variables
   const [hideDialog, { toggle: toggleHideDialog }] = useBoolean(true);
   const DigalogProps: IDialogContentProps = {
@@ -208,7 +205,10 @@ export class DetailsListBasicExample extends React.Component<any, any, IDetailsL
     for (let i = 0; i < _allcolums.length; i++) {
       if(_allcolums[i].key === csortColumn.key)
       {
-        _allcolums[i] = csortColumn
+        _allcolums[i] = csortColumn;
+      }
+      else{
+        _allcolums[i].isSorted = false;
       }
     }
     this.setState({
