@@ -104,8 +104,10 @@ class CSVGraph extends Graph {
   }
 }
 
+/*
 //creat levelgraph
 const db = levelgraph(level('2db'))
+
 
 // test cases
 const graph = new CSVGraph(db)
@@ -133,3 +135,210 @@ graph.delete(testData)
 const test8 = await graph.find({ subject: '?', predicate: 'time', object: '?' })
 //test to see if data is deleted
 console.log("Test8", test8)
+*/
+
+//data sturtue for the example.json
+interface TableRow {
+  Id: number
+  Type: string
+  Ppu: number
+  Name: string
+}
+
+class OMLType {
+  constructor(
+    public name: string,
+    public ownedPropertyRestrictions: Map<string, OMLScalarPropertyValueRestriction>,
+    public ownedSpecializations: string
+  ) {}
+}
+
+class OMLScalarPropertyValueRestriction {
+  constructor(
+    public property: string,
+    public value: any,
+  ) {}
+}
+
+class OMLInstance {
+  constructor(
+    public name: string,
+    public ownedTypes: OMLType,
+    public ownedPropertyValues: Map<string, OMLInstance|any>
+  ) {}
+}
+
+//create types for sort filter and callback
+type SortOrder = "ASC" | "DESC";
+type FilterCriteria = {column: keyof TableRow, value: any};
+type Callback = (data?: any) => void;
+
+// Maybe change name
+export class GitWorkDataBlock {
+  //data is the data that is stored in the table
+  data: TableRow[];
+  //eventListeners is a list of all the eventListeners
+  private eventListeners: { [key: string]: Callback[] };
+
+  //creates a list of all instances of OML
+  private instances: OMLInstance[] = [];
+
+  //constructor
+  constructor() {
+    this.data = [] as TableRow[];
+    this.eventListeners = {};
+  }
+
+  // Form API Part Compies but not fuctional tested
+  // Display fields for a specific OMLInstance
+  displayFieldsOMLInstance(instanceName: string): OMLInstance | null {
+    const instance = this.instances.find(instance => instance.name === instanceName);
+    if(instance){
+      console.log("Instance Name: ", instance.name);
+      console.log("Owned Types: ", instance.ownedTypes);
+      console.log("Owned Property Values: ", instance.ownedPropertyValues);
+      return instance;
+    }else{
+      console.log("No instance found with the given name.");
+      return null;
+    }
+  }
+
+  // Display fields for a specific OMLType
+  displayFieldsByOMLType(typeName: string): OMLInstance | null {
+    const instance = this.instances.find(instance => instance.ownedTypes.name === typeName);
+    if(instance){
+      console.log("Type Name: ", instance.ownedTypes.name);
+      console.log("Owned Property Restrictions: ", instance.ownedTypes.ownedPropertyRestrictions);
+      console.log("Owned Specializations: ", instance.ownedTypes.ownedSpecializations);
+      return instance;
+    }else{
+      console.log("No instance found with the given type name.");
+      return null;
+    }
+  }
+
+  // Add a new OMLInstance
+  addNewInstance(instance: OMLInstance): void {
+    this.instances.push(instance);
+    console.log("New instance added successfully");
+  }
+
+  // Edit an existing OMLInstance
+  editInstance(instanceName: string, newName: string, newOwnedTypes: OMLType, newOwnedPropertyValues: Map<string, OMLInstance|any>): void {
+    const instance = this.instances.find(instance => instance.name === instanceName);
+    if(instance){
+      instance.name = newName;
+      instance.ownedTypes = newOwnedTypes;
+      instance.ownedPropertyValues = newOwnedPropertyValues;
+      console.log("Instance edited successfully");
+    }else{
+      console.log("No instance found with the given name.");
+    }
+  }
+
+
+  // Table API Part
+  //add event listener
+  on(eventName: string, callback: Callback): void {
+    if (!this.eventListeners[eventName]) {
+      this.eventListeners[eventName] = [];
+    }
+    this.eventListeners[eventName].push(callback);
+  }
+
+  //emit event
+  private emit(eventName: string, data?: any): void {
+    if (this.eventListeners[eventName]) {
+      this.eventListeners[eventName].forEach(callback => callback(data));
+    }
+  }
+
+  //As a test it just loads the example.json
+  getData(): void {
+    const items = require("./example.json")
+
+    const GetItemsLength = (items: any) => {
+      return items.length
+    }
+    for (let i = 0; i < GetItemsLength(items); i++) {
+      //adds items to collu
+      let item = {} as TableRow;
+      item.Id = items[i].id;
+      item.Type = items[i].type;
+      item.Name = items[i].name;
+      item.Ppu = items[i].ppu;
+      this.data.push(item);
+    }
+    this.emit('update', this.data);
+  }
+
+  //delete row from the table
+  deleteRow(id: number): void {
+    this.data = this.data.filter(row => row.Id !== id);
+    this.emit('update', this.data);
+  }
+
+  //update row in the table
+  displayRows(sortColumn: keyof TableRow, sortOrder: SortOrder = "ASC", filter: FilterCriteria | null = null): TableRow[] {
+    let result = [...this.data];
+    //filter the data
+    if (filter) {
+      result = result.filter(row => row[filter.column] === filter.value);
+    }
+    //sort the data
+    result.sort((a, b) => {
+      if (a[sortColumn] < b[sortColumn]) {
+        return sortOrder === "ASC" ? -1 : 1;
+      } else if (a[sortColumn] > b[sortColumn]) {
+        return sortOrder === "ASC" ? 1 : -1;
+      } else {
+        return 0;
+      }
+    });
+    // return the result
+    return result;
+  }
+  //For the table front end to get the column names of the TableRow
+  getColumnNames(): (keyof TableRow)[] {
+    // If data is empty, return an empty array
+    if (this.data.length === 0) { return []; }
+    // If data is guaranteed to be non-empty, you can take the first element
+    let firstElement = this.data[0];
+
+    // Extract keys
+    let keys = Object.keys(firstElement);
+
+    // You might need to cast these keys back to (keyof TableRow)[]
+    return keys as (keyof TableRow)[];
+  }
+}
+
+/*
+//test cases
+// create a new table
+let table = new GitWorkDataBlock();
+
+// register a callback to log whenever the table data is updated
+table.on('update', (data) => {
+  console.log('Table data updated: ', data);
+});
+
+table.getData();
+
+// test the table sorting
+console.log("Ask for table data ASC:", table.displayRows("Id", "ASC"))
+console.log("Ask for table data DESC:", table.displayRows("Id", "DESC"))
+// test the table with delete
+table.deleteRow(1)
+console.log("Ask for table data ASC after delet of id 0001:", table.displayRows("Id", "ASC"))
+// test the table with filter
+console.log("Ask for table data filter for id 0003:", table.displayRows("Id", "ASC", {column: "Id", value: "0003"}))
+console.log("Ask for table data filter for name Old Fashioned:", table.displayRows("Id", "ASC", {column: "Name", value: "Old Fashioned"}))
+*/
+
+
+
+
+
+
