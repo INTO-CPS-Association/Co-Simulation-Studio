@@ -138,6 +138,8 @@ const test8 = await graph.find({ subject: '?', predicate: 'time', object: '?' })
 console.log("Test8", test8)
 */
 
+import { IColumn } from "@fluentui/react";
+
 //data sturtue for the example.json
 interface TableRow {
   Id: number
@@ -200,6 +202,8 @@ export class GitWorkDataBlock {
 
   //delete row from the table
   deleteRow(Id: number): void {
+    
+    console.log(Id)
     this.data = this.data.filter(row => row.Id !== Id);
     this.emit('update', this.data);
   }

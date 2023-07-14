@@ -8,11 +8,17 @@ import { TextField, ITextFieldStyles } from '@fluentui/react/lib/TextField';
 import { IComboBoxOption, IComboBoxStyles, VirtualizedComboBox } from '@fluentui/react';
 import { Stack } from '@fluentui/react/lib/Stack';
 import { IconButton, DefaultButton, PrimaryButton, IButtonStyles} from '@fluentui/react/lib/Button';
-import {GitWorkDataBlock} from "./index"
+import {GitWorkDataBlock} from "./api"
 
 
 //interfaces for the table
 interface IDetailsListBasicExampleItem {
+  Id: number
+  Type: string
+  Ppu: number
+  Name: string
+}
+interface TableRow {
   Id: number
   Type: string
   Ppu: number
@@ -140,39 +146,53 @@ const CommandBar_: React.FunctionComponent<CommandbarProps> = ({_deleteRow}) => 
   }
 export class DetailsListBasicExample extends React.Component<any, any, IDetailsListBasicExampleState> {
   private _selection: Selection;
+  private _table: GitWorkDataBlock;
   constructor(){
   
-    super({});
-    //initialize api
-    const _table = new GitWorkDataBlock();
-    //get data from api
-    _table.getData();
-
-    let columns = _table.getColumnNames();
-    //declare colums, still need to be 100% from api
-    let _columns: IColumn[] = [
-      { key: columns[0], name: columns[0], fieldName: columns[0], minWidth: 100, maxWidth: 200, isResizable: true, showSortIconWhenUnsorted: true, isSorted:false},
-      { key: columns[1], name: columns[1], fieldName: columns[1], minWidth: 100, maxWidth: 200, isResizable: true, showSortIconWhenUnsorted: true, isSorted:false},
-      { key: columns[2], name: columns[2], fieldName: columns[2], minWidth: 100, maxWidth: 200, isResizable: true, showSortIconWhenUnsorted: true, isSorted:false} ,
-      { key: columns[3], name: columns[3], fieldName: columns[3], minWidth: 100, maxWidth: 200, isResizable: true, showSortIconWhenUnsorted: true, isSorted:false},
-    ];
     
+    super({});
+    //initialize api and table
+    this._table = new GitWorkDataBlock;
+    this._table.getData();
     this._selection = new Selection({
       onSelectionChanged: () => this.setState({ selectionDetails: this._getSelectionDetails() }),
     });
+        
+      let keys = this._table.getColumnNames();
 
-    //set states with data from api
-    this.state = {
-      items: _table.data,
-      column: _columns,
-      selectionDetails: this._selection,
-      table: _table,
+      let _columns: IColumn[] = [];
+
+      for(let i = 0; i < keys.length; i++){
+        _columns.push({ key: keys[i], name: keys[i], fieldName: keys[i], minWidth: 100, maxWidth: 200, isResizable: true, showSortIconWhenUnsorted: true, isSorted:false });
+      }
+        //set states
+        this.state = {
+          items: this._table.data,
+          column: _columns,
+          selectionDetails: this._getSelectionDetails()
+        
     };
+
+    //auto update function
+    this._table.on('update', (data: any) => {
+      console.log("table has been updates")
+      let keys = this._table.getColumnNames();
+
+      let _columns: IColumn[] = [];
+
+      for(let i = 0; i < keys.length; i++){
+        _columns.push({ key: keys[i], name: keys[i], fieldName: keys[i], minWidth: 100, maxWidth: 200, isResizable: true, showSortIconWhenUnsorted: true, isSorted:false });
+      }
+        //set states
+        this.setState({
+          items: data,
+          column: _columns,
+          selectionDetails: this._getSelectionDetails()
+        });
+      })
   }
   
   
-  
-
   //function to sort collum ASC | DESC
   private _sortcolumn(csortColumn: IColumn, sortOrder: string){
     //first time sort is pressed
@@ -194,13 +214,20 @@ export class DetailsListBasicExample extends React.Component<any, any, IDetailsL
       sortOrder = "ASC";
     }
     //initialize variables to update table
-    const _table = this.state.table;
     let items: any;
     let _allcolums = this.state.column;
-
+    let collums = this._table.getColumnNames()
     //sort the data
-    items = _table.displayRows(csortColumn.key, sortOrder);
-   
+
+    for (let i = 0; i < collums.length; i++) {
+      if(collums[i] === csortColumn.key)
+        if(sortOrder === "DESC")
+          items = this._table.displayRows(collums[i], "DESC");
+        else
+          items = this._table.displayRows(collums[i], "ASC");
+
+      
+    }
     //updates table with items returned
     for (let i = 0; i < _allcolums.length; i++) {
       if(_allcolums[i].key === csortColumn.key)
@@ -213,27 +240,15 @@ export class DetailsListBasicExample extends React.Component<any, any, IDetailsL
     }
     this.setState({
       items: items,
-      table: _table,
       column: _allcolums,
     })
   }
 
-  //function to update table
-  private _updateItems(_table: GitWorkDataBlock) {
-    //updates table
-    this.setState({
-      items: _table.data,
-      table: _table,
-    })
-  }
   //function to remove a row
   private _RemoveRow(){
-    const _table = this.state.table
-    _table.deleteRow(this.state.selectionDetails);
-
-    this._updateItems(_table);
-    
+    this._table.deleteRow(this.state.selectionDetails);
   };
+
 //function to remove a collum - should be updated to use api
   private _RemoveColumn(index:any) {
     let {column} = this.state;
@@ -244,20 +259,26 @@ export class DetailsListBasicExample extends React.Component<any, any, IDetailsL
     }
   }
   //gets the row that is clicked 
- private _getSelectionDetails(): number {
-    const selectionCount = this._selection.getSelectedCount();
-    if ((this._selection.getSelection()[0])) {
-      return (this._selection.getSelection()[0] as IDetailsListBasicExampleItem).Id;
+  private _getSelectionDetails(): number {
+    
+    if(this._selection.getSelection()[0] as IDetailsListBasicExampleItem !== undefined)
+    {
+      return ((this._selection.getSelection()[0] as IDetailsListBasicExampleItem).Id)
     }
     return -1
-     
   }
+
+  private _onFilter = (ev: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue: string | undefined): void => {
+    let _table = this.state.table;
+
+    this.setState({
+      
+    });
+  };
   
   render() {
     let { items } = this.state;
     let {column} = this.state;
-    let {selectionDetails} = this.state;
-
     //function to remove column
     const _RemoveColumn = (index: any) => {
       this._RemoveColumn(index);
@@ -272,13 +293,17 @@ export class DetailsListBasicExample extends React.Component<any, any, IDetailsL
       this._sortcolumn(column, "ASC")
       }
     }
+    const searchfield = (<TextField
+      label='filter'
+      onChange={this._onFilter}
+    />)
     //probities of table
     const _detailslist = (<DetailsList
       items={items}
       columns={column}
       setKey="set"
       isHeaderVisible = {true}
-      selection={selectionDetails}
+      selection={this._selection}
       selectionPreservedOnEmptyClick={true}
       ariaLabelForSelectionColumn="Toggle selection"
       ariaLabelForSelectAllCheckbox="Toggle selection for all items"
@@ -292,6 +317,7 @@ export class DetailsListBasicExample extends React.Component<any, any, IDetailsL
       <div>
         <PanelLight handleClick={_RemoveColumn} columns={column}/>
         <CommandBar_ _deleteRow = {_deleteRow} />
+        {searchfield}
         {_detailslist}
       </div>
     );
