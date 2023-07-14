@@ -69,6 +69,7 @@ export const PanelColorPicker: React.FunctionComponent<ColorPickerProps> = ({dem
           defaultSelectedKey={alphaOptions[0].key}
           onChange={onAlphaTypeChange}
         />
+        
       </div>
     </div>
   );

@@ -125,8 +125,11 @@ export default class Demo extends React.PureComponent<{}, State> {
       <div>
         <Pivot aria-label="Large Link Size Pivot Example" linkSize="large">
           <PivotItem headerText="Properties">
-          <Label htmlFor={textFieldId}>Chart type</Label>
-          <TextField id={textFieldId} />
+          <TextField
+              label="Chart description:"
+              defaultValue={this.state.spec.description}
+              disabled
+              />
           <Label htmlFor={textFieldId}>Rename x-axis</Label>
           <TextField id={textFieldId} />
           <Label htmlFor={textFieldId}>Rename y-axis</Label>
@@ -134,11 +137,11 @@ export default class Demo extends React.PureComponent<{}, State> {
           <br />
           <Stack>
             <DefaultButton type="button" onClick={this.handleUpdateData}>
-              Update dataset
+              Update dataset (Only on bargraph)
             </DefaultButton>
             <br />
             <DefaultButton type="button" onClick={this.handleToggleSpec}>
-              Toggle Orientation
+              Cycle specification
             </DefaultButton>
           </Stack>
           <PanelColorPicker demoInstance={this}/>
