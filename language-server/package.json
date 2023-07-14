@@ -11,6 +11,7 @@
 	"scripts": {},
 	"dependencies": {
 		"big.js": "^6.2.1",
+		"bitset": "^5.1.1",
 		"factplusplus": "file:../reasoners/factplusplus/FaCT++.WASM/dist",
 		"graphology": "^0.25.1",
 		"graphology-components": "^1.5.4",

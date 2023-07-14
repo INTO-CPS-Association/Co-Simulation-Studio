@@ -1,4 +1,5 @@
-import MyLibrary from "../lib";
+
+/*import MyLibrary from "../lib";
 import * as Papa from 'papaparse';
 import {testData} from "./test-data";
 const myLibraryInstance = new MyLibrary();
@@ -145,29 +146,6 @@ interface TableRow {
   Name: string
 }
 
-class OMLType {
-  constructor(
-    public name: string,
-    public ownedPropertyRestrictions: Map<string, OMLScalarPropertyValueRestriction>,
-    public ownedSpecializations: string
-  ) {}
-}
-
-class OMLScalarPropertyValueRestriction {
-  constructor(
-    public property: string,
-    public value: any,
-  ) {}
-}
-
-class OMLInstance {
-  constructor(
-    public name: string,
-    public ownedTypes: OMLType,
-    public ownedPropertyValues: Map<string, OMLInstance|any>
-  ) {}
-}
-
 //create types for sort filter and callback
 type SortOrder = "ASC" | "DESC";
 type FilterCriteria = {column: keyof TableRow, value: any};
@@ -180,65 +158,12 @@ export class GitWorkDataBlock {
   //eventListeners is a list of all the eventListeners
   private eventListeners: { [key: string]: Callback[] };
 
-  //creates a list of all instances of OML
-  private instances: OMLInstance[] = [];
-
   //constructor
-  constructor() {
-    this.data = [] as TableRow[];
+  constructor(data: TableRow[] = []) {
+    this.data = data;
     this.eventListeners = {};
   }
 
-  // Form API Part Compies but not fuctional tested
-  // Display fields for a specific OMLInstance
-  displayFieldsOMLInstance(instanceName: string): OMLInstance | null {
-    const instance = this.instances.find(instance => instance.name === instanceName);
-    if(instance){
-      console.log("Instance Name: ", instance.name);
-      console.log("Owned Types: ", instance.ownedTypes);
-      console.log("Owned Property Values: ", instance.ownedPropertyValues);
-      return instance;
-    }else{
-      console.log("No instance found with the given name.");
-      return null;
-    }
-  }
-
-  // Display fields for a specific OMLType
-  displayFieldsByOMLType(typeName: string): OMLInstance | null {
-    const instance = this.instances.find(instance => instance.ownedTypes.name === typeName);
-    if(instance){
-      console.log("Type Name: ", instance.ownedTypes.name);
-      console.log("Owned Property Restrictions: ", instance.ownedTypes.ownedPropertyRestrictions);
-      console.log("Owned Specializations: ", instance.ownedTypes.ownedSpecializations);
-      return instance;
-    }else{
-      console.log("No instance found with the given type name.");
-      return null;
-    }
-  }
-
-  // Add a new OMLInstance
-  addNewInstance(instance: OMLInstance): void {
-    this.instances.push(instance);
-    console.log("New instance added successfully");
-  }
-
-  // Edit an existing OMLInstance
-  editInstance(instanceName: string, newName: string, newOwnedTypes: OMLType, newOwnedPropertyValues: Map<string, OMLInstance|any>): void {
-    const instance = this.instances.find(instance => instance.name === instanceName);
-    if(instance){
-      instance.name = newName;
-      instance.ownedTypes = newOwnedTypes;
-      instance.ownedPropertyValues = newOwnedPropertyValues;
-      console.log("Instance edited successfully");
-    }else{
-      console.log("No instance found with the given name.");
-    }
-  }
-
-
-  // Table API Part
   //add event listener
   on(eventName: string, callback: Callback): void {
     if (!this.eventListeners[eventName]) {
@@ -274,8 +199,8 @@ export class GitWorkDataBlock {
   }
 
   //delete row from the table
-  deleteRow(id: number): void {
-    this.data = this.data.filter(row => row.Id !== id);
+  deleteRow(Id: number): void {
+    this.data = this.data.filter(row => row.Id !== Id);
     this.emit('update', this.data);
   }
 
@@ -314,7 +239,6 @@ export class GitWorkDataBlock {
   }
 }
 
-/*
 //test cases
 // create a new table
 let table = new GitWorkDataBlock();
@@ -335,4 +259,4 @@ console.log("Ask for table data ASC after delet of id 0001:", table.displayRows(
 // test the table with filter
 console.log("Ask for table data filter for id 0003:", table.displayRows("Id", "ASC", {column: "Id", value: "0003"}))
 console.log("Ask for table data filter for name Old Fashioned:", table.displayRows("Id", "ASC", {column: "Name", value: "Old Fashioned"}))
-*/
+

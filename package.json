@@ -13,13 +13,105 @@
 		"*"
 	],
 	"browser": "./extension/dist/browserMain",
+	"contributes": {
+		"grammars": [
+			{
+				"language": "oml",
+				"scopeName": "source.oml",
+				"path": "./syntaxes/oml.tmLanguage.json"
+			},
+			{
+				"language": "sparql",
+				"scopeName": "source.sparql",
+				"path": "./syntaxes/sparql.tmLanguage.json"
+			}
+		],
+		"languages": [
+			{
+				"id": "oml",
+				"aliases": [
+					"oml",
+					"OML"
+				],
+				"extensions": [
+					".oml"
+				],
+				"configuration": "./syntaxes/oml-configuration.json"
+			},
+			{
+				"id": "sparql",
+				"aliases": [
+					"sparql",
+					"SPARQL"
+				],
+				"extensions": [
+					".sparql"
+				],
+				"configuration": "./syntaxes/sparql-configuration.json"
+			}
+		],
+		"viewsContainers": {
+			"activitybar": [
+				{
+					"id": "gitworks-workbench-workspace",
+					"icon": "$(repo)",
+					"title": "GitWorks Workspace"
+				},
+				{
+					"id": "gitworks-workbench-ontology",
+					"icon": "$(type-hierarchy)",
+					"title": "GitWorks Ontology"
+				},
+				{
+					"id": "gitworks-workbench-automation",
+					"icon": "$(server-process)",
+					"title": "GitWorks Automation"
+				},
+				{
+					"id": "gitworks-workbench-commons",
+					"icon": "$(package)",
+					"title": "GitWorks Commons"
+				}
+			]
+		},
+		"views": {
+			"gitworks-workbench-workspace": [
+				{
+					"id": "gitworks-workbench-workspace-explorer",
+					"name": "Explorer"
+				}
+			],
+			"gitworks-workbench-ontology": [
+				{
+					"id": "gitworks-workbench-ontology-vocabularies",
+					"name": "Vocabularies"
+				},
+				{
+					"id": "gitworks-workbench-ontology-structure",
+					"name": "Structure"
+				}
+			],
+			"gitworks-workbench-automation": [
+				{
+					"id": "gitworks-workbench-automation-tasks",
+					"name": "Tasks"
+				}
+			],
+			"gitworks-workbench-commons": [
+				{
+					"id": "gitworks-workbench-commons-search",
+					"name": "Search"
+				}
+			]
+		}
+	},
 	"scripts": {
 		"vscode:prepublish": "npm run compile",
 		"compile": "webpack",
 		"watch": "webpack --watch",
 		"package": "webpack --mode production --devtool hidden-source-map",
 		"lint": "eslint ./extension/src ./language-server/src --ext .ts,.tsx",
-		"postinstall": "cd extension && npm install && cd ../language-server && npm install && cd ..",
+		"postinstall": "cd grammars/tree-sitter-oml && npm install && cd ../../extension && npm install && cd ../language-server && npm install && cd ..",
 		"chrome": "vscode-test-web --host=0.0.0.0 --quality=insiders --extensionDevelopmentPath=. --extensionId=vscode-icons-team.vscode-icons"
 	},
 	"devDependencies": {
