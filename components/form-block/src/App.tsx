@@ -3,11 +3,11 @@ import { Stack, TextField, Separator, SpinButton, StackItem, Label, ILabelStyles
 import { DatePicker, IDatePickerStyles } from '@fluentui/react';
 import { Checkbox, ICheckboxStyles } from '@fluentui/react';
 import { FontWeights, IStackTokens, IStackStyles, ITextFieldStyles, ISpinButtonStyles } from '@fluentui/react';
-import { ChoiceGroup, IChoiceGroupOption } from '@fluentui/react/lib/ChoiceGroup';
 import { FontIcon, IIconProps } from '@fluentui/react/lib/Icon';
 import { initializeIcons } from '@fluentui/react/lib/Icons';
 import { mergeStyles, mergeStyleSets } from '@fluentui/react/lib/Styling';
 import { ActionButton, IButtonStyles } from '@fluentui/react/lib/Button';
+import { Dropdown, DropdownMenuItemType, IDropdownOption, IDropdownStyles } from '@fluentui/react/lib/Dropdown';
 import './App.css';
 
 /*
@@ -111,6 +111,18 @@ const checkboxStyles: Partial<ICheckboxStyles> = {
     boxSizing: 'border-box'
   }
 }
+const dropdownStyles: Partial<IDropdownStyles> = { 
+  dropdown: { 
+    width: 400,
+    fontWeight: FontWeights.semibold,
+    borderColor: '#4c4c4c',
+    fontSize: 22,
+    textAlign: 'left',
+  },
+  title: {
+    borderColor: 'transparent',
+  },
+};
 
 const conceptData = require("./example.json");
 
@@ -203,27 +215,28 @@ export const Form: React.FunctionComponent = () => {
   const [concepts, setConcepts] = React.useState<Concept[]>(getConcepts(conceptData))
   const [selectedConcept, setSelectedConcept] = React.useState<number>(0)
   const [conceptInstance, setConceptInstance] = React.useState<ConceptInstance>(getConceptInstance(concepts[selectedConcept]))
-  const [conceptOptions, setConceptOptions] = React.useState<IChoiceGroupOption[]>([]);
-  const [selectedKey, setSelectedKey] = React.useState<string>('1');
+  const [conceptOptions, setConceptOptions] = React.useState<IDropdownOption[]>([]);
+  const [selectedItem, setSelectedItem] = React.useState<IDropdownOption>();
   const [inEditMode, setInEditMode] = React.useState<boolean>(false);
 
-  // Initializes the options of the choice group
+  // Initializes the options of the dropdown
   React.useEffect(() => {
-    let options: IChoiceGroupOption[] = []
+    let options: IDropdownOption[] = []
     for (let i = 0; i < concepts.length; i++) {
-      options.push({ key: (i+1).toString(), text: ('Concept ' + (i+1).toString()) })
+      options.push({ key: (i+1).toString(), text: (concepts[i].name) })
     }
     setConceptOptions([...options])
+    setSelectedItem(conceptOptions[0])
   }, [concepts])
 
-  // Handles change of concept from the choice group
-  const handleConceptChange = React.useCallback((ev?: React.SyntheticEvent<HTMLElement>, option?: IChoiceGroupOption) => {
-    if (option === undefined) { return }
-    setSelectedKey(option.key)
-    setSelectedConcept(+option.key - 1)
+  // Handles change of concept from the dropdown
+  const handleConceptChange = React.useCallback((ev?: React.SyntheticEvent<HTMLElement>, item?: IDropdownOption) => {
+    if (item === undefined) { return }
+    setSelectedItem(item)
+    setSelectedConcept(+item.key - 1)
     setInEditMode(false)
 
-    const c = concepts[+option.key - 1]
+    const c = concepts[+item.key - 1]
     let modifiedConceptInstance = conceptInstance
     modifiedConceptInstance.conceptName = c.name
     // Check if the properties already exist 
@@ -345,7 +358,7 @@ export const Form: React.FunctionComponent = () => {
             />
           </StackItem>
           <StackItem align='center'>
-            <Label styles={conceptLabelStyles}>{conceptInstance.conceptName}</Label>
+            <ConceptDropdown />
           </StackItem>
         </Stack>
         <Stack enableScopedSelectors tokens={conceptStackTokens} styles={stackStyles}>
@@ -488,15 +501,17 @@ export const Form: React.FunctionComponent = () => {
     }    
   }
   
-  // Returns the choice group with the available concepts
-  function ConceptChoiceGroup() {  
+  // Returns the dropdown with the available concepts
+  function ConceptDropdown() {  
     return (
       <div>
-        <ChoiceGroup
-          selectedKey={selectedKey} 
+        <Dropdown
+          selectedKey={selectedItem ? selectedItem.key : undefined}
+          // eslint-disable-next-line react/jsx-no-bind
+          onChange={handleConceptChange}
+          placeholder="Select an option"
           options={conceptOptions}
-          onChange={handleConceptChange} 
-          label={"Select a component to view"}
+          styles={dropdownStyles}
         />
       </div>
     )
@@ -506,9 +521,6 @@ export const Form: React.FunctionComponent = () => {
   return (
     <div>
       <Stack enableScopedSelectors tokens={conceptStackTokens} styles={stackStyles}>
-        <StackItem align='stretch'>
-          <ConceptChoiceGroup />
-        </StackItem>
         <Separator></Separator>
         <StackItem>
           { ConceptView() }
