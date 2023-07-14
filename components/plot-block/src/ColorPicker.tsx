@@ -1,4 +1,6 @@
+
 import * as React from 'react';
+import { changeChartColor } from './APIcalls';
 import {
   ColorPicker,
   ChoiceGroup,
@@ -22,7 +24,7 @@ export const PanelColorPicker: React.FunctionComponent = () => {
   const updateColor = React.useCallback((ev: any, colorObj: IColor) => {
     setColor(colorObj);
     const hexColor = colorObj.str; // Access the hex color here
-    console.log('Hex color:', hexColor);
+    changeChartColor(hexColor);
     return hexColor}, []);
     
   const onShowPreviewClick = React.useCallback((ev: any, checked?: boolean) => setShowPreview(!!checked), []);

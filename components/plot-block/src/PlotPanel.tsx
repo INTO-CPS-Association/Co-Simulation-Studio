@@ -6,7 +6,7 @@ import { Label } from '@fluentui/react/lib/Label';
 import { TextField } from '@fluentui/react/lib/TextField';
 import { useId } from '@fluentui/react-hooks';
 import { PanelColorPicker } from './ColorPicker';
-import { DropdownBasicExample } from './Dropdown';
+import { DropdownBasic } from './Dropdown';
 import { IStackTokens, Stack } from '@fluentui/react/lib/Stack';
 
 const buttonStyles = { root: { marginRight: 8 } };
@@ -14,6 +14,7 @@ const buttonStyles = { root: { marginRight: 8 } };
 export const PanelLight: React.FunctionComponent = () => {
     const [isOpen, { setTrue: openPanel, setFalse: dismissPanel }] = useBoolean(false);
     const textFieldId = useId('anInput');
+    /*
     const onRenderFooterContent = React.useCallback(
         () => (
           <div>
@@ -24,6 +25,7 @@ export const PanelLight: React.FunctionComponent = () => {
           </div>
         ),
         [dismissPanel],);
+        */
 
     return (
       <div>
@@ -34,10 +36,12 @@ export const PanelLight: React.FunctionComponent = () => {
             isLightDismiss
             isOpen={isOpen}
             onDismiss={dismissPanel}
-            closeButtonAriaLabel="Close"
+            //closeButtonAriaLabel="Close"
             headerText="Options"
+            /*
             onRenderFooterContent={onRenderFooterContent}
             isFooterAtBottom={true}
+            */
             customWidth='500px'
             type={PanelType.custom}
         >   
@@ -48,15 +52,11 @@ export const PanelLight: React.FunctionComponent = () => {
             <Label htmlFor={textFieldId}>y axis</Label>
             <TextField id={textFieldId} />
             <br />
-            <Stack>
-
-            </Stack>
-            
             <br />
             <br />
             <br />
             <br />
-            <DropdownBasicExample />
+            <DropdownBasic />
             <PanelColorPicker />
         </Panel>
       </div>
