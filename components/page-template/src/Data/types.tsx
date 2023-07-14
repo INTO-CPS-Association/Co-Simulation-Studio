@@ -1,5 +1,6 @@
+import { ReactNode } from "react";
 
-//defining page template - add more elements
+//-----------SINGLE PAGE COMPONENT--------------------
 export interface Page {
     id: number;
     title: string;
@@ -7,14 +8,14 @@ export interface Page {
     image: string;
   }
 
-
-//defining list of pages templates
+//-----------------LISTS OF PAGES/PROJECTS--------------------
+//list of templates
 export interface PageTemplatesProps {
     pages: Page[];
     onEdit: (page: Page) => void;
   };
 
-//definint list of user projects
+//list of projects
 export interface PageProjectsProps {
     pages: Page[];
     onDelete: (page: Page) => void;
@@ -22,14 +23,7 @@ export interface PageProjectsProps {
   };
 
 
-//defining home page
-export interface HomePageProps {
-    pages: Page[];
-    projects: Page[];
-};
-
-
-//defining functionallity of page template
+//--------------------FUNCTIONALITY COMPONENTS--------------------
 export interface PageDialogProps {
   selectedPage: Page | null;
   onDismiss: () => void;
@@ -38,16 +32,40 @@ export interface PageDialogProps {
 }
 
 
-//defining functionallity of create page button
-export interface CreatePageButtonProps {
-  onClick: () => void;
+//--------------------PAGE FORM COMPONENTS--------------------
+//defining functionallity of page creator
+export interface NewPageFormProps {
+  onCreate: (page: Page) => void;
+}
+
+//defining functionallity of page editor
+export interface EditPageFormProps {
+  onEdit: (page: Page) => void;
+}
+
+//defining functionallity of page editor
+export interface PageFormProbs {
+  onEdit?: (page: Page) => void;
+  onCreate?: (page: Page) => void;
 }
 
 
-export interface NewPageFormProps {
-  onCreate: (page: Page) => void;
-  onEdit?: (page: Page) => void;
-  page?: Page;                    //The page to edit. If undefined, we are creating a new page
+//--------------------REACT CONTEXT--------------------
+export interface PagesContextProps {
+  templates: Page[];
+  projects: Page[];
+  addTemplate: (template: Page) => void;
+  addProject: (project: Page) => void;
+  editTemplate: (updatedTemplate: Page) => void;
+  editProject: (updatedProject: Page) => void;
+  deleteProject: (id: number) => void;
+  
+}
+
+export interface PagesProviderProps {
+  children: ReactNode;
+  initialTemplates: Page[];
+  initialProjects: Page[];
 }
 
 

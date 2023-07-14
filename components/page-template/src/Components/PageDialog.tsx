@@ -12,6 +12,7 @@ const PageDialog: React.FC<PageDialogProps> = ({ selectedPage, onDismiss, onEdit
     return (
         <Dialog
           hidden={selectedPage === null}
+
           onDismiss={onDismiss}
           dialogContentProps={{
             title: selectedPage.title,
