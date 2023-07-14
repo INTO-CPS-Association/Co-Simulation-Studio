@@ -48,6 +48,7 @@ export const data1 = {
     encoding: {
       x: { field: "b", type: "quantitative" },
       y: { field: "a", type: "ordinal" },
+      color: { value: "#f5d0d0" },
     },
     mark: "bar",
   };
@@ -61,7 +62,8 @@ export const data1 = {
     mark: "point",
     encoding: {
       x: { field: "Horsepower", type: "quantitative" },
-      y: { field: "Miles_per_Gallon", type: "quantitative" }
+      y: { field: "Miles_per_Gallon", type: "quantitative" },
+      color: { value: "#f5d0d0" },
     }
     
   }
@@ -75,6 +77,7 @@ export const data1 = {
     mark: "line",
     encoding: {
       x: { field: "date", type: "temporal" },
-      y: { field: "price", type: "quantitative" }
+      y: { field: "price", type: "quantitative" },
+      color: { value: "#f5d0d0" },
     },
   };

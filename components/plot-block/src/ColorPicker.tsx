@@ -13,18 +13,24 @@ import {
   updateA,
   mergeStyleSets,
 } from '@fluentui/react';
+import Demo from './App';
 
 const white = getColorFromString('#ffffff')!;
 
-export const PanelColorPicker: React.FunctionComponent = () => {
+
+type ColorPickerProps = {
+  demoInstance: Demo;
+};
+
+export const PanelColorPicker: React.FunctionComponent<ColorPickerProps> = ({demoInstance}) => {
   const [color, setColor] = React.useState(white);
   const [showPreview, setShowPreview] = React.useState(true);
   const [alphaType, setAlphaType] = React.useState<IColorPickerProps['alphaType']>('alpha');
 
-  const updateColor = React.useCallback((ev: any, colorObj: IColor) => {
+  const updateColor = React.useCallback((ev: any, colorObj: IColor, demoInstance: Demo,) => {
     setColor(colorObj);
     const hexColor = colorObj.str; // Access the hex color here
-    changeChartColor(hexColor);
+    demoInstance.UpdateSpec(hexColor, demoInstance.state.spec)
     return hexColor}, []);
     
   const onShowPreviewClick = React.useCallback((ev: any, checked?: boolean) => setShowPreview(!!checked), []);
@@ -43,7 +49,7 @@ export const PanelColorPicker: React.FunctionComponent = () => {
     <div className={classNames.wrapper}>
       <ColorPicker
         color={color}
-        onChange={updateColor}
+        onChange={(ev, colorObj) =>updateColor(ev, colorObj, demoInstance)}
         alphaType={alphaType}
         showPreview={showPreview}
         styles={colorPickerStyles}
@@ -51,8 +57,6 @@ export const PanelColorPicker: React.FunctionComponent = () => {
         // If your app is localized, you MUST provide the `strings` prop with localized strings.
         strings={{
           // By default, the sliders will use the text field labels as their aria labels.
-          // Previously this example had more detailed instructions in the labels, but this is
-          // a bad practice and not recommended. Labels should be concise, and match visible text when possible.
           hueAriaLabel: 'Hue',
         }}
       />

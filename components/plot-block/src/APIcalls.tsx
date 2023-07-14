@@ -2,6 +2,8 @@
 
 //ts plot component that handles general customizations which is then passed
 
+import Demo from "./App";
+
 
 //update mark & encoding
 //setmark function
@@ -45,7 +47,7 @@ export function jsonToSpec(path: string, spec: any) {
 
 
 //colorpicker function
-export function changeChartColor(hexColor: String)
+export function changeChartColor(hexColor: String, demoInstance: Demo)
 {
     console.log('Hex color:', hexColor);
 }

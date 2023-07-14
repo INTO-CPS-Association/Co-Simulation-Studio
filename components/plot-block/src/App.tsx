@@ -72,7 +72,7 @@ export default class Demo extends React.PureComponent<{}, State> {
     }
   }
 
-  public UpdateSpec(NewSpec: string) {
+  public UpdateSpec(NewSpec: any, spec?: any) {
 
     if (NewSpec === 'bar') {
       this.setState({ spec: hc.spec1});
@@ -80,9 +80,9 @@ export default class Demo extends React.PureComponent<{}, State> {
       this.setState({ spec: hc.spec3 });
     } else if (NewSpec === 'line') {
       this.setState({ spec: hc.spec4 });
-    } else {
-      this.setState({ spec: hc.spec1 });
-      console.log(this.state)
+    }
+    if (NewSpec[0] === '#') {
+      spec.encoding.color.value = NewSpec
     }
     
   }
@@ -141,7 +141,7 @@ export default class Demo extends React.PureComponent<{}, State> {
               Toggle Orientation
             </DefaultButton>
           </Stack>
-          <PanelColorPicker />
+          <PanelColorPicker demoInstance={this}/>
           </PivotItem>
           <PivotItem headerText="Source">
             <TextField
