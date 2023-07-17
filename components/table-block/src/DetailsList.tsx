@@ -224,7 +224,7 @@ export class DetailsListBasicExample extends React.Component<any, any, IDetailsL
         if(sortOrder === "DESC")
           items = this._table.displayRows(collums[i], "DESC");
         else
-          items = this._table.displayRows(collums[i], "ASC");
+           items = this._table.displayRows(collums[i], "ASC");
 
       
     }
