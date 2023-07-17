@@ -268,11 +268,14 @@ export class DetailsListBasicExample extends React.Component<any, any, IDetailsL
     return -1
   }
 
-  private _onFilter = (ev: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue: string | undefined): void => {
-    let _table = this.state.table;
-
+  //searchfilter funcition 
+  private _onFilter = (ev: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, TextInput: string | undefined): void => {
+    //gets items the the original table
+    let items: IDetailsListBasicExampleItem[];
+    items = this._table.data
+    //update the table in regards to Textput
     this.setState({
-      
+      items: TextInput ? items.filter(i => i.Name.toLowerCase().indexOf(TextInput) > -1) :items,
     });
   };
   
@@ -287,15 +290,19 @@ export class DetailsListBasicExample extends React.Component<any, any, IDetailsL
     const _deleteRow = () => {
       this._RemoveRow();
     }
+    //make the textfield shorter 
+    const textFieldStyles: Partial<ITextFieldStyles> = { root: { maxWidth: '300px' } };
     //function to sortColumn. sorts accending on default 
     const _onColumnClick = (event: React.MouseEvent<HTMLElement> |  undefined, column: IColumn | undefined): void => {
       if (column != undefined){
       this._sortcolumn(column, "ASC")
       }
     }
+    //proberties of searchfield 
     const searchfield = (<TextField
-      label='filter'
+      label='Search field'
       onChange={this._onFilter}
+      styles={textFieldStyles}
     />)
     //probities of table
     const _detailslist = (<DetailsList
