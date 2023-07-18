@@ -3,7 +3,6 @@ import React, { useState } from 'react';
 import { PageFormProbs, Page } from '../Data/types'; // Replace with the path to your actual types file
 import { useLocation, useNavigate } from 'react-router-dom';
 import { TextField, PrimaryButton, DefaultButton, Stack, Image, Text} from '@fluentui/react';
-import { nanoid } from 'nanoid';
 
 //-------------------- PAGE FORM COMPONENT--------------------
 const PageForm: React.FC<PageFormProbs> = ({ onEdit, onCreate }) => {
@@ -18,7 +17,7 @@ const PageForm: React.FC<PageFormProbs> = ({ onEdit, onCreate }) => {
     const [title, setTitle] = useState(selectedPage?.title || '');
     const [description, setDescription] = useState(selectedPage?.description || '');
     const [image, setImage] = useState(selectedPage?.image || '');
-
+    const [category, setCategory] = useState(selectedPage?.category || '');
 
     //--------------------FUNCTIONALITY--------------------
     //edit existing page or template
@@ -30,7 +29,7 @@ const PageForm: React.FC<PageFormProbs> = ({ onEdit, onCreate }) => {
             onEdit({ ...selectedPage, title, description, image });
         } else if (onCreate) {
             // Otherwise, we're creating a new page
-            onCreate({ id: Number(nanoid), title, description, image }); // assuming nanoid is your ID generator function
+            onCreate({ id: 3, title, description, image, category }); // assuming nanoid is your ID generator function
         }
     }; 
 

@@ -1,5 +1,5 @@
 
-import React, { createContext, useState, useContext, /*useCallback*/ } from 'react';
+import React, { createContext, useState, useContext } from 'react';
 import { PagesContextProps, PagesProviderProps, Page } from '../Data/types';
 
 //define context to manage pages state
@@ -11,10 +11,6 @@ export const PagesProvider: React.FC<PagesProviderProps> = ({ children, initialT
     const [templates, setTemplates] = useState<Page[]>(initialTemplates);
     const [projects, setProjects] = useState<Page[]>(initialProjects);
     
-    //receive last ID from templates and projects
-    //const [lastId, setLastId] = useState(Math.max(...initialTemplates.map(t => t.id), ...initialProjects.map(p => p.id)));
-
-
     //--------------------FUNCTIONALITY--------------------
     const addTemplate = (template: Page) => {
         const lastId = Math.max(...templates.map(t => t.id), ...projects.map(p => p.id));         //get last ID from templates and projects

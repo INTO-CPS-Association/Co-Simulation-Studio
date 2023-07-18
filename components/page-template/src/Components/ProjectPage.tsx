@@ -1,10 +1,10 @@
 
 import React from "react";
 import { Page } from "../Data/types";
-import UserProjectsGallery from "./UserProjectsGallery";
-import PageForm from "./PageForm";
 import { Routes, Route, useNavigate } from 'react-router-dom';
 import { usePages } from "./PageProvider";
+import UserProjectsGallery from "./UserProjectsGallery";
+import PageForm from "./PageForm";
 
 //--------------------PROJECT COMPONENT--------------------
 const ProjectPage: React.FC = () => {

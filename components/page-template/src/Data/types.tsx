@@ -6,6 +6,7 @@ export interface Page {
     title: string;
     description: string;
     image: string;
+    category: string;
   }
 
 //-----------------LISTS OF PAGES/PROJECTS--------------------

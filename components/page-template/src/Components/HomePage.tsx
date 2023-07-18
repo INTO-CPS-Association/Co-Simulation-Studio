@@ -1,11 +1,12 @@
 
 import React from "react";
 import { Page } from "../Data/types";
-import PageTemplatesGallery from "./PageTemplatesGallery";
-import { useNavigate } from 'react-router-dom';
+import { Routes, Route, useNavigate } from 'react-router-dom';
 import { usePages } from "./PageProvider";
-import { Routes, Route } from 'react-router-dom';
+
 import PageForm from "./PageForm";
+import PageTemplatesGallery from "./PageTemplatesGallery";
+
 
 
 //--------------------HOME COMPONENT--------------------
@@ -60,3 +61,4 @@ const HomePage: React.FC = () => {
 };
 
 export default HomePage;
+

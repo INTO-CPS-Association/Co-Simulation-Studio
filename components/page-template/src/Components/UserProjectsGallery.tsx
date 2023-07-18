@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { PageProjectsProps, Page } from "../Data/types";
-import PageDialog from "./PageDialog";
-
 import { ChoiceGroup, IChoiceGroupOption } from "@fluentui/react";
-
+import PageDialog from "./PageDialog";
 
 //--------------------PageTemplateGallery Component--------------------
 const UserProjectsGallery: React.FC<PageProjectsProps & { onEdit: (page: Page) => void; onDelete: (page: Page) => void; }> = ({ pages, onEdit, onDelete }) => {
