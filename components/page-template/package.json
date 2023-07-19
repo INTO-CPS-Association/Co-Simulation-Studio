@@ -3,7 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@fluentui/react": "^8.110.7",
+    "@fluentui/react": "^8.110.8",
+    "@mui/material": "^5.14.0",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^12.1.5",
     "@testing-library/user-event": "^13.5.0",

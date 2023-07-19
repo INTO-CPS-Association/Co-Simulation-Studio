@@ -1,19 +1,28 @@
 import React, { useState, useEffect } from "react";
 import { PageTemplatesProps, Page } from "../Data/types";
-//import PageDialog from "./PageDialog";
-
-import { ChoiceGroup, DefaultButton, IChoiceGroupOption } from "@fluentui/react";
-
+import { ChoiceGroup, DefaultButton, IChoiceGroupOption, PrimaryButton, Dropdown, IDropdownOption, Modal, IModalProps } from "@fluentui/react";
 
 //--------------------PAGE TEMPLATES GALLERY COMPONENT--------------------
 const PageTemplatesGallery: React.FC<PageTemplatesProps & { onEdit: (page: Page) => void }> = ({ pages, onEdit }) => {
     //state variables
     const [selectedPage, setSelectedPage] = useState<Page | null>(null);
     const [options, setOptions] = useState<IChoiceGroupOption[]>([]);
-    
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedCategory, setSelectedCategory] = useState<string | undefined>(undefined);
+    const [categoryOptions, setCategoryOptions] = useState<IDropdownOption[]>([]);
+
+
     //setting the data for the choice group i.e. the list of pages
     useEffect(() => {
-        const newOptions: IChoiceGroupOption[] = pages.map((page) => ({
+        
+        // If a category is selected, filter the pages to include only those in the selected category
+        const filteredPages = selectedCategory && selectedCategory !== 'None' 
+        ? pages.filter(page => page.category === selectedCategory) 
+        : pages;
+    
+
+        // Create the options for the choice group
+        const newOptions: IChoiceGroupOption[] = filteredPages.map((page) => ({
             key: page.id.toString(),
             text: page.title,
             imageSrc: page.image,
@@ -21,20 +30,41 @@ const PageTemplatesGallery: React.FC<PageTemplatesProps & { onEdit: (page: Page)
         }));
 
         setOptions(newOptions);
-    }, [pages]);
+        
+        // Collect unique categories and set them to categoryOptions
+        const categories = ['None', ...Array.from(new Set(pages.map(page => page.category)))];
+        setCategoryOptions(categories.map(category => ({ key: category, text: category })));
+      
+    }, [pages, selectedCategory]);
 
     //--------------------FUNCTIONALITY--------------------    
     const onEditPage = (page: Page) => {
         if(selectedPage) {
             console.log("Editing template: ", selectedPage?.id);
             onEdit(page);
+            setIsModalOpen(false); // close the modal after editing
         }
+    };
+
+    //modal functionality
+    const modalProps: IModalProps = {
+        isBlocking: true,
+        styles: { main: { maxWidth: 600 } },
     };
 
 
     //--------------------RENDERING--------------------
     return (
-        <div>
+        <div style={{ padding: '20px', textAlign: "left", display: 'flex', flexDirection: 'column' }}>
+            {/* dropdown of categories */}
+            <Dropdown
+                label="Category:"
+                options={categoryOptions}
+                styles={{ dropdown: { width: 200 } }} // Adjust width here
+                onChange={(event, option) => setSelectedCategory(option?.key.toString())}
+                />
+            
+            {/* choice group of templates */}
             <ChoiceGroup
                 options={options}
                 required={true}
@@ -44,12 +74,26 @@ const PageTemplatesGallery: React.FC<PageTemplatesProps & { onEdit: (page: Page)
     
                 if (selectedPage) {
                         setSelectedPage(selectedPage);       //ensures no null values
+                        setIsModalOpen(true);                // show the modal when a template is selected
+
                     }
                 }}
             />
-
-            {/* Creates a edit button, when a user clicks on template (probably change later to more user-friendly component) */}
-            {selectedPage && <DefaultButton onClick={() => onEditPage(selectedPage)}>Edit Template</DefaultButton>}
+            {/* modal when user clicks on template */}
+            <Modal
+                titleAriaId="edit-template-title"
+                isOpen={isModalOpen}
+                onDismiss={() => setIsModalOpen(false)}
+                isModeless={false}
+                {...modalProps}
+            >
+                <div style={{ padding: '20px' }}>
+                    <h2 id="edit-template-title">Edit Template</h2>
+                    <p>Are you sure you want to edit this template?</p>
+                    <PrimaryButton onClick={() => onEditPage(selectedPage!)} style={{ marginRight: '8px' }}>Yes</PrimaryButton>
+                    <DefaultButton onClick={() => setIsModalOpen(false)}>No</DefaultButton>
+                </div>
+            </Modal>
         </div>
     );
 };

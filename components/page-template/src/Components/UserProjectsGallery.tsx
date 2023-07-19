@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { PageProjectsProps, Page } from "../Data/types";
-import PageDialog from "./PageDialog";
-
 import { ChoiceGroup, IChoiceGroupOption } from "@fluentui/react";
-
+import PageDialog from "./PageDialog";
 
 //--------------------PageTemplateGallery Component--------------------
 const UserProjectsGallery: React.FC<PageProjectsProps & { onEdit: (page: Page) => void; onDelete: (page: Page) => void; }> = ({ pages, onEdit, onDelete }) => {
@@ -57,7 +55,7 @@ const UserProjectsGallery: React.FC<PageProjectsProps & { onEdit: (page: Page) =
                 }}
             />
 
-            {/* Insert PageDialog component and send functions as probs */}
+            {/* Insert PageDialog component and send functions as probs       NB: Consider changing PageDialog to Modal - like in PageGalleryTemplate)*/}
             <PageDialog
                 selectedPage={selectedPage}
                 onDismiss={onDismiss}
