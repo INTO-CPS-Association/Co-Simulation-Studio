@@ -142,7 +142,13 @@ const CommandBar_: React.FunctionComponent<CommandbarProps> = ({_deleteRow , fil
         text: 'Sort on muliple collums',
         iconProps: { iconName: 'Filter'},
         onClick: () => openPanel()
-    }
+    },
+    {
+        key: 'Saverow',
+        text: 'Save row for template',
+        iconProps: { iconName: 'Save'},
+        
+    }  
   ];
 // -------------------------THE SORT TABLE ------------------------------------
 
@@ -375,6 +381,7 @@ export class DetailsListBasicExample extends React.Component<any, any, IDetailsL
     
     if(this._selection.getSelection()[0] as IDetailsListBasicExampleItem !== undefined)
     {
+      console.log(this._selection.getSelection()[0] as IDetailsListBasicExampleItem)
       return ((this._selection.getSelection()[0] as IDetailsListBasicExampleItem).Id)
     }
     return -1
