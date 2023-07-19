@@ -138,7 +138,6 @@ const test8 = await graph.find({ subject: '?', predicate: 'time', object: '?' })
 console.log("Test8", test8)
 */
 
-import { IColumn } from "@fluentui/react";
 
 //data sturtue for the example.json
 interface TableRow {
@@ -210,6 +209,7 @@ export class GitWorkDataBlock {
 
   //update row in the table
   displayRows(sortColumn: keyof TableRow, sortOrder: SortOrder = "ASC", filter: FilterCriteria | null = null): TableRow[] {
+    
     let result = [...this.data];
     //filter the data
     if (filter) {
