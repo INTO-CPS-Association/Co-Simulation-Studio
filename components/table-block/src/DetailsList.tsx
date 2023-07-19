@@ -147,7 +147,7 @@ const CommandBar_: React.FunctionComponent<CommandbarProps> = ({_deleteRow , fil
         key: 'Saverow',
         text: 'Save row for template',
         iconProps: { iconName: 'Save'},
-        
+
     }  
   ];
 // -------------------------THE SORT TABLE ------------------------------------
@@ -375,6 +375,10 @@ export class DetailsListBasicExample extends React.Component<any, any, IDetailsL
         column: column.slice(0, index).concat(column.slice(index+1)) 
       });
     }
+  }
+  // saves row for template 
+  private _saverowfortemplate() {
+    
   }
   //gets the row that is clicked 
   private _getSelectionDetails(): number {
