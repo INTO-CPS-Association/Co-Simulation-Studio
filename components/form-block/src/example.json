@@ -1,129 +1,91 @@
 [
     {
-        "id": "0001",
-        "type": "donut",
-        "name": "Cake",
-        "ppu": 0.55,
-        "batters": {
-            "batter": [
-                {
-                    "id": "1001",
-                    "type": "Regular"
-                },
-                {
-                    "id": "1002",
-                    "type": "Chocolate"
-                },
-                {
-                    "id": "1003",
-                    "type": "Blueberry"
-                },
-                {
-                    "id": "1004",
-                    "type": "Devil's Food"
-                }
-            ]
-        },
-        "topping": [
+        "name": "Alarm",
+        "properties": [
             {
-                "id": "5001",
-                "type": "None"
+                "name": "ID",
+                "type": "string",
+                "value": "1"
             },
             {
-                "id": "5002",
-                "type": "Glazed"
+                "name": "Volume db",
+                "type": "number",
+                "value": 5.0
             },
             {
-                "id": "5005",
-                "type": "Sugar"
+                "name": "Expert",
+                "type": "string",
+                "value": "John"
             },
             {
-                "id": "5007",
-                "type": "Powdered Sugar"
-            },
-            {
-                "id": "5006",
-                "type": "Chocolate with Sprinkles"
-            },
-            {
-                "id": "5003",
-                "type": "Chocolate"
-            },
-            {
-                "id": "5004",
-                "type": "Maple"
+                "name": "Activated",
+                "type": "bool",
+                "value": true
             }
         ]
     },
     {
-        "id": "0002",
-        "type": "donut",
-        "name": "Raised",
-        "ppu": 0.55,
-        "batters": {
-            "batter": [
-                {
-                    "id": "1001",
-                    "type": "Regular"
-                }
-            ]
-        },
-        "topping": [
+        "name": "Experiment-3D",
+        "properties": [
             {
-                "id": "5001",
-                "type": "None"
+                "name": "ID",
+                "type": "string",
+                "value": "1"
             },
             {
-                "id": "5002",
-                "type": "Glazed"
+                "name": "Time step",
+                "type": "number",
+                "value": 0.1
             },
             {
-                "id": "5005",
-                "type": "Sugar"
+                "name": "Simulation time",
+                "type": "number",
+                "value": 10.0
             },
             {
-                "id": "5003",
-                "type": "Chocolate"
+                "name": "Algorithm",
+                "type": "algorithm",
+                "value": "Fixed Step"
             },
             {
-                "id": "5004",
-                "type": "Maple"
+                "name": "Date",
+                "type": "date",
+                "value": "07/23/2023"
+            },
+            {
+                "name": "Include breakfast?",
+                "type": "bool",
+                "value": false
             }
         ]
     },
     {
-        "id": "0003",
-        "type": "donut",
-        "name": "Old Fashioned",
-        "ppu": 0.55,
-        "batters": {
-            "batter": [
-                {
-                    "id": "1001",
-                    "type": "Regular"
-                },
-                {
-                    "id": "1002",
-                    "type": "Chocolate"
-                }
-            ]
-        },
-        "topping": [
+        "name": "Example 3",
+        "properties": [
             {
-                "id": "5001",
-                "type": "None"
+                "name": "ID",
+                "type": "string",
+                "value": "3"
             },
             {
-                "id": "5002",
-                "type": "Glazed"
+                "name": "Algorithm",
+                "type": "algorithm",
+                "value": "Fixed Step"
             },
             {
-                "id": "5003",
-                "type": "Chocolate"
+                "name": "Start time",
+                "type": "float",
+                "value": 0
             },
             {
-                "id": "5004",
-                "type": "Maple"
+                "name": "Step size",
+                "type": "float",
+                "value": 0.01
+            },
+            {
+                "name": "Stop time",
+                "type": "float",
+                "value": 40
             }
         ]
     }
