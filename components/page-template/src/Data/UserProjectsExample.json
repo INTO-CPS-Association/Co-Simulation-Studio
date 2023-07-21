@@ -1,0 +1,17 @@
+
+[
+    {
+        "id": 8,
+        "title": "Line Follower Robot",
+        "image": "https://vega.github.io/vega-lite/examples/bar_size_responsive.svg",
+        "description": "Line Follower Robot is a basic robot that follows a specific path indicated by a line having some particular width. It follows the path by detecting the line and controlling its motion accordingly.",
+        "category": "Ground Robots"
+    },
+    {
+        "id": 9,
+        "title": "F1Tenth Autonomous Car",
+        "image": "https://vega.github.io/vega-lite/examples/bar_size_responsive.svg",
+        "description": "The F1Tenth Autonomous Car is an open-source, scaled-down autonomous vehicle designed to help people learn about high-performance computing and artificial intelligence.",
+        "category": "Ground Robots"
+    }
+]

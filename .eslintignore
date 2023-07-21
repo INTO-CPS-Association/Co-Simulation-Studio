@@ -1,0 +1,7 @@
+node_modules/**
+extension/node_modules/**
+extension/dist/**
+language-server/node_modules/**
+language-server/dist/**
+webviews/**
+./webpack.config.js

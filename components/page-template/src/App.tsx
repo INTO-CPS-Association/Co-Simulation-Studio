@@ -1,44 +1,103 @@
 import React from 'react';
-import { Stack, Text, Link, FontWeights, IStackTokens, IStackStyles, ITextStyles } from '@fluentui/react';
-import logo from './logo.svg';
-import './App.css';
+import startTemplates from './Data/InitialPages.json';                    // Import initial pages
+import startProjects from './Data/UserProjectsExample.json';              // Import initial projects
+import HomePage from './Components/HomePage';                             // Import HomePage component
+import ProjectPage from './Components/ProjectPage';
+import '@fluentui/react/dist/css/fabric.css';                             // Import Fluent UI styles
+import { BrowserRouter as Router,  Routes, Route, Navigate } from 'react-router-dom';
+import { Pivot, PivotItem, mergeStyles  } from '@fluentui/react';
+import { PagesProvider } from './Components/PageProvider';
+ 
 
-const boldStyle: Partial<ITextStyles> = { root: { fontWeight: FontWeights.semibold } };
-const stackTokens: IStackTokens = { childrenGap: 15 };
-const stackStyles: Partial<IStackStyles> = {
-  root: {
-    width: '960px',
-    margin: '0 auto',
-    textAlign: 'center',
-    color: '#605e5c',
-  },
-};
+/*------------------------APP COMPONENT-------------------------*/
+export const App: React.FC = () => {
 
-export const App: React.FunctionComponent = () => {
+  // Define your custom styles here
+  const pivotStyles = mergeStyles({
+    textAlign: 'right',
+
+  });
+
+  //--------------------RENDERING--------------------
   return (
-    <Stack horizontalAlign="center" verticalAlign="center" verticalFill styles={stackStyles} tokens={stackTokens}>
-      <img className="App-logo" src={logo} alt="logo" />
-      <Text variant="xxLarge" styles={boldStyle}>
-        Welcome to your Fluent UI app
-      </Text>
-      <Text variant="large">For a guide on how to customize this project, check out the Fluent UI documentation.</Text>
-      <Text variant="large" styles={boldStyle}>
-        Essential links
-      </Text>
-      <Stack horizontal tokens={stackTokens} horizontalAlign="center">
-        <Link href="https://developer.microsoft.com/en-us/fluentui#/get-started/web">Docs</Link>
-        <Link href="https://stackoverflow.com/questions/tagged/office-ui-fabric">Stack Overflow</Link>
-        <Link href="https://github.com/microsoft/fluentui/">Github</Link>
-        <Link href="https://twitter.com/fluentui">Twitter</Link>
-      </Stack>
-      <Text variant="large" styles={boldStyle}>
-        Design system
-      </Text>
-      <Stack horizontal tokens={stackTokens} horizontalAlign="center">
-        <Link href="https://developer.microsoft.com/en-us/fluentui#/styles/web/icons">Icons</Link>
-        <Link href="https://developer.microsoft.com/en-us/fluentui#/styles/web">Styles</Link>
-        <Link href="https://aka.ms/themedesigner">Theme designer</Link>
-      </Stack>
-    </Stack>
+    <Router>
+      <PagesProvider initialTemplates={startTemplates} initialProjects={startProjects}>
+      <Routes>
+            <Route path="/" element={<Navigate to="/home" replace />} />
+
+            <Route path="/home/*" element={
+              <div className={pivotStyles}>
+
+              <Pivot>
+                <PivotItem headerText="Home">
+                  <HomePage />
+                </PivotItem>
+
+                <PivotItem headerText="Projects">
+                  <Navigate to="/projects" replace />
+                </PivotItem>
+
+                <PivotItem headerText="Settings">
+                  {/*add route path for settings*/} 
+                </PivotItem>
+              </Pivot>
+              </div>
+            } />
+
+            <Route path="/projects/*" element={
+              <div className={pivotStyles}>
+
+              <Pivot>
+                <PivotItem headerText="Home">
+                  <Navigate to="/home" replace />
+                </PivotItem>
+
+                <PivotItem headerText="Projects">
+                  <ProjectPage />
+                </PivotItem>
+
+                <PivotItem headerText="Settings">
+                  {/*add route path for settings*/} 
+                </PivotItem>
+              </Pivot>
+              </div>
+           } />
+          </Routes>
+      </PagesProvider>
+    </Router>
   );
 };
+
+
+/* IMPLEMENT THE CODE BELOW AS IT IS MORE CLEAN THAN THE CODE ABOVE
+  return (
+    <Router>
+      <PagesProvider initialTemplates={startTemplates} initialProjects={startProjects}>
+        <div className={pivotStyles}>
+          <Pivot>
+            <PivotItem headerText="Home">
+              <Navigate to="/home" replace />
+            </PivotItem>
+
+            <PivotItem headerText="Projects">
+              <Navigate to="/projects" replace />
+            </PivotItem>
+
+            <PivotItem headerText="Settings">
+              {/*add route path for settings*} 
+              </PivotItem>
+              </Pivot>
+    
+              <Routes>
+                <Route path="/" element={<Navigate to="/home" replace />} />
+                <Route path="/home/*" element={<HomePage />} />
+                <Route path="/projects/*" element={<ProjectPage />} />
+                {/* Add a route for settings when ready *}
+              </Routes>
+            </div>
+          </PagesProvider>
+        </Router>
+      );
+    };
+
+*/
