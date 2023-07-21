@@ -138,6 +138,7 @@ const test8 = await graph.find({ subject: '?', predicate: 'time', object: '?' })
 console.log("Test8", test8)
 */
 
+
 //data sturtue for the example.json
 interface TableRow {
   Id: number
@@ -200,12 +201,15 @@ export class GitWorkDataBlock {
 
   //delete row from the table
   deleteRow(Id: number): void {
+    
+    console.log(Id)
     this.data = this.data.filter(row => row.Id !== Id);
     this.emit('update', this.data);
   }
 
   //update row in the table
   displayRows(sortColumn: keyof TableRow, sortOrder: SortOrder = "ASC", filter: FilterCriteria | null = null): TableRow[] {
+    
     let result = [...this.data];
     //filter the data
     if (filter) {
@@ -238,7 +242,7 @@ export class GitWorkDataBlock {
     return keys as (keyof TableRow)[];
   }
 }
-
+/*
 //test cases
 // create a new table
 let table = new GitWorkDataBlock();
@@ -260,3 +264,4 @@ console.log("Ask for table data ASC after delet of id 0001:", table.displayRows(
 console.log("Ask for table data filter for id 0003:", table.displayRows("Id", "ASC", {column: "Id", value: "0003"}))
 console.log("Ask for table data filter for name Old Fashioned:", table.displayRows("Id", "ASC", {column: "Name", value: "Old Fashioned"}))
 
+*/

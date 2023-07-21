@@ -10,17 +10,10 @@ import { IStyleSet, Label, ILabelStyles, Pivot, PivotItem } from '@fluentui/reac
 import { CommandBar, ICommandBarItemProps } from '@fluentui/react/lib/CommandBar';
 import { TextField, ITextFieldStyles } from '@fluentui/react/lib/TextField';
 import { Stack } from '@fluentui/react/lib/Stack';
-
-
-//pivt + commandbart with add and remove. 
-//click add opens dialog. fist row is a drop down with type. second URL (list files in current workspace), third add precix(text?)
-/* 
-one column with prefix, one column with import type (extends/uses), one column with URL, 
-*/
-
+//initialize icons needs happen to be able to activate them
 initializeIcons();
 
-
+//component to create the commandbart in OML settings
 export const CommandBar_: React.FunctionComponent = () => {
   const stackTokens = { childrenGap: 15 };
   const ComboBox_type: React.FunctionComponent = () => {
@@ -139,35 +132,36 @@ export const CommandBar_: React.FunctionComponent = () => {
   )
   }
 
-
+//allows detailslist as input
 type PivitPros = {
   _detaillist: any //should be type details list 
 };
 
+//creates pivit for the settings page 
 export const Pivot_: React.FunctionComponent<PivitPros> = ({_detaillist}) => {
 
+  // set the collums of the OML table - need to update it to get data from API
   let _columns: IColumn[] = [
     { key: 'Oml_descripter', name: 'Descripter', fieldName: 'Descripter', minWidth: 100, maxWidth: 200, isResizable: true },
     { key: 'Importtype', name: 'Import type', fieldName: 'Import type', minWidth: 100, maxWidth: 200, isResizable: true },
     { key: 'Url', name: 'URL', fieldName: 'URL', minWidth: 100, maxWidth: 200, isResizable: true },
     { key: 'Prefix', name: 'Prefix', fieldName: 'Prefix', minWidth: 100, maxWidth: 200, isResizable: true },
   ]
-const API_RequestData_Viewlist = (path: any) => {
+  //get the data from api to fill oml
+  const API_RequestData_Viewlist = (path: any) => {
     const items = require("./oml_descriptors");
     return items
   };
-  const GetItemsLength = (items:any) => {
-    return items.length;
-  }
-
-  //still need to implement functionallity to display URL import type
+ 
   const items = API_RequestData_Viewlist("./oml_descriptors");
-  console.log(items);
+
+  //set content of table
   const _detailslist_OML = (<DetailsList
     items={items}
     columns={_columns}
   /> )
 
+  //display pivit, commandbar and table
   return (
     <div>
     <Pivot>
@@ -183,13 +177,17 @@ const API_RequestData_Viewlist = (path: any) => {
   );
 };
 
+//inputs to panel
 type PanelProps = {
   handleClick: (index: number) => void
   columns: any
 };
-//colums and handleClick is passed as probs to the PanelLight component.
+
+//settings panel component
 export const PanelLight: React.FunctionComponent<PanelProps> = ( {handleClick, columns}) => {
     const [isOpen, { setTrue: openPanel, setFalse: dismissPanel }] = useBoolean(false);
+
+    //Set table collums
     let _columns: IColumn[] = [
       { key: 'ColumnHeader', name: 'ColumnHeader', fieldName: 'ColumnHeader', minWidth: 100, maxWidth: 200, isResizable: true },
       { key: 'Remove', name: 'Remove', fieldName: 'Remove', minWidth: 100, maxWidth: 200, isResizable: true, 
@@ -208,6 +206,7 @@ export const PanelLight: React.FunctionComponent<PanelProps> = ( {handleClick, c
       },
     ]; //item is the buttom that is pressed
 
+    //functions for the api to use
     const GetColunmsHeader = (item: any) => {
       return item.ColumnHeader
     }
@@ -228,11 +227,13 @@ export const PanelLight: React.FunctionComponent<PanelProps> = ( {handleClick, c
     
     const items = require("./Headers.json")
     
+    //set content of table 
     const _detailslist = (<DetailsList
         items={items}
         columns={_columns}
       /> )
-      
+    
+    //the back button of the panel
     const onRenderFooterContent = React.useCallback(
         () => (
           <div>
@@ -240,6 +241,8 @@ export const PanelLight: React.FunctionComponent<PanelProps> = ( {handleClick, c
           </div>
         ),
         [dismissPanel],);
+
+    //displayed content of panel
     return (
       <div>
         <IconButton text="Settings" onClick={openPanel} 
