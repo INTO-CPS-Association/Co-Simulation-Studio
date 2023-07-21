@@ -107,7 +107,7 @@
 	},
 	"scripts": {
 		"vscode:prepublish": "npm run compile",
-		"compile": "cd components/block-api && npm run build && cd ../block-template && npm run build && cd ../form-block && npm run build && cd ../page-template && npm run build && cd ../plot-block && npm run build && cd ../table-block && npm run build && cd ../../grammars/tree-sitter-oml && npm run build && cd ../../webviews && npm run build && cd .. && webpack",
+		"compile": "cd components/block-api && npm run build && cd ../block-template && npm run build && cd ../form-block && npm run build && cd ../page-template && npm run build && cd ../plot-block && npm run build && cd ../table-block && npm run build && cd ../../webviews && npm run build && cd .. && webpack",
 		"watch": "webpack --watch",
 		"package": "webpack --mode production --devtool hidden-source-map",
 		"lint": "eslint ./extension/src ./language-server/src --ext .ts,.tsx",
