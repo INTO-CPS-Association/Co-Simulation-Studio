@@ -1,4 +1,5 @@
 {
+  "cmake.configureOnOpen": false
 	"editor.insertSpaces": false,
 	"typescript.tsc.autoDetect": "off",
 	"typescript.preferences.quoteStyle": "single",
