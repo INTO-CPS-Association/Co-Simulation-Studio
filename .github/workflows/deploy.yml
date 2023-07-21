@@ -28,9 +28,9 @@ jobs:
       with:
         node-version: 16
 
-    - run: npm install && npm ci && npm run package
+    - run: npm ci && npm run package
     - run: npm install -g @vscode/vsce
-    - run: vsce package
+    - run: CI=false vsce package
     - name: Archive VSCode VSIX
       uses: actions/upload-artifact@v3
       with:
