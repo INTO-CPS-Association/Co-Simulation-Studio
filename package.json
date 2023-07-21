@@ -107,11 +107,11 @@
 	},
 	"scripts": {
 		"vscode:prepublish": "npm run compile",
-		"compile": "webpack",
+		"compile": "cd components/block-api && npm run build && cd ../block-template && npm run build && cd ../form-block && npm run build && cd ../page-template && npm run build && cd ../plot-block && npm run build && cd ../table-block && npm run build && cd ../../webviews && npm run build && cd .. && webpack",
 		"watch": "webpack --watch",
 		"package": "webpack --mode production --devtool hidden-source-map",
 		"lint": "eslint ./extension/src ./language-server/src --ext .ts,.tsx",
-		"postinstall": "cd grammars/tree-sitter-oml && npm install && cd ../../extension && npm install && cd ../language-server && npm install && cd ..",
+		"postinstall": "cd components/block-api && npm install && cd ../block-template && npm install && cd ../form-block && npm install && cd ../page-template && npm install && cd ../plot-block && npm install && cd ../table-block && npm install && cd ../../extension && npm install && cd ../language-server && npm install && cd ../webviews && npm install && cd ..",
 		"chrome": "vscode-test-web --host=0.0.0.0 --quality=insiders --extensionDevelopmentPath=. --extensionId=vscode-icons-team.vscode-icons"
 	},
 	"devDependencies": {

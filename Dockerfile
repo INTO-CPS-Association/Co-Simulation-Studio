@@ -8,9 +8,8 @@ WORKDIR /usr/src/app/vscode-test-web
 
 RUN export NODE_ENV=development
 
-RUN yarn --frozen-lockfile
-RUN yarn --cwd=fs-provider --frozen-lockfile 
-RUN yarn run compile
+RUN npm ci
+RUN npm run compile
 
 EXPOSE 3000
 
