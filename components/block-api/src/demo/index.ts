@@ -336,9 +336,3 @@ console.log("Ask for table data ASC after delet of id 0001:", table.displayRows(
 console.log("Ask for table data filter for id 0003:", table.displayRows("Id", "ASC", {column: "Id", value: "0003"}))
 console.log("Ask for table data filter for name Old Fashioned:", table.displayRows("Id", "ASC", {column: "Name", value: "Old Fashioned"}))
 */
-
-
-
-
-
-
