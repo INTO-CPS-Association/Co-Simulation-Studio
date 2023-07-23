@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { BlockProps } from '../Data/interface';
 import AceEditor from 'react-ace';
-
+import "../Styling/CodeSnippetBlock.css"
 import 'ace-builds/src-noconflict/mode-javascript';
 import 'ace-builds/src-noconflict/theme-monokai';
 import 'ace-builds/src-noconflict/worker-javascript'; // this line is important

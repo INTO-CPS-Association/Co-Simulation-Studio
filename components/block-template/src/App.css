@@ -60,10 +60,11 @@
   margin-bottom: 30px;
 }
 
-.blocks-container {
+.blocks-container > div {
   margin-top: 20px;
-  border-top: 1px solid #ccc;
   padding-top: 20px;
+  margin-bottom: 50px;
+
 }
 
 select, button {

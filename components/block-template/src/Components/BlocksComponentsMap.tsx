@@ -2,6 +2,7 @@ import React from 'react';
 import { BlockProps } from "../Data/interface"
 import CodeSnippetBlock from '../Blocks/CodeSnippetBlock';
 import AudioBlock from '../Blocks/AudioBlock';
+import TextBlock from '../Blocks/TextBlock';
 import ImageBlock from '../Blocks/ImageBlock';
 
 //------------------ SERVICE TO HANDLE BLOCK TEMPLATES ------------------//
@@ -14,6 +15,7 @@ class BlockService {
             'Image': ImageBlock,
             'Audio': AudioBlock,
             'Code': CodeSnippetBlock,
+			'Text': TextBlock
         };
     }
 
@@ -39,6 +41,7 @@ const blockService = new BlockService();
 blockService.registerBlock('Code', CodeSnippetBlock);
 blockService.registerBlock('Audio', AudioBlock);
 blockService.registerBlock('Image', ImageBlock);
+blockService.registerBlock('Text', TextBlock);
 
 
 export default blockService;

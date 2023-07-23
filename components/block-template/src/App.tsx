@@ -29,10 +29,12 @@ export const App: React.FC = () => {
       <BlockDropdownMenu onBlockAdd={handleBlockAdd} blockTypes={blockService.getBlockTypes()} />
 
       <div className="blocks-container">
-        {projectData.map((block, index) => (
-          <Block key={index} {...block} />
-        ))}
-      </div>
+        {projectData.map((block) => (
+      <Block key={block.id} {...block} />
+    ))}
+</div>
     </div>
   );
 };
+
+
