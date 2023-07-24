@@ -152,7 +152,14 @@ export class DetailsListBasicExample extends React.Component<any, any, IDetailsL
 
   private _saverowfortemplate() {
     //togle dialog 
-    if(this.state.selectionDetails !== undefined){
+    if(this.state.selectionDetails !== undefined)
+    {
+    for(let i = 0; i < this.state.saved_templates.length; i++){
+      if(this.state.saved_templates[i] === this.state.selectionDetails){
+        console.log("This row has allready been saved")
+        return
+      }
+    }
     this.state.saved_templates.push(this.state.selectionDetails)
     console.log(this.state.selectionDetails, 'Has been saved')
     }

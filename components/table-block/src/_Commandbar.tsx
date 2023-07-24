@@ -25,8 +25,13 @@ type CommandbarProps = {
   //create commandbart which can add or remove
   export const CommandBar_: React.FunctionComponent<CommandbarProps> = ({_deleteRow , filter_columns, multSearch, savetemplate, savedtemplates}) => {    
   // ------------------------ADD functionallity ---------------------
+  
+  const Add = ()  :void => {
+    console.log('addButton')
+  }
   const ComboBox_saved_templates: React.FunctionComponent = () => {
       
+    
     const options: IComboBoxOption[] = []
     
     if(savedtemplates !== undefined){
@@ -95,6 +100,7 @@ type CommandbarProps = {
       );
     };
     //creates the textfield to contain ppu
+    
     const TextField_ppu: React.FunctionComponent = () => {
       const [TextFieldValue, setTextFieldValue] = React.useState(templatePpu);
       const onChangeFirstTextFieldValue = React.useCallback(
@@ -103,6 +109,8 @@ type CommandbarProps = {
         },
         [],
       );
+
+      console.log(TextFieldValue)
       return (
           <TextField
             label="Ppu"
@@ -120,6 +128,7 @@ type CommandbarProps = {
         },
         [],
       );
+      console.log(TextFieldValue)
       return (
           <TextField
             label="Name"
@@ -127,6 +136,7 @@ type CommandbarProps = {
             //Textfieldvalue contains the prefix. need to set up constaints for prefix format.
             onChange={onChangeFirstTextFieldValue}
           />
+          
       );
     };
   
@@ -231,7 +241,8 @@ type CommandbarProps = {
     const onRenderFooterContentAdd = React.useCallback(
       () => (
         <div>
-          <DefaultButton onClick={openAddPanel}>Back</DefaultButton>
+          <DefaultButton onClick={Add}>Add</DefaultButton>
+          <DefaultButton onClick={dismissAddPanel}>Back</DefaultButton>
         </div>
       ),
       [dismissAddPanel],
