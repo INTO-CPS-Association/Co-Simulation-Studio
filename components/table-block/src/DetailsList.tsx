@@ -173,10 +173,16 @@ export class DetailsListBasicExample extends React.Component<any, any, IDetailsL
   private _onFilter = (ev: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, TextInput: string | undefined): void => {
     //gets items the the original table
     let items: IDetailsListBasicExampleItem[];
-    items = this._table.data
-    //update the table in regards to Textput
+    items = this._table.data;
+    //update the table in regards to Textinput
     this.setState({
-      items: TextInput ? items.filter(i => i.Name.toLowerCase().indexOf(TextInput) > -1) :items,
+      items: TextInput ? items.filter(i => 
+      i.Name.toLowerCase().includes(TextInput.toLowerCase()) || // Search in the name property
+      i.Ppu.toString().toLowerCase().includes(TextInput.toLowerCase()) || // Search in the ppu property
+      i.Id.toString().toLowerCase().includes(TextInput.toLowerCase()) || // Search in the id property 
+      i.Type.toString().toLowerCase().includes(TextInput.toLowerCase())  //Search in the type proberty
+  )
+: items,
     });
   };
 
