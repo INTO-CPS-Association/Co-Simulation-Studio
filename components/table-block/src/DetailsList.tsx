@@ -170,7 +170,6 @@ export class DetailsListBasicExample extends React.Component<any, any, IDetailsL
     
     if(this._selection.getSelection()[0] as IDetailsListBasicExampleItem !== undefined)
     {
-      console.log(this._selection.getSelection()[0] as IDetailsListBasicExampleItem)
       return ((this._selection.getSelection()[0] as IDetailsListBasicExampleItem))
     }
     return undefined
@@ -193,11 +192,15 @@ export class DetailsListBasicExample extends React.Component<any, any, IDetailsL
     });
   };
 
-  private multSearch = (column: any, SortOrder: any): void => {
-    let sorted_items = this._table.displayRows(column.key, SortOrder.key);
-    this.setState ({
-      items: sorted_items
-    });
+  //aplies the search configurations given in data 
+  private multSearch = (data: any): void => {  
+      for(let i = 0; i < data.length; i++)
+      {
+        let sorted_items = this._table.displayRows(data[i].column, data[i].sortorder);
+        this.setState ({
+          items: sorted_items
+        });
+      }
   };
   
   render() {

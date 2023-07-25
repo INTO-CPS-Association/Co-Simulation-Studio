@@ -209,7 +209,6 @@ export class GitWorkDataBlock {
 
   //update row in the table
   displayRows(sortColumn: keyof TableRow, sortOrder: SortOrder = "ASC", filter: FilterCriteria | null = null): TableRow[] {
-    
     let result = [...this.data];
     //filter the data
     if (filter) {
