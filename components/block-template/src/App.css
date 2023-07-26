@@ -36,3 +36,51 @@
     transform: rotate(360deg);
   }
 }
+
+/* App.css */
+
+.app-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+.app-title {
+  font-size: 2em;
+  color: #333;
+  margin-bottom: 20px;
+  text-align: center;
+
+}
+
+.app-description {
+  font-size: 1.2em;
+  color: #666;
+  margin-bottom: 30px;
+}
+
+.blocks-container > div {
+  margin-top: 20px;
+  padding-top: 20px;
+  margin-bottom: 50px;
+
+}
+
+select, button {
+  padding: 10px 15px;
+  margin-right: 10px;
+  font-size: 1em;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+button {
+  background-color: #007BFF;
+  color: white;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
