@@ -152,7 +152,14 @@ export class DetailsListBasicExample extends React.Component<any, any, IDetailsL
 
   private _saverowfortemplate() {
     //togle dialog 
-    if(this.state.selectionDetails !== undefined){
+    if(this.state.selectionDetails !== undefined)
+    {
+    for(let i = 0; i < this.state.saved_templates.length; i++){
+      if(this.state.saved_templates[i] === this.state.selectionDetails){
+        console.log("This row has allready been saved")
+        return
+      }
+    }
     this.state.saved_templates.push(this.state.selectionDetails)
     console.log(this.state.selectionDetails, 'Has been saved')
     }
@@ -163,7 +170,6 @@ export class DetailsListBasicExample extends React.Component<any, any, IDetailsL
     
     if(this._selection.getSelection()[0] as IDetailsListBasicExampleItem !== undefined)
     {
-      console.log(this._selection.getSelection()[0] as IDetailsListBasicExampleItem)
       return ((this._selection.getSelection()[0] as IDetailsListBasicExampleItem))
     }
     return undefined
@@ -173,18 +179,28 @@ export class DetailsListBasicExample extends React.Component<any, any, IDetailsL
   private _onFilter = (ev: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, TextInput: string | undefined): void => {
     //gets items the the original table
     let items: IDetailsListBasicExampleItem[];
-    items = this._table.data
-    //update the table in regards to Textput
+    items = this._table.data;
+    //update the table in regards to Textinput
     this.setState({
-      items: TextInput ? items.filter(i => i.Name.toLowerCase().indexOf(TextInput) > -1) :items,
+      items: TextInput ? items.filter(i => 
+      i.Name.toLowerCase().includes(TextInput.toLowerCase()) || // Search in the name property
+      i.Ppu.toString().toLowerCase().includes(TextInput.toLowerCase()) || // Search in the ppu property
+      i.Id.toString().toLowerCase().includes(TextInput.toLowerCase()) || // Search in the id property 
+      i.Type.toString().toLowerCase().includes(TextInput.toLowerCase())  //Search in the type proberty
+  )
+: items,
     });
   };
 
-  private multSearch = (column: any, SortOrder: any): void => {
-    let sorted_items = this._table.displayRows(column.key, SortOrder.key);
-    this.setState ({
-      items: sorted_items
-    });
+  //aplies the search configurations given in data 
+  private multSearch = (data: any): void => {  
+      for(let i = 0; i < data.length; i++)
+      {
+        let sorted_items = this._table.displayRows(data[i].column, data[i].sortorder);
+        this.setState ({
+          items: sorted_items
+        });
+      }
   };
   
   render() {

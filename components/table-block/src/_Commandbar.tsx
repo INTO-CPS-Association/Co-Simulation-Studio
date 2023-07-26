@@ -16,7 +16,7 @@ import {IDetailsListBasicExampleItem} from './DetailsList'
 type CommandbarProps = {
     _deleteRow: () => void
     filter_columns: IColumn[] 
-    multSearch: (column: any, SortOrder: any) => void
+    multSearch: (data: any) => void
     savetemplate:() =>void
     savedtemplates: IDetailsListBasicExampleItem[]
   };
@@ -25,8 +25,13 @@ type CommandbarProps = {
   //create commandbart which can add or remove
   export const CommandBar_: React.FunctionComponent<CommandbarProps> = ({_deleteRow , filter_columns, multSearch, savetemplate, savedtemplates}) => {    
   // ------------------------ADD functionallity ---------------------
+  
+  const Add = ()  :void => {
+    console.log('addButton')
+  }
   const ComboBox_saved_templates: React.FunctionComponent = () => {
       
+    
     const options: IComboBoxOption[] = []
     
     if(savedtemplates !== undefined){
@@ -95,6 +100,7 @@ type CommandbarProps = {
       );
     };
     //creates the textfield to contain ppu
+    
     const TextField_ppu: React.FunctionComponent = () => {
       const [TextFieldValue, setTextFieldValue] = React.useState(templatePpu);
       const onChangeFirstTextFieldValue = React.useCallback(
@@ -103,6 +109,8 @@ type CommandbarProps = {
         },
         [],
       );
+
+      console.log(TextFieldValue)
       return (
           <TextField
             label="Ppu"
@@ -127,6 +135,7 @@ type CommandbarProps = {
             //Textfieldvalue contains the prefix. need to set up constaints for prefix format.
             onChange={onChangeFirstTextFieldValue}
           />
+          
       );
     };
   
@@ -151,10 +160,10 @@ type CommandbarProps = {
     //panel variables 
     const [isOpenSort, { setTrue: openSortPanel, setFalse: dismissSortPanel }] = useBoolean(false);
     const [isOpenAdd, { setTrue: openAddPanel, setFalse: dismissAddPanel }] = useBoolean(false);
-    const [selectedcolumn, setSelectedcolumn] = React.useState<IDropdownOption>();
-    const [selectedSortorder, setSelectedSortorder] = React.useState<IDropdownOption>();
+    const [selectedcolumn, setSelectedcolumn] = React.useState<string[]>([]);
+    const [selectedSortorder, setSelectedSortorder] = React.useState<string[]>([]);
     const [indexcounter, setindex] = React.useState<number>(0);
-    const [data, setData] = React.useState<any>([{ key: indexcounter, name: indexcounter}]);
+    const [data, setData] = React.useState<any>([{ column: 'Id', sortorder: 'ASC', index: indexcounter}]);
      //create the two options and assign onClick functions.
     const _items: ICommandBarItemProps[] = [
       {
@@ -186,32 +195,39 @@ type CommandbarProps = {
   // -------------------------THE SORT TABLE ------------------------------------
   
     //Set table collums
+    
     let _columns: IColumn[] = [
       { key: 'ColumnSort', name: 'ColumnSort', fieldName: 'ColumnSort', minWidth: 100, maxWidth: 200, isResizable: true,
         onRender: (item) => (
           <Dropdown
             options={options_columns}
-            defaultSelectedKey={options_columns[0].key}
             styles={{ dropdown: { width: 150 } }}
-            onChange = {onChangecolumn}
+            defaultSelectedKey={getdefaultkeysColumn(item)}
+            onChange = {(event, option) => onChangecolumn(event, option, item)}
           />
         ), },
       { key: 'SortOrder', name: 'SortOrder', fieldName: 'SortOrder', minWidth: 100, maxWidth: 200, isResizable: true,
         onRender: (item) => (
           <Dropdown
             options={sort_columns}
-            defaultSelectedKey={sort_columns[0].key}
+            defaultSelectedKey={getdefaultkeysSortOrder(item)}
             styles={{ dropdown: { width: 150 } }}
-            onChange={onChangeSortOrder}
+            onChange={(event, option) => onChangeSortOrder(event, option, item)}
             
           />
         ),
     },
     ];
+    const getdefaultkeysSortOrder = (items: any): string[] => {
+      return data[items.index].sortorder
+    }
+    const getdefaultkeysColumn = (items: any): string[] => {
+      return data[items.index].column
+    }
     const addrow = (data: any) => {
       setindex(indexcounter + 1)
        
-       data.push({key: indexcounter+1, name: indexcounter+1})
+       data.push({column: "Id", sortorder: 'ASC', index: indexcounter+1})
        setData(data)
     }
     const _table = <DetailsList
@@ -223,7 +239,7 @@ type CommandbarProps = {
     const onRenderFooterContentSort = React.useCallback(
       () => (
         <div>
-          <DefaultButton onClick={openSortPanel}>Back</DefaultButton>
+          <DefaultButton onClick={dismissSortPanel}>Back</DefaultButton>
         </div>
       ),
       [dismissSortPanel],
@@ -231,17 +247,24 @@ type CommandbarProps = {
     const onRenderFooterContentAdd = React.useCallback(
       () => (
         <div>
-          <DefaultButton onClick={openAddPanel}>Back</DefaultButton>
+          <DefaultButton onClick={Add}>Add</DefaultButton>
+          <DefaultButton onClick={dismissAddPanel}>Back</DefaultButton>
         </div>
       ),
       [dismissAddPanel],
       );
-  
-      const onChangecolumn = (event: React.FormEvent<HTMLDivElement>, option?: IDropdownOption | undefined): void => {
-        setSelectedcolumn(option);
+
+      const onChangecolumn = (event: React.FormEvent<HTMLDivElement>, option?: IDropdownOption | undefined, item?: any): void => {
+        
+        if(option !== undefined && item !== undefined)
+        {
+          data[item.index].column = option.key
+        }
       };
-      const onChangeSortOrder = (event: React.FormEvent<HTMLDivElement>, option?: IDropdownOption | undefined): void => {
-        setSelectedSortorder(option);
+      const onChangeSortOrder = (event: React.FormEvent<HTMLDivElement>, option?: IDropdownOption | undefined, item?: any): void => {
+        if(option !== undefined  && item !== undefined){
+          data[item.index].sortorder = option.key
+        }
       };
   
     // ---------------------------------------RETURN CONTENT --------------------------------
@@ -282,7 +305,7 @@ type CommandbarProps = {
             <DefaultButton 
             label='Save'
             text='Save'
-            onClick={() => {multSearch(selectedcolumn, selectedSortorder)}}
+            onClick={() => {multSearch(data)}}
             />
             <DefaultButton 
             label='Add new '
