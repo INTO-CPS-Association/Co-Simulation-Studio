@@ -1,0 +1,37 @@
+.preview-wrapper {
+	top: 35px;
+	left: 0px;
+	bottom: 0px;
+	left: 0px;
+	position: absolute;
+	overflow: scroll;
+	width: 100%;
+}
+
+.navbar-xs {
+	min-height: 25px;
+	height: 25px;
+
+}
+
+.navbar-xs .navbar-brand {
+	padding: 0px 12px;
+	font-size: 16px;
+	line-height: 25px;
+}
+
+.navbar-xs .navbar-nav>li>a {
+	padding-top: 0px;
+	padding-bottom: 0px;
+	line-height: 20px;
+}
+
+.navbar-xs .navbar-nav>li {
+	margin-right: 10px;
+}
+
+.navbar-xs .navbar-btn.btn-xs {
+	margin-top: 1px;
+	margin-bottom: 1px;
+
+}

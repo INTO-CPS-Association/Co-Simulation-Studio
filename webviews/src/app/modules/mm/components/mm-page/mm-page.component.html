@@ -1,0 +1,7 @@
+<app-panel [title]="'Overview'" [open]="true">
+    <app-mm-overview #overview [path]="path"></app-mm-overview>
+</app-panel>
+
+<app-panel id="Configuration" [title]="'Configuration'" [open]="false">
+    <app-mm-configuration [path]="path" (change)="overview.parseConfig()"></app-mm-configuration>
+</app-panel>

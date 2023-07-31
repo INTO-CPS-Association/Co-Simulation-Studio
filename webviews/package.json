@@ -11,7 +11,15 @@
   "private": true,
   "browser": {
     "fs": false,
-    "path": false
+    "child_process": false,
+    "path": false,
+    "os": false,
+    "url": false,
+    "util": false,
+    "crypto": false,
+    "assert": false,
+    "stream": false,
+    "constants": false
   },
   "dependencies": {
     "@angular/animations": "^14.2.0",
@@ -25,25 +33,32 @@
     "@estruyf/vscode": "^1.1.0",
     "@vscode/codicons": "^0.0.33",
     "@vscode/webview-ui-toolkit": "^1.2.2",
+    "bootstrap": "^3.3.6",
+    "jquery": "^3.7.0",
+    "jszip": "^3.10.1",
+    "plotly.js-dist": "^2.25.0",
     "rxjs": "~7.5.0",
     "tslib": "^2.3.0",
+    "w2ui": "^1.4.3",
+    "xml2js": "^0.6.2",
     "zone.js": "~0.11.4"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^14.2.11",
     "@angular/cli": "~14.2.11",
     "@angular/compiler-cli": "^14.2.0",
-    "@types/big.js": "^6.1.6",
-    "@types/cytoscape": "^3.19.9",
     "@types/jasmine": "~4.0.0",
-    "@types/lodash-es": "^4.17.7",
+    "@types/jquery": "^3.5.16",
     "@types/vscode-webview": "^1.57.1",
+    "@types/w2ui": "^1.4.33",
+    "@types/xml2js": "^0.4.11",
     "jasmine-core": "~4.3.0",
     "karma": "~6.4.0",
     "karma-chrome-launcher": "~3.1.0",
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.0.0",
+    "node-loader": "^2.0.0",
     "typescript": "~4.7.2"
   }
 }

@@ -1,8 +1,0 @@
-node_modules
-test
-build
-script
-examples
-*.log
-test.js
-target

@@ -1,9 +1,7 @@
 {
-	"name": "gitworks-workbench-extension",
-	"description": "GitWorks Workbench Extension",
-	"author": "Perpetual Labs, Ltd.",
+	"name": "co-simulation-studio-extension",
+	"description": "Co-Simulation Studio Extension",
 	"version": "0.0.0",
-	"publisher": "perpetual-labs",
 	"private": true,
 	"engines": {
 		"vscode": "^1.77.0"

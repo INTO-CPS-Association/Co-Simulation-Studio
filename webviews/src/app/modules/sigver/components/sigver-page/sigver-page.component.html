@@ -1,0 +1,21 @@
+<app-coe-launch [required_coe_version]="requiredMaestroVersion"></app-coe-launch>
+<app-panel [title]="'Scenario'" [open]="sigverConfigurationService.isDefaultConfiguration">
+	<app-sigver-configuration></app-sigver-configuration>
+</app-panel>
+<app-sigver-coe-interaction [generationresultspath]="generationResultsPath"
+	[verificationresultspath]="verificationResultsPath"></app-sigver-coe-interaction>
+
+<app-panel [title]="'Simulation'" [open]="!sigverConfigurationService.isDefaultConfiguration">
+	<h5 *ngIf="!cosConfPath" class="text-warning">Scenario needs to be configured</h5>
+	<div *ngIf="cosConfPath">
+		<app-panel [title]="'Configuration'" [open]="false">
+			<app-coe-configuration [path]="cosConfPath" [allow_changing_algorithm]="false"
+				(change)="sim.parseConfig()"></app-coe-configuration>
+		</app-panel>
+		<h5 *ngIf="!masterModel" class="text-warning">A master model needs to be generated before running the
+			simulation.</h5>
+		<app-coe-simulation #sim [path]="cosConfPath" [mastermodel]="masterModel" [resultsdir]="executionResultsPath"
+			[external_disable_simulation]="disableSimulationBtn"
+			[required_coe_version]="requiredMaestroVersion"></app-coe-simulation>
+	</div>
+</app-panel>

@@ -1,9 +1,7 @@
 {
-	"name": "gitworks-workbench",
-	"description": "GitWorks Workbench",
-	"author": "Perpetual Labs, Ltd.",
+	"name": "co-simulation-studio",
+	"description": "Co-Simulation Studio",
 	"version": "0.0.0",
-	"publisher": "perpetual-labs",
 	"private": true,
 	"engines": {
 		"vscode": "^1.77.0"
@@ -14,104 +12,43 @@
 	],
 	"browser": "./extension/dist/browserMain",
 	"contributes": {
-		"grammars": [
+		"customEditors": [
 			{
-				"language": "oml",
-				"scopeName": "source.oml",
-				"path": "./syntaxes/oml.tmLanguage.json"
-			},
-			{
-				"language": "sparql",
-				"scopeName": "source.sparql",
-				"path": "./syntaxes/sparql.tmLanguage.json"
-			}
-		],
-		"languages": [
-			{
-				"id": "oml",
-				"aliases": [
-					"oml",
-					"OML"
+				"viewType": "cosimulationstudio.editors.appEditor",
+				"displayName": "App Editor",
+				"selector": [
+					{
+						"filenamePattern": "*.json"
+					}
 				],
-				"extensions": [
-					".oml"
-				],
-				"configuration": "./syntaxes/oml-configuration.json"
-			},
-			{
-				"id": "sparql",
-				"aliases": [
-					"sparql",
-					"SPARQL"
-				],
-				"extensions": [
-					".sparql"
-				],
-				"configuration": "./syntaxes/sparql-configuration.json"
+				"priority": "default"
 			}
 		],
 		"viewsContainers": {
 			"activitybar": [
 				{
-					"id": "gitworks-workbench-workspace",
+					"id": "co-simulation-studio-workspace",
 					"icon": "$(repo)",
-					"title": "GitWorks Workspace"
-				},
-				{
-					"id": "gitworks-workbench-ontology",
-					"icon": "$(type-hierarchy)",
-					"title": "GitWorks Ontology"
-				},
-				{
-					"id": "gitworks-workbench-automation",
-					"icon": "$(server-process)",
-					"title": "GitWorks Automation"
-				},
-				{
-					"id": "gitworks-workbench-commons",
-					"icon": "$(package)",
-					"title": "GitWorks Commons"
+					"title": "Co-Simulation Studio Workspace"
 				}
 			]
 		},
 		"views": {
-			"gitworks-workbench-workspace": [
+			"co-simulation-studio-workspace": [
 				{
-					"id": "gitworks-workbench-workspace-explorer",
+					"id": "co-simulation-studio-workspace-explorer",
 					"name": "Explorer"
-				}
-			],
-			"gitworks-workbench-ontology": [
-				{
-					"id": "gitworks-workbench-ontology-vocabularies",
-					"name": "Vocabularies"
-				},
-				{
-					"id": "gitworks-workbench-ontology-structure",
-					"name": "Structure"
-				}
-			],
-			"gitworks-workbench-automation": [
-				{
-					"id": "gitworks-workbench-automation-tasks",
-					"name": "Tasks"
-				}
-			],
-			"gitworks-workbench-commons": [
-				{
-					"id": "gitworks-workbench-commons-search",
-					"name": "Search"
 				}
 			]
 		}
 	},
 	"scripts": {
 		"vscode:prepublish": "npm run compile",
-		"compile": "cd components/block-api && npm run build && cd ../block-template && npm run build && cd ../form-block && npm run build && cd ../page-template && npm run build && cd ../plot-block && npm run build && cd ../table-block && npm run build && cd ../../webviews && npm run build && cd .. && webpack",
+		"compile": "cd components && npm run build && cd ../webviews && npm run build && cd .. && webpack",
 		"watch": "webpack --watch",
 		"package": "webpack --mode production --devtool hidden-source-map",
 		"lint": "eslint ./extension/src ./language-server/src --ext .ts,.tsx",
-		"postinstall": "cd components/block-api && npm install && cd ../block-template && npm install && cd ../form-block && npm install && cd ../page-template && npm install && cd ../plot-block && npm install && cd ../table-block && npm install && cd ../../grammars/tree-sitter-oml && npm install && cd ../../webviews && npm install && cd ../extension && npm install && cd ../language-server && npm install && cd ..",
+		"postinstall": "cd components && npm install && cd ../webviews && npm install && cd ../extension && npm install && cd ../language-server && npm install && cd ..",
 		"chrome": "vscode-test-web --host=0.0.0.0 --quality=insiders --extensionDevelopmentPath=. --extensionId=vscode-icons-team.vscode-icons"
 	},
 	"devDependencies": {

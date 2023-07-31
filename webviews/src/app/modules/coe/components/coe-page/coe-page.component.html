@@ -1,0 +1,8 @@
+<app-panel id="Configuration" [title]="'Configuration'" [open]="false">
+    <app-coe-configuration [path]="path" (change)="sim.parseConfig()"></app-coe-configuration>
+</app-panel>
+
+<app-panel id="Simulation" [title]="'Simulation'">
+    <app-coe-launch></app-coe-launch>
+    <app-coe-simulation #sim [path]="path"></app-coe-simulation>
+</app-panel>

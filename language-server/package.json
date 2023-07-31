@@ -1,31 +1,14 @@
 {
-	"name": "gitworks-workbench-language-server",
-	"description": "GitWorks Workbench Language Server",
-	"author": "Perpetual Labs, Ltd.",
+	"name": "co-simulation-studio-language-server",
+	"description": "Co-Simulation Studio Language Server",
 	"version": "0.0.0",
-	"publisher": "perpetual-labs",
 	"private": true,
 	"engines": {
 		"node": "*"
 	},
 	"scripts": {},
 	"dependencies": {
-		"big.js": "^6.2.1",
-		"bitset": "^5.1.1",
-		"factplusplus": "file:../reasoners/factplusplus/FaCT++.WASM/dist",
-		"graphology": "^0.25.1",
-		"graphology-components": "^1.5.4",
-		"graphology-dag": "^0.3.0",
-		"graphology-traversal": "^0.3.1",
-		"oxigraph": "^0.3.16",
-		"rdf-canonize": "^3.4.0",
-		"sparql-engine": "^0.8.3",
-		"tree-sitter-oml": "file:../grammars/tree-sitter-oml",
 		"vscode-languageserver": "^7.0.0",
-		"vscode-languageserver-textdocument": "^1.0.1",
-		"web-tree-sitter": "^0.20.7"
-	},
-	"devDependencies": {
-		"@types/big.js": "^6.1.6"
+		"vscode-languageserver-textdocument": "^1.0.1"
 	}
 }
