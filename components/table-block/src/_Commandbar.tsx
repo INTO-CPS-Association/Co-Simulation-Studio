@@ -141,6 +141,18 @@ type CommandbarProps = {
   
   // ----------------------Sort on multiple collums funtionallity-------------------
     
+  const selection = new Selection({
+    onSelectionChanged: () => {
+      // Handle selection changes here, if needed
+      setSelectedItem(selection.getSelection()[0] as datatype)
+    },
+  });
+  const RemoveSortRow = ():void => {
+    if(selectedItem !== undefined){
+      setindex(indexcounter-1)
+      setData(data.filter(a => a.index !== selectedItem.index));
+    }
+  }
     //set options 
     const options_columns: IDropdownOption[] = []
     for(let i = 0; i<filter_columns.length; i++){
@@ -156,14 +168,18 @@ type CommandbarProps = {
         text: 'DESC'
       }
     ];
-  
+    
+    type datatype = {
+      column: string;
+      sortorder: string;
+      index: number;
+    };
     //panel variables 
     const [isOpenSort, { setTrue: openSortPanel, setFalse: dismissSortPanel }] = useBoolean(false);
+    const [selectedItem, setSelectedItem] = React.useState<datatype>();
     const [isOpenAdd, { setTrue: openAddPanel, setFalse: dismissAddPanel }] = useBoolean(false);
-    const [selectedcolumn, setSelectedcolumn] = React.useState<string[]>([]);
-    const [selectedSortorder, setSelectedSortorder] = React.useState<string[]>([]);
     const [indexcounter, setindex] = React.useState<number>(0);
-    const [data, setData] = React.useState<any>([{ column: 'Id', sortorder: 'ASC', index: indexcounter}]);
+    const [data, setData] = React.useState<datatype[]>([{ column: 'Id', sortorder: 'ASC', index: indexcounter}]);
      //create the two options and assign onClick functions.
     const _items: ICommandBarItemProps[] = [
       {
@@ -218,10 +234,11 @@ type CommandbarProps = {
         ),
     },
     ];
-    const getdefaultkeysSortOrder = (items: any): string[] => {
+    const getdefaultkeysSortOrder = (items: datatype): string => {
       return data[items.index].sortorder
     }
-    const getdefaultkeysColumn = (items: any): string[] => {
+    const getdefaultkeysColumn = (items: datatype): string => {
+      console.log(data)
       return data[items.index].column
     }
     const addrow = (data: any) => {
@@ -233,6 +250,9 @@ type CommandbarProps = {
     const _table = <DetailsList
       items = {data}
       columns={_columns}
+      selection={selection}
+      selectionPreservedOnEmptyClick={true}
+      
       />
   
     //panel renderes
@@ -253,17 +273,18 @@ type CommandbarProps = {
       ),
       [dismissAddPanel],
       );
-
+      //consinder changeing these such that the data uses state
+      //error when trying to add new after removeing 
       const onChangecolumn = (event: React.FormEvent<HTMLDivElement>, option?: IDropdownOption | undefined, item?: any): void => {
         
         if(option !== undefined && item !== undefined)
         {
-          data[item.index].column = option.key
+          data[item.index].column = option.key.toString()
         }
       };
       const onChangeSortOrder = (event: React.FormEvent<HTMLDivElement>, option?: IDropdownOption | undefined, item?: any): void => {
         if(option !== undefined  && item !== undefined){
-          data[item.index].sortorder = option.key
+          data[item.index].sortorder = option.key.toString()
         }
       };
   
@@ -311,6 +332,11 @@ type CommandbarProps = {
             label='Add new '
             text='Add new'
             onClick={() => {addrow(data)}}
+            />
+            <DefaultButton
+            label='Remove'
+            text='Remove'
+            onClick={() => {RemoveSortRow()}}
             />
           </Panel>
         </>
