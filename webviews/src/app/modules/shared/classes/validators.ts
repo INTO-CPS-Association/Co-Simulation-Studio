@@ -29,8 +29,9 @@
  * See the CONTRIBUTORS file for author and contributor information. 
  */
 
-import { FormControl, FormArray, FormGroup, AsyncValidatorFn, AbstractControl } from "@angular/forms";
+import { FormControl, FormArray, FormGroup, AsyncValidatorFn, AbstractControl, ValidatorFn, ValidationErrors} from "@angular/forms";
 import { Observable } from 'rxjs';
+//import { ValidationError } from 'xml2js';
 
 function isString(x: any) {
 	return typeof x === 'string';
@@ -49,39 +50,47 @@ function isInteger(x: any) {
 	return !isNaN(number) && isFinite(number) && number % 1 === 0;
 }
 
-export function numberValidator(control: FormControl): { [s: string]: boolean } | undefined {
+//set return type to validatorFn. validation function now returns null if valid. proberly uses validation ellror and abstract controll
+export function numberValidator(): ValidatorFn {
+	return (control: AbstractControl): ValidationErrors | null => {
 	if (!isNumber(control.value))
 		return { invalidNumber: true };
 
-	return;
+	return null
+}
 }
 
-export function integerValidator(control: FormControl): { [s: string]: boolean } | undefined {
+export function integerValidator(): ValidatorFn {
+	return (control: AbstractControl): ValidationErrors | null => {
 	if (!isInteger(control.value))
 		return { invalidInteger: true };
 
-	return;
+	return null;
 }
-
-export function lengthValidator(min: number | null = null, max: number | null = null) {
-	return (control: FormControl) => {
-		let length = control.value.length;
-
-		if (length === undefined || min !== null && length < min || max !== null && length > max)
-			return { invalidLength: true };
-
-		return;
-	}
 }
-
-export function uniqueGroupPropertyValidator(propertyName: string) {
-	return (control: FormArray) => {
-		for (let i = 0; i < control.length; i++) {
-			let group: FormGroup = <FormGroup>control.at(i);
+//set return type to validatorFn. validation function now returns null if valid. proberly uses validation ellror and abstract controll
+export function lengthValidator(min: number | null = null, max: number | null = null): ValidatorFn {
+	return (control: AbstractControl): ValidationErrors | null => {
+	  let length = control.value.length;
+  
+	  if (length === undefined || (min !== null && length < min) || (max !== null && length > max)) {
+		return { invalidLength: true };
+	  }
+	  
+	  return null;
+	};
+  }
+//set return type to validatorFn. validation function now returns null if valid. 
+//proberly uses validation ellror and abstract controll. now uses control.value instead of just control
+export function uniqueGroupPropertyValidator(propertyName: string): ValidatorFn {
+	//there might be an error in terms of the control input. needs to be tested
+	return (control: AbstractControl): ValidationErrors | null => {
+		for (let i = 0; i < control.value.length; i++) {
+			let group: FormGroup = <FormGroup>control.value.at(i);
 			let value = group.controls[propertyName].value;
 
-			for (let j = i + 1; j < control.length; j++) {
-				let other: FormGroup = <FormGroup>control.at(j);
+			for (let j = i + 1; j < control.value.length; j++) {
+				let other: FormGroup = <FormGroup>control.value.at(j);
 				let otherValue = other.controls[propertyName].value;
 
 				if (value === otherValue)
@@ -90,11 +99,12 @@ export function uniqueGroupPropertyValidator(propertyName: string) {
 
 		}
 
-		return;
+		return null;
 	}
 }
-
-export function uniqueValidator(control: FormControl) {
+//set return type to validatorFn. validation function now returns null if valid. proberly uses validation ellror and abstract controll
+export function uniqueValidator(): ValidatorFn {
+	return (control: AbstractControl): ValidationErrors | null => {
 	var elements = control.value;
 
 	for (let i = 0; i < elements.length; i++) {
@@ -104,7 +114,8 @@ export function uniqueValidator(control: FormControl) {
 		}
 	}
 
-	return;
+	return null;
+	};
 }
 
 export function uniqueControlValidator(control: FormArray) {
