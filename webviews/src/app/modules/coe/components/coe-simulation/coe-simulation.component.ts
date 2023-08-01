@@ -25,6 +25,7 @@ export class CoeSimulationComponent {
   @Input()
   external_disable_simulation: boolean = false;
 
+  //FIXME: This is a non angular Interface
   @Input()
   required_coe_version!: maestroVersions;
 
@@ -65,9 +66,13 @@ export class CoeSimulationComponent {
   httpErrorMessage: string = "";
   url: string = "";
   version: string = "";
+  //FIXME: This is a non angular Interface
   config!: CoSimulationConfig;
+  //FIXME: This is a non angular Interface
   mmWarnings: WarningMessage[] = [];
+  //FIXME: This is a non angular Interface
   coeWarnings: WarningMessage[] = [];
+  //FIXME: This is a non angular Interface
   simWarnings: WarningMessage[] = [];
   hasPostScriptOutput = false;
   hasPostScriptOutputError = false;
@@ -76,6 +81,7 @@ export class CoeSimulationComponent {
   hasRunSimulation: boolean = false;
 
   constructor(
+    //FIXME: This is a non angular Interface
     public coeSimulation: CoeSimulationService,
     private zone: NgZone
   ) {
@@ -92,6 +98,7 @@ export class CoeSimulationComponent {
   }
 
   parseConfig() {
+    //FIXME: This is a non angular Interface
     let project = IntoCpsApp.getInstance()?.getActiveProject();
     this.parsing = true;
 
@@ -131,7 +138,7 @@ export class CoeSimulationComponent {
       this.postScriptOutput = "";
       this.simulating = true;
     });
-
+    //FIXME: This is a non angular Interface
     const errorReportCB = (hasError: boolean, message: string, hasWarning?: boolean, stopped?: boolean) => {
       this.zone.run(() => {
         this.errorHandler(hasError, message, hasWarning, stopped);
@@ -143,6 +150,8 @@ export class CoeSimulationComponent {
         this.simulating = false;
       });
     }
+
+    //FIXME: This is a non angular Interface
     const postScriptOutputReportCB = (hasError: boolean, message: string) => {
       this.zone.run(() => {
         this.postScriptOutputHandler(hasError, message);
@@ -169,6 +178,7 @@ export class CoeSimulationComponent {
     this.coeSimulation.stop();
   }
 
+  //FIXME: This is a non angular Interface
   errorHandler(hasError: boolean, message: string, hasWarning: boolean = false, stopped?: boolean) {
     if (stopped) {
       var warning = new Message("Co-simulation stopped. COE status OK");
@@ -191,6 +201,7 @@ export class CoeSimulationComponent {
     if (hasError) this.simulating = false;
   }
 
+  //FIXME: This is a non angular Interface
   postScriptOutputHandler(hasError: boolean, message: string) {
     this.hasPostScriptOutput = true;
     this.hasPostScriptOutputError = hasError;
