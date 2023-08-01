@@ -29,7 +29,7 @@
  * See the CONTRIBUTORS file for author and contributor information. 
  */
 
-import { FormControl, FormArray, FormGroup, AsyncValidatorFn, AbstractControl } from "@angular/forms";
+import { FormControl, FormArray, FormGroup, AsyncValidatorFn, AbstractControl, ValidatorFn } from "@angular/forms";
 import { Observable } from 'rxjs';
 
 function isString(x: any) {
@@ -135,10 +135,10 @@ export function lessThanValidator(selfName: string, otherName: string): AsyncVal
 
 }
 
-export function lessThanValidator2(selfName: string, otherName: string) {
-	return (group: FormGroup) => {
-		let self = group.get(selfName);
-		let other = group.get(otherName);
+export function lessThanValidator2(selfName: string, otherName: string): ValidatorFn {
+	return (control: AbstractControl) => {
+		let self = control.get(selfName);
+		let other = control.get(otherName);
 
 		if (self?.value && other?.value && Number(self.value) >= Number(other.value)) {
 			return { notLessThan: true };
@@ -146,3 +146,4 @@ export function lessThanValidator2(selfName: string, otherName: string) {
 		else return null;
 	}
 }
+
