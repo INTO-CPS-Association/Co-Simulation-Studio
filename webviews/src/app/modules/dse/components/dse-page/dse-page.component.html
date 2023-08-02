@@ -1,6 +1,6 @@
-<app-panel [title]="'DSE Configuration'" [open]="true">
+<app-panel [title]="'DSE Configuration'">
     <app-dse-configuration [path]="path" (coechange)="coeChangeEvent($event)"></app-dse-configuration>
 </app-panel>
-<app-panel [title]="'DSE COE launch'" >
+<app-panel [title]="'DSE COE launch'" [open]="true">
     <app-dse-coe-launch [path]="path" [coeconfig]="coeconfig"></app-dse-coe-launch>
 </app-panel>
