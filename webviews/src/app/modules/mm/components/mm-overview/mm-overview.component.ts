@@ -24,8 +24,9 @@ export class MmOverviewComponent {
     get path(): string {
         return this._path;
     }
-
+    //FIXME MultiModelConfig is a non angular Class
     config!: MultiModelConfig;
+    //FIXME WarningMessage is a non angular 
     warnings: WarningMessage[] = [];
 
     constructor(private zone: NgZone) {
@@ -33,6 +34,7 @@ export class MmOverviewComponent {
     }
 
     parseConfig() {
+        //FIXME IntoCpsApp is a non angular Class
         let project = IntoCpsApp.getInstance()?.getActiveProject();
 
         MultiModelConfig
@@ -41,11 +43,12 @@ export class MmOverviewComponent {
     }
 
     getOutputs() {
+        //FIXME OutputConnectionsPair is a non angular Class
         let outputs: OutputConnectionsPair[] = [];
 
         this.config.fmuInstances.forEach(instance => {
             instance.outputsTo.forEach((connections, scalarVariable) => {
-
+                //FIXME OutputConnectionsPair and Serializer is a non angular Class
                 outputs.push(new OutputConnectionsPair(Serializer.getIdSv(instance, scalarVariable), connections));
             });
         });
@@ -53,10 +56,12 @@ export class MmOverviewComponent {
         return outputs;
     }
 
+    //FIXME ErrorMessages is a non angular 
     getWarnings() {
         return this.warnings.filter(w => !(w instanceof ErrorMessage));
     }
 
+    //FIXME ErrorMessages is a non angular 
     getErrors() {
         return this.warnings.filter(w => w instanceof ErrorMessage);
     }
