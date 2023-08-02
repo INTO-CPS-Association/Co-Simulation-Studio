@@ -64,15 +64,19 @@ export class MmConfigurationComponent {
                 // Create a form group for validation
                 this.form = new FormGroup({
                     /*PL-TODO
+                    Issue here is typing around uniqueControlValidator.
+                    Ive used "any" on line 1503 of ...\Co-Simulation-Studio\webviews\node_modules\@angular\forms\index.d.ts
+                    instead of the original typing
+                    */
                     fmus: new FormArray(this.config.fmus.map(fmu =>
                         new FormControl(this.getFmuName(fmu),
                             [Validators.required, Validators.pattern("[^{^}]*")])),
                         uniqueControlValidator),
                     instances: new FormArray(this.config.fmus.map(fmu =>
-                        new FormArray(this.getInstances(fmu).map(instance =>
+                        new FormArray(this.getInstances(fmu)!.map(instance => //added ! exclamation mark as it is the non-null assertion operator in TypeScript. Otherwise it throws an error saying fmu can be undefined due to the ? optional operator.
                             new FormControl(instance.name, [Validators.required,
                             Validators.pattern("[^\.]*")])), uniqueControlValidator)))
-                            */
+                            
                 });
                 this.warnings = this.config.validate();
                 /*  }); */
@@ -116,7 +120,7 @@ export class MmConfigurationComponent {
         let formArray = <FormArray>this.form?.get('fmus');
         let fmuArray = <FormArray>this.form?.get('instances');
 
-        //PL-TODO fmuArray.push(new FormArray([], uniqueControlValidator));
+        fmuArray.push(new FormArray([], uniqueControlValidator)); //PL-TODO UniqueCOntrolValidator threw same error down here previous fix made this compile
         formArray.push(new FormControl(this.getFmuName(fmu), [Validators.required, Validators.pattern("[^{^}]*")]));
     }
 
