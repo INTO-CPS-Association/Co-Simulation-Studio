@@ -8,7 +8,7 @@ import * as fs from "fs";
     styleUrls: ['./file-browser.component.scss']
 })
 export class FileBrowserComponent implements OnInit {
-
+    
     @Input()
     basePath = "";
 
@@ -27,6 +27,7 @@ export class FileBrowserComponent implements OnInit {
     dialog: any;
     platform!: string;
 
+    //FIXME some commented code here 
     ngOnInit(): any {
         //this.dialog = remote.dialog;
         //this.platform = remote.getGlobal("intoCpsApp").platform;
@@ -50,7 +51,7 @@ export class FileBrowserComponent implements OnInit {
         });
 
     }
-
+    //FIXME uses some fs code here 
     onChange(path: string) {
         this.path = path;
 
