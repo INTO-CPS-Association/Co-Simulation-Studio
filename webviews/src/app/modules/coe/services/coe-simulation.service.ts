@@ -1,6 +1,6 @@
 import { Injectable, NgZone } from '@angular/core';
 import * as Path from "path";
-import * as fs from 'fs'
+import * as fs from 'fs' //FIXME needs removal as fs is not angular
 import { CoSimulationConfig, LiveGraph } from '../../shared/classes/configuration/co-simulation-config';
 import { BehaviorSubject, Observable, Subject, Subscription } from 'rxjs';
 import { Graph } from '../../shared/classes/graph';
@@ -15,6 +15,13 @@ import { Fmu } from '../../shared/classes/models/fmu';
 import { SettingKeys } from '../../shared/services/settings.service';
 
 const child_process: any = {};
+
+
+//------------------------------------------------------
+// FUNCITON STUBS THAT NEED TO BE EXTRACTED INTO API
+//------------------------------------------------------
+export function accessSync(path? : string): void {}
+
 
 @Injectable({
     providedIn: 'root'
@@ -87,7 +94,7 @@ export class CoeSimulationService {
     }
 
     openCOEServerStatusWindow(
-        data: string = "",
+        data: string = "",          //Data declared but never used //FIXME
         show: boolean = true
     ) {
         this.maestroApiService.launchCOE();
@@ -328,7 +335,8 @@ export class CoeSimulationService {
         let scriptNormalized = Path.normalize(Path.join(this.config.projectRoot, script));
         var scriptExists = false;
         try {
-            fs.accessSync(scriptNormalized, fs.constants.R_OK);
+            //fs.accessSync(scriptNormalized, fs.constants.R_OK); //FIXME cant use fs. in angular?
+            accessSync(scriptNormalized);
             scriptExists = true;
 
         } catch (e) {
