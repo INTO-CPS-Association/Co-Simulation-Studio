@@ -42,23 +42,29 @@ import { dependencyCheckJava } from '../../shared/classes/dependency-checker';
 const child_process: any = {};
 
 export class CoeProcess {
+	//FIXME ISettingsValues is a non angular class
 	private settings: ISettingsValues;
 	private static firstStart = true;
 	private process: any /*child_process.ChildProcess*/ | null = null;
 	private maxReadSize = 100000;
-	// java check
+	//FIXME java check not useed???
 	private static javaprop: boolean = false;
+	//FIXME CoeLogPrinter is a non angular class
 	private coeLogPrinter!: CoeLogPrinter;
 	private coeConsolePrinter!: CoeLogPrinter;
+	//FIXME UICrtlType is a non angular class
 	private cbPrepSimCBs: Map<UICrtlType, () => void> = new Map<
 		UICrtlType,
 		() => void
 	>();
+
+	//FIXME setting is a non angular class
 	public constructor(settings: ISettingsValues) {
 		this.settings = settings;
 	}
 
 	//get the url needed to obtain the version of the coe
+	//FIXME SettingKeys and IntoCpsApp is a non angular class
 	public static getCoeVersionUrl() {
 		let url =
 			IntoCpsApp.getInstance()?.getSettings()
@@ -102,6 +108,7 @@ export class CoeProcess {
 		}
 	}
 
+	//FIXME SettingKeys is a non angular class
 	private getWorkingDir() {
 		let installDir = this.settings.getValue(SettingKeys.INSTALL_TMP_DIR);
 		let childCwd = Path.join(installDir, "coe-working-dir");
@@ -156,6 +163,7 @@ export class CoeProcess {
 		return this.process != null;
 	}
 
+	//FIXME SettingKeys is a non angular class
 	//get the path to the coe jar which will be launched
 	public getCoePath() {
 		let installDir = this.settings.getValue(SettingKeys.INSTALL_TMP_DIR);
@@ -174,6 +182,7 @@ export class CoeProcess {
 	//start or restart the COE process
 	public start() {
 		if (!this.checkCoeAvaliablity()) {
+			//FIXME remove this electron dependency
 			//PL-TODO const electron = require("electron");
 			const electron: any = {};
 			var dialog: any = {};
@@ -207,6 +216,7 @@ export class CoeProcess {
 			}
 		}
 
+		//FIXME This is some way for checking if java is installed on the system maybe there is a better way
 		// Checking if java is installed.
 		dependencyCheckJava();
 
@@ -298,6 +308,7 @@ export class CoeProcess {
 		if (this.coeConsolePrinter) this.coeConsolePrinter.stopPrintingRemaining();
 	}
 
+	//FIXME UICrtlType is a non angular class
 	public subscribePrepareSimulationCallback(
 		uiCrtlType: UICrtlType,
 		callback: () => void
@@ -326,6 +337,7 @@ export class CoeProcess {
 		this.coeLogPrinter.startWatching(this.getLog4JFilePath());
 	}
 
+	//FIXME UICrtlType is a non angular class
 	public unloadPrintView(uiCrtlType: UICrtlType) {
 		let logPrinterRef =
 			uiCrtlType == UICrtlType.Console
