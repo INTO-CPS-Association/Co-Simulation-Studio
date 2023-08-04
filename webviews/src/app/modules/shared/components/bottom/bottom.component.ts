@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-
+//FIXME None no-angular interfaces here 
 @Component({
   selector: 'app-bottom',
   templateUrl: './bottom.component.html',
