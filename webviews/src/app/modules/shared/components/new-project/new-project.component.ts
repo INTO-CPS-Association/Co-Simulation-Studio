@@ -42,7 +42,7 @@ export class NewProjectComponent {
 
     var p: HTMLInputElement = <HTMLInputElement>document.getElementById("projectRootPathText");
     var n: HTMLInputElement = <HTMLInputElement>document.getElementById("name");
-
+    //FIXME IntoCpsApp is non-angular class 
     IntoCpsApp.getInstance()?.createProject(n.value, p.value);
     window.top?.close();
 
