@@ -44,7 +44,7 @@ import { ISerializable } from './serializable';
 export class DseConfiguration implements ISerializable {
 
     sourcePath!: string;
-    searchAlgorithm: any /*PL-TODO IDseAlgorithm*/ = new ExhaustiveSearch(); //set as default
+    searchAlgorithm: any /*FIXME IDseAlgorithm*/ = new ExhaustiveSearch(); //set as default 
     scenarios: DseScenario[] = [];
     objConst: DseObjectiveConstraint[] = [];
     paramConst: DseParameterConstraint[] = [];
@@ -109,7 +109,7 @@ export class DseConfiguration implements ISerializable {
 
 
     //Set search algorithm
-    public newSearchAlgortihm(sa: IDseAlgorithm) {
+    public newSearchAlgortihm(sa: IDseAlgorithm) { //FIXME  Previously discussed removing/changing IDseAlgorithm
         this.searchAlgorithm = sa;
     }
 
@@ -690,7 +690,7 @@ export class ParetoDimension {
 /*
  * DSE Algorithm interface states that an algorithm must have a name and type.
  */
-export interface IDseAlgorithm {
+export interface IDseAlgorithm { //FIXME  Previously discussed removing/changing IDseAlgorithm
     toFormGroup(): FormGroup;
     getName(): string;
     toObject(): { [key: string]: any };
@@ -703,7 +703,7 @@ export interface IDseAlgorithm {
  * The genetic search algorithm expands upon the IDSEAlgorithm interface with a collection of additional
  * values for the genetic search algorithm.  
  */
-export class GeneticSearch implements IDseAlgorithm {
+export class GeneticSearch implements IDseAlgorithm { //FIXME  Previously discussed removing/changing IDseAlgorithm
     type = "genetic";
     name = "Genetic";
 
@@ -746,7 +746,7 @@ export class GeneticSearch implements IDseAlgorithm {
  * The Exhaustive Search class implements the IDSEAlgorithm, setting the default values to 'exhaustive'. The
  * exhaustive algorithm requires no additional information.
  */
-export class ExhaustiveSearch implements IDseAlgorithm {
+export class ExhaustiveSearch implements IDseAlgorithm { //FIXME  Previously discussed removing/changing IDseAlgorithm
     type = "exhaustive";
     name = "Exhaustive";
 
