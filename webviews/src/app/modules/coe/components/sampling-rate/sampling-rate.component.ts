@@ -9,6 +9,7 @@ import { SamplingRateConstraint } from 'src/app/modules/shared/classes/configura
 })
 export class SamplingRateComponent {
 
+  //FIXME This is nonangular interface
   @Input()
   constraint!: SamplingRateConstraint;
 

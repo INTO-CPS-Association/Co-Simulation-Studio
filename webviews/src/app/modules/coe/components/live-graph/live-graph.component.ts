@@ -10,6 +10,7 @@ import { InstanceScalarPair, ScalarVariable, CausalityType, ScalarVariableType, 
 })
 export class LiveGraphComponent {
 
+
     //FIXME: This Uses a non Angular interface
     @Input()
     graph!: LiveGraph;
@@ -19,6 +20,7 @@ export class LiveGraphComponent {
     config!: CoSimulationConfig;
 
     //FIXME: This seams to not be used
+
     /* set path(config: CoSimulationConfig) {
          this.config = config;
    
@@ -42,6 +44,7 @@ export class LiveGraphComponent {
     outputPorts: Array<InstanceScalarPair> = [];
 
     //This is only need if the path is used
+
     /* parseconfig() {
          // Create an array of all output ports on all instances
          this.outputPorts = this.config.multiModel.fmuInstances
@@ -51,6 +54,7 @@ export class LiveGraphComponent {
              .reduce((a, b) => a.concat(...b), []);
      }
    */
+
     liveStreamSearchName: string = '';
 
     customTrackBy(index: number, obj: any): any {
@@ -66,6 +70,7 @@ export class LiveGraphComponent {
     isLocal(variable: ScalarVariable): boolean {
         return variable.causality === CausalityType.Local
     }
+
 
     //FIXME: This Uses a non Angular interface
     getScalarVariableTypeName(type: ScalarVariableType) {
