@@ -20,9 +20,11 @@ export class CoeServerStatusComponent implements OnInit {
 
 
 var globalChild: any;
+//FIXME no-agluar interface
 var intoCpsAppIns = IntoCpsApp.getInstance();
 var killWindow = false;
 var preventUnload = true;
+//FIXME no-agluar interface
 window.onload = function () {
   launchCoe();
   //    if (window.location.search === "?data=autolaunch")
@@ -30,14 +32,16 @@ window.onload = function () {
 };
 
 function hideBehaviour(ev: Event) {
-  //PL-TODO ev.returnValue = false;
-  //PL-TODO remote.getCurrentWindow().hide();
+  //FIXME function only not-supported on browser deno
+  ev.returnValue = false;
+  remote.getCurrentWindow().hide();
 }
 
-//PL-TODO remote.getCurrentWindow().on('minimize', (ev: Event) => {
-//PL-TODO   hideBehaviour(ev);
-//PL-TODO })
+remote.getCurrentWindow().on('minimize', (ev: Event) => {
+hideBehaviour(ev);
+})
 
+//FIXME no-agluar interface
 window.onbeforeunload = (ev: Event) => {
   if (preventUnload) {
     var isqutting = intoCpsAppIns?.isquitting;
@@ -53,10 +57,10 @@ window.onbeforeunload = (ev: Event) => {
   }
 }
 
-//PL-TODO ipcRenderer.on("kill", () => {
-//PL-TODO   killWindow = true;
-//PL-TODO   window.close();
-//PL-TODO });
+ipcRenderer.on("kill", () => {
+killWindow = true;
+window.close();
+});
 
 
 
@@ -78,6 +82,7 @@ function killCoeCloseWindow() {
   }
 }
 
+//FIXME Some functions whice are not used here. maybe should be removed 
 function coeClose() {
   window.close();
 }
@@ -89,10 +94,11 @@ function clearOutput() {
       div.removeChild(div.firstChild);
   }
 }
-
+//FIXME no-agluar interface
 var activeDiv: HTMLDivElement;
 var errorPrefix = ".";
 
+//FIXME no-agluar interface
 function processOutput(data: string) {
 
   let div = <HTMLDivElement>document.getElementById("coe-console-output");
@@ -123,7 +129,7 @@ function processOutput(data: string) {
     }
   window.scrollTo(0, document.body.scrollHeight);
 }
-
+//FIXME no-agluar interface. OBS some code has been comented out.
 function launchCoe() {
 
   var coe = IntoCpsApp.getInstance()?.getCoeProcess();
@@ -166,14 +172,14 @@ function launchCoe() {
     sp.className = "glyphicon glyphicon-link";
   }
 }
-
+//FIXME no-agluar interface. function is not called 
 function stopCoe() {
   var coe = IntoCpsApp.getInstance()?.getCoeProcess();
   if (coe?.isRunning()) {
     coe.stop();
   }
 }
-
+//FIXME no-agluar interface. function is not called
 function createPanel(title: string, content: HTMLElement): HTMLElement {
   var divPanel = document.createElement("div");
   divPanel.className = "panel panel-default";
