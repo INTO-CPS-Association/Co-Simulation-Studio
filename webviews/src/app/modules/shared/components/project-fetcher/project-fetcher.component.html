@@ -21,6 +21,27 @@
 </head>
 -->
 
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+     The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags --
+    <title>Open project from Git</title>
+    <!--link rel="stylesheet" href="../css/bootstrap.css"--> //FIXME Error: The loader didn't return a string.
+!-- Hack to fix electron and typescript interoperability
+    https://stackoverflow.com/a/43702240/1308616 --
+    <script>
+        var exports = {};
+      </script>
+    !--Styles to fix issues with related to responsiveness and padding of ui-layout--
+    <!-- script src="ProjectFetcher.js"></ script--> //FIXME Could not find file - perhaps corrected to src="Project-Fetcher.component.ts"
+    <script>window.$ = window.jQuery = require('jquery');</script>
+    <style>
+
+    </style>
+
+</head>
+
 
 <div id="container" class="container">
     <label for="basic-url">Git repository URL</label>
