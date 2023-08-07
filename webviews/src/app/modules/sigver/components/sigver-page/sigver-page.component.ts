@@ -1,8 +1,8 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import * as Path from "path";
-import * as Fs from "fs";
-import { SigverConfigurationService } from '../../services/sigver-configuration.service';
+import * as Fs from "fs"; //FIXME Non-angular interface
+import { SigverConfigurationService } from '../../services/sigver-configuration.service'; //FIXME Contains Non-angular interface
 import { maestroVersions } from 'src/app/modules/shared/services/maestro-api.service';
 
 @Component({
@@ -27,7 +27,7 @@ export class SigverPageComponent {
 		this._path = path;
 		this.sigverConfigurationService.configurationPath = this._path;
 		this.sigverConfigurationService
-			.loadConfigurationFromPath()
+			.loadConfigurationFromPath() //FIXME this function relies on Non-angular interface (fs) from '../../services/sigver-configuration.service'
 			.then(() => this.ensureResultPaths(Path.join(this.sigverConfigurationService.configurationPath, "..", "results", Path.sep)))
 			.catch((err) => console.error(err));
 	}
@@ -65,10 +65,10 @@ export class SigverPageComponent {
 
 	ensureDirectoryExistence(filePath: string): Promise<void> {
 		return new Promise<void>((resolve, reject) => {
-			if (Fs.existsSync(filePath)) {
+			if (Fs.existsSync(filePath)) { //FIXME Non-angular interface
 				resolve();
 			}
-			Fs.promises.mkdir(filePath, { recursive: true }).then(
+			Fs.promises.mkdir(filePath, { recursive: true }).then( //FIXME Non-angular interface
 				() => {
 					resolve();
 				},
