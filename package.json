@@ -12,6 +12,131 @@
 	],
 	"browser": "./extension/dist/browserMain",
 	"contributes": {
+		"configuration": {
+			"title": "Co-Simulation Studio",
+			"properties": {
+				"cosimulationstudio.developmentMode": {
+					"title": "Development Mode",
+					"type": "boolean",
+					"default": false
+				},
+				"cosimulationstudio.activeProjectLocation": {
+					"title": "Active Project Location",
+					"type": "string",
+					"default": "${workspaceFolder}"
+				},
+				"cosimulationstudio.downloadsInstallationLocation": {
+					"title": "Downloads Installation Location",
+					"type": "string",
+					"default": "${userHome}/into-cps-projects/install"
+				},
+				"cosimulationstudio.downloadsLocation": {
+					"title": "Downloads Location",
+					"type": "string",
+					"default": "${userHome}/into-cps-projects/install_downloads"
+				},
+				"cosimulationstudio.coeUrl": {
+					"title": "COE URL",
+					"type": "string",
+					"default": "localhost:8082"
+				},
+				"cosimulationstudio.traceabilityDaemonPort": {
+					"title": "Traceability Daemon Port",
+					"type": "string",
+					"default": "8083"
+				},
+				"cosimulationstudio.coeIsRemote": {
+					"title": "COE Is Remote",
+					"type": "boolean",
+					"default": false
+				},
+				"cosimulationstudio.coeJarLocation": {
+					"title": "COE .jar Location",
+					"type": "string",
+					"default": "${userHome}/into-cps-projects/install_downloads"
+				},
+				"cosimulationstudio.rtTesterInstallationLocation": {
+					"title": "RT-Tester Installation Location",
+					"type": [
+						"string",
+						"null"
+					],
+					"default": null
+				},
+				"cosimulationstudio.rtTesterMbtInstallationLocation": {
+					"title": "RT-Tester MBT Installation Location",
+					"type": [
+						"string",
+						"null"
+					],
+					"default": null
+				},
+				"cosimulationstudio.rtTesterRttui3ExecutableLocation": {
+					"title": "RT-Tester RTTUI3 Executable Location",
+					"type": [
+						"string",
+						"null"
+					],
+					"default": null
+				},
+				"cosimulationstudio.pythonExecutableForRtTester": {
+					"title": "Python Executable for RT-Tester",
+					"type": [
+						"string",
+						"null"
+					],
+					"default": null
+				},
+				"cosimulationstudio.updateSite": {
+					"title": "Update Site",
+					"type": "string",
+					"default": "https://raw.githubusercontent.com/INTO-CPS-Association/INTO-CPS-Association.github.io/master/download/"
+				},
+				"cosimulationstudio.developmentModeUpdateSite": {
+					"title": "Development Mode Update Site",
+					"type": "string",
+					"default": "https://raw.githubusercontent.com/INTO-CPS-Association/INTO-CPS-Association.github.io/development/download/"
+				},
+				"cosimulationstudio.examplesUrl": {
+					"title": "Examples URL",
+					"type": "string",
+					"default": "https://raw.githubusercontent.com/INTO-CPS-Association/INTO-CPS-Association.github.io/master/examples/examples.json"
+				},
+				"cosimulationstudio.developmentModeExamplesUrl": {
+					"title": "Development Mode Examples URL",
+					"type": "string",
+					"default": "https://raw.githubusercontent.com/INTO-CPS-Association/INTO-CPS-Association.github.io/development/examples/examples.json"
+				},
+				"cosimulationstudio.defaultProjectLocation": {
+					"title": "Default Project Location",
+					"type": "string",
+					"default": "${userHome}/into-cps-projects"
+				},
+				"cosimulationstudio.enableTraceability": {
+					"title": "Enable Traceability",
+					"type": "boolean",
+					"default": false
+				},
+				"cosimulationstudio.localUpdateSite": {
+					"title": "Local Update Site",
+					"type": [
+						"string",
+						"null"
+					],
+					"default": null
+				},
+				"cosimulationstudio.enableLocalUpdateSite": {
+					"title": "Enable Local Update Site",
+					"type": "boolean",
+					"default": false
+				},
+				"cosimulationstudio.numberOfSamplesInGraph": {
+					"title": "Number of Samples in Graph",
+					"type": "integer",
+					"default": 1000
+				}
+			}
+		},
 		"customEditors": [
 			{
 				"viewType": "cosimulationstudio.editors.appEditor",
