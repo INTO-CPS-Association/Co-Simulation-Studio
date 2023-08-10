@@ -29,7 +29,7 @@ export class ProjectRenameComponent {
 
     var fs: any = {} // PL-TODO require('fs-extra');
 
-    fs.move(oldPath, newPath, function (err: any) {
+    fs.move(oldPath, newPath, function (err: any) { //FIXME
       if (err) {
         console.error("Move faild " + oldPath + " -> " + newPath);
         return console.error(err);
