@@ -32,98 +32,75 @@
 import { FormControl, FormArray, FormGroup, AsyncValidatorFn, AbstractControl } from "@angular/forms";
 import { Observable } from 'rxjs';
 
-function isString(x: any) {
-	return typeof x === 'string';
-}
-
-function isNumber(x: any) {
+function isNumber(x: any): boolean {
 	let number = Number(x);
-
 	return !isNaN(number) && isFinite(number);
 }
 
-function isInteger(x: any) {
-	let number = Number(x);
-
-	// TODO: It sees 1.0000000000000001 as an integer, due to floating point rounding error.
-	return !isNaN(number) && isFinite(number) && number % 1 === 0;
-}
-
-export function numberValidator(control: FormControl): { [s: string]: boolean } | undefined {
+export function numberValidator(control: FormControl): { invalidNumber: boolean } | undefined {
 	if (!isNumber(control.value))
 		return { invalidNumber: true };
-
-	return;
+	return undefined;
 }
 
-export function integerValidator(control: FormControl): { [s: string]: boolean } | undefined {
-	if (!isInteger(control.value))
+export function integerValidator(control: FormControl): { invalidInteger: boolean } | undefined {
+	if (!Number.isInteger(control.value))
 		return { invalidInteger: true };
-
-	return;
+	return undefined;
 }
 
 export function lengthValidator(min: number | null = null, max: number | null = null) {
-	return (control: FormControl) => {
+	return (control: FormControl): { invalidLength: boolean } | undefined => {
 		let length = control.value.length;
-
 		if (length === undefined || min !== null && length < min || max !== null && length > max)
 			return { invalidLength: true };
-
-		return;
+		return undefined;
 	}
 }
 
 export function uniqueGroupPropertyValidator(propertyName: string) {
-	return (control: FormArray) => {
+	return (control: FormArray): { notUnique: boolean } | undefined => {
 		for (let i = 0; i < control.length; i++) {
 			let group: FormGroup = <FormGroup>control.at(i);
 			let value = group.controls[propertyName].value;
-
 			for (let j = i + 1; j < control.length; j++) {
 				let other: FormGroup = <FormGroup>control.at(j);
 				let otherValue = other.controls[propertyName].value;
-
 				if (value === otherValue)
 					return { notUnique: value };
 			}
-
 		}
-
-		return;
+		return undefined;
 	}
 }
 
-export function uniqueValidator(control: FormControl) {
-	var elements = control.value;
-
+export function uniqueValidator(control: FormControl): { notUnique: boolean } | undefined {
+	const elements = control.value;
 	for (let i = 0; i < elements.length; i++) {
 		for (let j = i + 1; j < elements.length; j++) {
 			if (elements[i] === elements[j])
 				return { notUnique: true };
 		}
 	}
-
-	return;
+	return undefined;
 }
 
-export function uniqueControlValidator(control: FormArray) {
+export function uniqueControlValidator(control: FormArray): { notUnique: boolean } | undefined {
 	for (let i = 0; i < control.length; i++) {
 		for (let j = i + 1; j < control.length; j++) {
 			if (control.at(i).value === control.at(j).value)
 				return { notUnique: control.at(i).value };
 		}
 	}
-	return;
+	return undefined;
 }
 
-// from angular v6 their is a pending call which is new to abstractControls if problems should arise with this function look into that.
+// from angular v6 there is a pending call which is new to abstractControls if problems should arise with this function look into that.
 export function lessThanValidator(selfName: string, otherName: string): AsyncValidatorFn {
 	return (group: AbstractControl): Promise<{ [key: string]: any } | null> | Observable<{ [key: string]: any } | null> => {
 		return new Promise((resolve, reject) => {
 			let self = group.get(selfName);
 			let other = group.get(otherName);
-
 			if (self?.value && other?.value && Number(self.value) >= Number(other.value)) {
 				resolve({ notLessThan: true });
 			} else {
@@ -131,18 +108,14 @@ export function lessThanValidator(selfName: string, otherName: string): AsyncVal
 			}
 		});
 	}
-
-
 }
 
 export function lessThanValidator2(selfName: string, otherName: string) {
-	return (group: FormGroup) => {
+	return (group: FormGroup): { notLessThan: boolean } | undefined => {
 		let self = group.get(selfName);
 		let other = group.get(otherName);
-
-		if (self?.value && other?.value && Number(self.value) >= Number(other.value)) {
+		if (self?.value && other?.value && Number(self.value) >= Number(other.value))
 			return { notLessThan: true };
-		}
-		else return null;
+		return undefined;
 	}
 }

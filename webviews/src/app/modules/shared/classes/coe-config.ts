@@ -30,7 +30,7 @@
  */
 
 import * as Path from 'path';
-import { CoSimulationConfig } from '../configuration/co-simulation-config';
+import { CoSimulationConfig } from '../co-simulation-config';
 import { Serializer } from '../configuration/parser';
 import { Instance, ScalarVariable } from './fmu';
 

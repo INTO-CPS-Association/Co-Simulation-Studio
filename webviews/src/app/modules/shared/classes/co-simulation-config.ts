@@ -32,18 +32,18 @@
 import { MultiModelConfig } from "./multi-model-config"
 import { Parser, Serializer } from "./parser"
 import * as fs from "fs"
-import { Instance, ScalarVariable, InstanceScalarPair } from "../models/fmu";
+import { Instance, ScalarVariable, InstanceScalarPair } from "./fmu";
 import { WarningMessage, ErrorMessage } from "./messages";
 import { FormArray, FormGroup, FormControl, Validators } from "@angular/forms";
 import {
     numberValidator, integerValidator, lengthValidator,
     uniqueGroupPropertyValidator, uniqueValidator
-} from "../validators";
+} from "./validators";
 
 import * as Path from 'path';
 
-import { checksum } from "../project";
-import IntoCpsApp from "../into-cps-app";
+import { checksum } from "./project";
+import IntoCpsApp from "./into-cps-app";
 import { ISerializable } from './serializable';
 
 export class CoSimulationConfig implements ISerializable {

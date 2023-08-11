@@ -34,7 +34,7 @@ import * as Path from 'path';
 let JSZip = require("jszip");
 import { NgZone } from '@angular/core';
 //import { reject } from 'bluebird';
-import { Utilities } from '../utilities';
+import { Utilities } from './utilities';
 
 // Holds information about a .fmu container
 export class Fmu {

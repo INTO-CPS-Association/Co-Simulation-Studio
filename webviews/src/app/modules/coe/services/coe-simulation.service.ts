@@ -1,7 +1,7 @@
 import { Injectable, NgZone } from '@angular/core';
 import * as Path from "path";
 import * as fs from 'fs' //FIXME needs removal as fs is not angular
-import { CoSimulationConfig, LiveGraph } from '../../shared/classes/configuration/co-simulation-config';
+import { CoSimulationConfig, LiveGraph } from '../../shared/classes/co-simulation-config';
 import { BehaviorSubject, Observable, Subject, Subscription } from 'rxjs';
 import { Graph } from '../../shared/classes/graph';
 import DialogHandler from '../../shared/classes/dialog-handler';
@@ -11,7 +11,7 @@ import { storeResultCrc } from '../../shared/classes/configuration/result-config
 import { CoeConfig } from '../../shared/classes/models/coe-config';
 import { Deferred } from '../../shared/classes/deferred';
 import { SettingsService } from '../../shared/services/settings.service';
-import { Fmu } from '../../shared/classes/models/fmu';
+import { Fmu } from '../../shared/classes/fmu';
 import { SettingKeys } from '../../shared/services/settings.service';
 
 const child_process: any = {};

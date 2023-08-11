@@ -30,8 +30,8 @@
  */
 
 import { BehaviorSubject } from "rxjs";
-import { CoSimulationConfig, LiveGraph } from './configuration/co-simulation-config';
-import { Serializer } from './configuration/parser';
+import { CoSimulationConfig, LiveGraph } from './co-simulation-config';
+import { Serializer } from './parser';
 
 export class Graph {
     private config?: CoSimulationConfig;
