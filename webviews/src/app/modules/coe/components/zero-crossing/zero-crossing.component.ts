@@ -10,9 +10,11 @@ import { InstanceScalarPair } from 'src/app/modules/shared/classes/models/fmu';
 })
 export class ZeroCrossingComponent {
 
+    //FIXME Non angular interface
     @Input()
     constraint!: ZeroCrossingConstraint;
 
+    //FIXME Non angular interface
     @Input()
     ports: Array<InstanceScalarPair> = [];
 

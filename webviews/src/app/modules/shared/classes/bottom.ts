@@ -36,20 +36,22 @@ import IntoCpsApp from './into-cps-app';
 export class PreviewHandler {
 
 	setVisible: any;
+	//FIXME CoeProcess is a non angular class 
 	coe?: CoeProcess;
 
 	constructor(setVisible: any) {
 		this.setVisible = setVisible;
+		//FIXME IntoCpsApp is Non-anglular class 
 		this.coe = IntoCpsApp.getInstance()?.getCoeProcess() ?? undefined;
 		window.setInterval(() => { this.setStatusIcons() }, 1000);
 	}
-
+	//FIXME The following mothod uses a non-angular interface. however it looks like its something that built into TS
 	private setStatusIcons() {
 		let iconSpan = document.getElementById("coeIconColor");
 		if (iconSpan)
 			iconSpan.style.color = this.coe?.isRunning() ? "green" : "red";
 	}
-
+	//FIXME The following mothod uses a non-angular interface. however it looks like its something that built into TS
 	public setVisibilityPreviewPanel(name: string, visibel: boolean) {
 		this.setVisible("preview", name, visibel);
 
@@ -64,7 +66,7 @@ export class PreviewHandler {
 	}
 }
 
-
+//FIXME The following class uses a non-angular interface. however it looks like its something that built into TS
 export class StatusBarHandler {
 
 	static setVisibilityPreviewPanel(element: HTMLElement, previewHandler: PreviewHandler, name: string) {

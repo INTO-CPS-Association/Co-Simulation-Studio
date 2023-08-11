@@ -50,6 +50,7 @@ export class LineChartComponent implements OnInit {
     window.removeEventListener('resize', this.resizeEventListener);
   }
 
+  //FIXME Behavior subject is non-angular interface 
   @Input()
   set datasets(datasets: BehaviorSubject<any> | undefined) {
 
@@ -64,11 +65,13 @@ export class LineChartComponent implements OnInit {
     }
   }
 
+  //FIXME input something is not used? maybe should be deleted 
   @Input()
   set something(something: any) {
     this.redrawLayoutChange();
   }
 
+  //FIXME plotly is non-angular interface 
   private redrawLayoutChange() {
     let node = Plotly.d3
       .select(this.element.nativeElement)
@@ -79,11 +82,11 @@ export class LineChartComponent implements OnInit {
 
       })
       .node();
-
+    //FIXME plotly is non-angular interface 
     Plotly
       .newPlot(node, [], this.layout, this.options)
       .then(() => this.loading = false);
-
+    //FIXME plotly is non-angular interface 
     Plotly.Plots.resize(node);
   }
 
@@ -116,14 +119,14 @@ export class LineChartComponent implements OnInit {
 
       })
       .node();
-
+      //FIXME plotly is non-angular interface 
     Plotly
       .newPlot(this._resizeNode, [], this.layout, this.options)
       .then(() => this.loading = false);
 
     window.addEventListener('resize', this.resizeEventListener);
   }
-
+//FIXME plotly is non-angular interface 
   private resizeEventListener = () => {
     Plotly.Plots.resize(this._resizeNode)
   };
@@ -131,6 +134,7 @@ export class LineChartComponent implements OnInit {
   private draw(datasets: Array<any>) {
     this.element.nativeElement.data = datasets;
     requestAnimationFrame(() => {
+      //FIXME plotly is non-angular interface 
       Plotly.redraw(this.element.nativeElement);
       this.redrawCooldown = false;
       this.lastUpdateTime = Date.now();

@@ -10,11 +10,16 @@ import { InstanceScalarPair, ScalarVariable, CausalityType, ScalarVariableType, 
 })
 export class LiveGraphComponent {
 
+
+    //FIXME: This Uses a non Angular interface
     @Input()
     graph!: LiveGraph;
 
+    //FIXME: This Uses a non Angular interface
     @Input()
     config!: CoSimulationConfig;
+
+    //FIXME: This seams to not be used
 
     /* set path(config: CoSimulationConfig) {
          this.config = config;
@@ -35,8 +40,10 @@ export class LiveGraphComponent {
     @Input()
     editing: boolean = false;
 
-
+    //FIXME: This Uses a non Angular interface
     outputPorts: Array<InstanceScalarPair> = [];
+
+    //This is only need if the path is used
 
     /* parseconfig() {
          // Create an array of all output ports on all instances
@@ -47,28 +54,35 @@ export class LiveGraphComponent {
              .reduce((a, b) => a.concat(...b), []);
      }
    */
+
     liveStreamSearchName: string = '';
 
     customTrackBy(index: number, obj: any): any {
         return index;
     }
 
+    //FIXME: This Uses a non Angular interface
     getOutputs(scalarVariables: Array<ScalarVariable>) {
         return scalarVariables.filter(variable => (variable.causality === CausalityType.Output || variable.causality === CausalityType.Local));
     }
 
+    //FIXME: This Uses a non Angular interface
     isLocal(variable: ScalarVariable): boolean {
         return variable.causality === CausalityType.Local
     }
 
+
+    //FIXME: This Uses a non Angular interface
     getScalarVariableTypeName(type: ScalarVariableType) {
         return ScalarVariableType[type];
     }
 
+    //FIXME: This Uses a non Angular interface
     restrictToCheckedLiveStream(instance: Instance, scalarVariables: Array<ScalarVariable>) {
         return scalarVariables.filter(variable => this.isLivestreamChecked(instance, variable));
     }
 
+    //FIXME: This Uses a non Angular interface
     isLivestreamChecked(instance: Instance, output: ScalarVariable) {
         let variables = this.graph.getLivestream().get(instance);
 
@@ -77,6 +91,7 @@ export class LiveGraphComponent {
         return variables.indexOf(output) !== -1;
     }
 
+    //FIXME: This Uses a non Angular interface
     onLivestreamChange(enabled: boolean, instance: Instance, output: ScalarVariable) {
         let variables = this.graph.getLivestream().get(instance);
 

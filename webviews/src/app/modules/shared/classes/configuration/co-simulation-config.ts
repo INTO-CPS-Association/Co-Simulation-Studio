@@ -332,7 +332,7 @@ export class FixedStepAlgorithm implements ICoSimAlgorithm {
 
     toFormGroup() {
         return new FormGroup({
-            //PL-TODO size: new FormControl(this.size, [Validators.required??, numberValidator])
+            size: new FormControl(this.size, [Validators.required?? numberValidator])
         });
     }
 
@@ -362,10 +362,10 @@ export class VariableStepAlgorithm implements ICoSimAlgorithm {
 
     toFormGroup() {
         return new FormGroup({
-            //PL-TODO initSize: new FormControl(this.initSize, [Validators.required, numberValidator]),
-            //PL-TODO sizeMin: new FormControl(this.sizeMin, [Validators.required, numberValidator]),
-            //PL-TODO sizeMax: new FormControl(this.sizeMax, [Validators.required, numberValidator]),
-            //PL-TODO constraints: new FormArray(this.constraints.map(c => c.toFormGroup()), uniqueGroupPropertyValidator("id"))
+            initSize: new FormControl(this.initSize, [Validators.required, numberValidator]),
+            sizeMin: new FormControl(this.sizeMin, [Validators.required, numberValidator]),
+            sizeMax: new FormControl(this.sizeMax, [Validators.required, numberValidator]),
+            constraints: new FormArray(this.constraints.map(c => c.toFormGroup()), uniqueGroupPropertyValidator("id"))
         });
     }
 
@@ -407,10 +407,10 @@ export class ZeroCrossingConstraint implements VariableStepConstraint {
     toFormGroup() {
         return new FormGroup({
             id: new FormControl(this.id),
-            //PL-TODO ports: new FormControl(this.ports, [lengthValidator(1, 2), uniqueValidator]),
+            ports: new FormControl(this.ports, [lengthValidator(1, 2), uniqueValidator]),
             order: new FormControl(this.order),
-            //PL-TODO abstol: new FormControl(this.abstol, [numberValidator]),
-            //PL-TODO safety: new FormControl(this.safety, [numberValidator])
+            abstol: new FormControl(this.abstol, [numberValidator]),
+            safety: new FormControl(this.safety, [numberValidator])
         });
     }
 
@@ -466,13 +466,14 @@ export class BoundedDifferenceConstraint implements VariableStepConstraint {
     ) {
     }
 
+    
     toFormGroup() {
         return new FormGroup({
             id: new FormControl(this.id),
-            //PL-TODO ports: new FormControl(this.ports, [lengthValidator(1), uniqueValidator]),
-            //PL-TODO abstol: new FormControl(this.abstol, [numberValidator]),
-            //PL-TODO reltol: new FormControl(this.reltol, [numberValidator]),
-            //PL-TODO safety: new FormControl(this.safety, [numberValidator]),
+            ports: new FormControl(this.ports, [lengthValidator(1), uniqueValidator]),
+            abstol: new FormControl(this.abstol, [numberValidator]),
+            reltol: new FormControl(this.reltol, [numberValidator]),
+            safety: new FormControl(this.safety, [numberValidator]),
             skipDiscrete: new FormControl(this.skipDiscrete)
         });
     }
@@ -506,9 +507,9 @@ export class SamplingRateConstraint implements VariableStepConstraint {
     toFormGroup() {
         return new FormGroup({
             id: new FormControl(this.id, [Validators.required]),
-            //PL-TODO base: new FormControl(this.base, [Validators.required, integerValidator]),
-            //PL-TODO rate: new FormControl(this.rate, [Validators.required, integerValidator]),
-            //PL-TODO startTime: new FormControl(this.startTime, [Validators.required, integerValidator])
+            base: new FormControl(this.base, [Validators.required, integerValidator]),
+            rate: new FormControl(this.rate, [Validators.required, integerValidator]),
+            startTime: new FormControl(this.startTime, [Validators.required, integerValidator])
         });
     }
 

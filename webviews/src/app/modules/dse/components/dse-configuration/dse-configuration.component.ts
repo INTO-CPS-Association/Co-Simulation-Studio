@@ -14,6 +14,32 @@ import * as fs from 'fs'
 import { Serializer } from 'src/app/modules/shared/classes/configuration/parser';
 import { SettingKeys } from 'src/app/modules/shared/classes/setting-keys';
 
+
+/*TASKS
+replace function calls with unified API
+for now stub with dummy data
+Get UI functional
+use console.log or simple data to enable UI
+*/
+/*
+------------------------------------------------------
+FUNCTIONS THAT NEED TO BE EXTRACTED INTO API //PL-TODO
+------------------------------------------------------
+*/
+export function readdirSync(path: string) : string[] {
+    return ["a.txt", "b.txt"];
+};
+export function isDirectory(path: string) : boolean {
+
+    return true;
+}
+
+
+/*
+------------------------------------------------------
+ACTUAL COMPONENT
+------------------------------------------------------
+*/
 @Component({
     selector: 'app-dse-configuration',
     templateUrl: './dse-configuration.component.html',
@@ -28,7 +54,7 @@ export class DseConfigurationComponent {
         this._path = path;
 
         if (path) {
-            let app: IntoCpsApp | undefined = IntoCpsApp.getInstance() ?? undefined;
+            let app: IntoCpsApp | undefined = IntoCpsApp.getInstance() ?? undefined; //intoCPSapp???
             let p: string = app?.getActiveProject()?.getRootFilePath() ?? "";
             this.cosimConfig = this.loadCosimConfigs(Path.join(p, Project.PATH_MULTI_MODELS));
 
@@ -91,12 +117,12 @@ export class DseConfigurationComponent {
         this._coeIsOnlineSub = this.maestroApiService.startMonitoringOnlineStatus(isOnline => this.online = isOnline);
     }
 
-    ngOnDestroy() {
+    ngOnDestroy() : void {
         clearInterval(this.onlineInterval);
         this.maestroApiService.stopMonitoringOnlineStatus(this._coeIsOnlineSub);
     }
 
-    parseConfig(mmPath: string) {
+    parseConfig(mmPath: string) : void {
         let project = IntoCpsApp.getInstance()?.getActiveProject();
         if (project == null)
             return;
@@ -123,7 +149,7 @@ export class DseConfigurationComponent {
 
                     // Create a form group for validation
                     this.form = new FormGroup({
-                        //PL-TODO searchAlgorithm: this.algorithmFormGroups.get(this.config.searchAlgorithm),
+                        //searchAlgorithm: this.algorithmFormGroups.get(this.config.searchAlgorithm), //PL-TODO
                         paramConstraints: new FormArray(this.config.paramConst.map(c => new FormControl(c))),
 
                         objConstraints: new FormArray(this.config.objConst.map(c => new FormControl(c))),
@@ -154,7 +180,7 @@ export class DseConfigurationComponent {
 
         this.warnings = this.config.validate();
 
-        let override = false;
+        let override = false; //override doesn't do anything but change state - there has to be something dependent on the state of override //FIXME
 
         if (this.warnings.length > 0) {
 
@@ -196,23 +222,28 @@ export class DseConfigurationComponent {
     /*
      * Method to state that the multi-model has been chosen for the DSE config
      */
-    /* onMMSubmit() {
+    onMMSubmit() { //FIXME
         if (!this.editingMM) return;
         this.editingMM = false;
         if (this.mmPath !='')
         {
             this.mmSelected = true;
         }
-    } */
+    }
 
+
+    
 
 
     getFiles(path: string): string[] {
         var fileList: string[] = [];
-        var files = fs.readdirSync(path);
+        
+        
+        var files = readdirSync(path); //stubbed function
+        
         for (var i in files) {
             var name = Path.join(path, files[i]);
-            if (fs.statSync(name).isDirectory()) {
+            if (isDirectory(name)) { //stubbed function
                 fileList = fileList.concat(this.getFiles(name));
             } else {
                 fileList.push(name);
@@ -221,6 +252,8 @@ export class DseConfigurationComponent {
 
         return fileList;
     }
+
+
 
     loadCosimConfigs(path: string): string[] {
         var files: string[] = this.getFiles(path);
@@ -246,8 +279,7 @@ export class DseConfigurationComponent {
         try {
             if (Path.isAbsolute(mmPath)) {
                 // console.warn("Could not find mm at: " + mmPath + " initiating search or possible alternatives...")
-                //no we have the old style
-                fs.readdirSync(Path.join(this.coeconfig, "..", "..")).forEach(file => {
+                readdirSync(Path.join(this.coeconfig, "..", "..")).forEach(file => {            //stubbed function readdirSync
                     if (file.endsWith("mm.json")) {
                         mmPath = Path.join(this.coeconfig, "..", "..", file);
                         console.log("Found mm at: " + mmPath);
@@ -261,8 +293,6 @@ export class DseConfigurationComponent {
         } catch (error) {
             console.error("Path was not a correct path.. " + mmPath + " error: " + error);
         }
-
-
     }
 
     /*
@@ -356,7 +386,7 @@ export class DseConfigurationComponent {
      */
     setDSEParameter(instance: Instance, variableName: string, newValue: any) {
 
-        // this will not work with the python scripts as it will try to run on an array, this will be commented out for now and removed in an up-coming commit
+        // this will not work with the python scripts as it will try to run on an array, this will be commented out for now and removed in an up-coming commit //FIXME
         /* if (!newValue.includes(",")){
             if (instance.fmu.getScalarVariable(variableName).type === ScalarVariableType.Real)
                 newValue = parseFloat(newValue);
@@ -434,12 +464,12 @@ export class DseConfigurationComponent {
     }
 
     //Utility method to obtain an instance from the multimodel by its string id encoding
-    private getParameter(dse: DseConfiguration, id: string): Instance | null {
+    private getParameter(dse: DseConfiguration, id: string): Instance | null { //FIXME Entire function is never read
         let ids = this.parseId(id);
 
         let fmuName = ids[0];
         let instanceName = ids[1];
-        let scalarVariableName = ids[2];
+        //let scalarVariableName = ids[2]; //value never called //FIXME
         return dse.getInstanceOrCreate(fmuName, instanceName);
     }
 
@@ -621,7 +651,7 @@ export class DseConfigurationComponent {
 
 
     addInternalFunction() {
-        let intf = this.config.addInternalFunction();
+        //let intf = this.config.addInternalFunction(); //value never used //FIXME
         this.objNames = this.getObjectiveNames();
     }
 
