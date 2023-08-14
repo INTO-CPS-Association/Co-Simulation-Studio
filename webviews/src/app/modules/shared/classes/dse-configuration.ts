@@ -30,13 +30,13 @@
  */
 
 import { Validators, FormControl, FormGroup } from "@angular/forms";
-import { numberValidator } from "../validators";
+import { numberValidator } from "./validators";
 import * as fs from "fs"
 import { DseParser } from "./dse-parser"
 import { Serializer } from "./parser";
 import {
     Fmu, Instance, ScalarVariableType, ScalarVariable
-} from "../models/fmu";
+} from "./fmu";
 import { WarningMessage } from "./messages";
 import { MultiModelConfig } from "./multi-model-config"
 import { ISerializable } from './serializable';

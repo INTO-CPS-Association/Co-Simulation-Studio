@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, NgZone, OnInit } from '@angular/core';
-import { LiveGraph } from 'src/app/modules/shared/classes/configuration/co-simulation-config';
+import { LiveGraph } from 'src/app/modules/shared/classes/co-simulation-config';
 import { Graph } from 'src/app/modules/shared/classes/graph';
 import { FileSystemService } from 'src/app/modules/shared/services/file-system.service';
 

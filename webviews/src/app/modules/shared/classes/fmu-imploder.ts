@@ -34,9 +34,9 @@ import { MultiModelConfig } from "./multi-model-config"
 import {
     ScalarVariable, Fmu, CausalityType, Instance, InstanceScalarPair, ScalarVariableType, VariabilityType,
     causalityToString, typeToString, variabilityToString, initialToString, InitialType
-} from "../models/fmu"
-import { CoeConfig } from "../models/coe-config"
-import IntoCpsApp from "../into-cps-app";
+} from "./fmu"
+import { CoeConfig } from "./coe-config"
+import IntoCpsApp from "./into-cps-app";
 import { Serializer } from "./parser";
 import * as fs from "fs"
 import * as xml2js from 'xml2js';

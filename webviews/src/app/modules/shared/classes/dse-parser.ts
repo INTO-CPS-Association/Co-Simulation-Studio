@@ -30,7 +30,7 @@
  */
 
 import { ParetoDimension, DseConfiguration, DseParameterConstraint, DseScenario, DseObjectiveConstraint, IDseObjective, ObjectiveParam, ExternalScript, IDseAlgorithm, DseParameter, IDseRanking, ParetoRanking, GeneticSearch, ExhaustiveSearch } from "./dse-configuration"
-import { Fmu, InstanceScalarPair, Instance, ScalarVariable, CausalityType } from "../models/fmu";
+import { Fmu, InstanceScalarPair, Instance, ScalarVariable, CausalityType } from "./fmu";
 
 
 export class DseParser {

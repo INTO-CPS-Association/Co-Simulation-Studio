@@ -407,10 +407,10 @@ export class ZeroCrossingConstraint implements VariableStepConstraint {
     toFormGroup() {
         return new FormGroup({
             id: new FormControl(this.id),
-            ports: new FormControl(this.ports, [lengthValidator(1, 2), uniqueValidator]),
+            ports: new FormControl(this.ports, [Validators.required, lengthValidator(1, 2), uniqueValidator]),
             order: new FormControl(this.order),
-            abstol: new FormControl(this.abstol, [numberValidator]),
-            safety: new FormControl(this.safety, [numberValidator])
+            abstol: new FormControl(this.abstol, [Validators.required, numberValidator]),
+            safety: new FormControl(this.safety, [Validators.required, numberValidator])
         });
     }
 
@@ -470,10 +470,10 @@ export class BoundedDifferenceConstraint implements VariableStepConstraint {
     toFormGroup() {
         return new FormGroup({
             id: new FormControl(this.id),
-            ports: new FormControl(this.ports, [lengthValidator(1), uniqueValidator]),
-            abstol: new FormControl(this.abstol, [numberValidator]),
-            reltol: new FormControl(this.reltol, [numberValidator]),
-            safety: new FormControl(this.safety, [numberValidator]),
+            ports: new FormControl(this.ports, [Validators.required, lengthValidator(1), uniqueValidator]),
+            abstol: new FormControl(this.abstol, [Validators.required, numberValidator]),
+            reltol: new FormControl(this.reltol, [Validators.required, numberValidator]),
+            safety: new FormControl(this.safety, [Validators.required, numberValidator]),
             skipDiscrete: new FormControl(this.skipDiscrete)
         });
     }

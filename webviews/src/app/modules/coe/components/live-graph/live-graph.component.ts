@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { CoSimulationConfig, LiveGraph } from 'src/app/modules/shared/classes/configuration/co-simulation-config';
-import { InstanceScalarPair, ScalarVariable, CausalityType, ScalarVariableType, Instance } from 'src/app/modules/shared/classes/models/fmu';
+import { CoSimulationConfig, LiveGraph } from 'src/app/modules/shared/classes/co-simulation-config';
+import { InstanceScalarPair, ScalarVariable, CausalityType, ScalarVariableType, Instance } from 'src/app/modules/shared/classes/fmu';
 
 @Component({
     selector: 'app-live-graph',

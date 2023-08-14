@@ -36,7 +36,7 @@ import {
 } from "./co-simulation-config";
 import * as Path from 'path';
 import * as fs from 'fs';
-import { Fmu, InstanceScalarPair, Instance, ScalarVariable, CausalityType } from "../models/fmu";
+import { Fmu, InstanceScalarPair, Instance, ScalarVariable, CausalityType } from "./fmu";
 
 export class Parser {
 

@@ -2,16 +2,16 @@
 import { Component, EventEmitter, Input, NgZone, OnInit, Output } from '@angular/core';
 import { FormGroup, FormArray, FormControl } from '@angular/forms';
 import { Subscription } from 'rxjs';
-import { IDseAlgorithm, DseConfiguration, ExhaustiveSearch, GeneticSearch, DseParameter, DseParameterConstraint, ExternalScript, InternalFunction, DseObjectiveConstraint, ParetoRanking, ParetoDimension, DseScenario } from 'src/app/modules/shared/classes/configuration/dse-configuration';
-import { WarningMessage } from 'src/app/modules/shared/classes/configuration/messages';
-import { Instance, ScalarVariable, isCausalityCompatible, CausalityType, ScalarValuePair, ScalarVariableType } from 'src/app/modules/shared/classes/models/fmu';
+import { IDseAlgorithm, DseConfiguration, ExhaustiveSearch, GeneticSearch, DseParameter, DseParameterConstraint, ExternalScript, InternalFunction, DseObjectiveConstraint, ParetoRanking, ParetoDimension, DseScenario } from 'src/app/modules/shared/classes/dse-configuration';
+import { WarningMessage } from 'src/app/modules/shared/classes/messages';
+import { Instance, ScalarVariable, isCausalityCompatible, CausalityType, ScalarValuePair, ScalarVariableType } from 'src/app/modules/shared/classes/fmu';
 import { Project } from 'src/app/modules/shared/classes/project';
 import { MaestroApiService } from 'src/app/modules/shared/services/maestro-api.service';
 import { NavigationService } from 'src/app/modules/shared/services/navigation.service';
 import IntoCpsApp from 'src/app/modules/shared/classes/into-cps-app';
 import * as Path from "path";
 import * as fs from 'fs'
-import { Serializer } from 'src/app/modules/shared/classes/configuration/parser';
+import { Serializer } from 'src/app/modules/shared/classes/parser';
 import { SettingKeys } from 'src/app/modules/shared/classes/setting-keys';
 
 

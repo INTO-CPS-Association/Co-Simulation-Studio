@@ -29,7 +29,7 @@
  * See the CONTRIBUTORS file for author and contributor information. 
  */
 
-import { FormControl, FormArray, FormGroup, AsyncValidatorFn, AbstractControl, ValidatorFn, ValidationErrors} from "@angular/forms";
+import { FormControl, FormArray, FormGroup, AsyncValidatorFn, AbstractControl, ValidatorFn, ValidationErrors } from "@angular/forms";
 
 import { Observable } from 'rxjs';
 //import { ValidationError } from 'xml2js';
@@ -39,44 +39,45 @@ function isNumber(x: any): boolean {
 	return !isNaN(number) && isFinite(number);
 }
 
-export function numberValidator(control: FormControl): { invalidNumber: boolean } | undefined {
+export function numberValidator(control: FormControl): ValidationErrors | null {
 	if (!isNumber(control.value))
 		return { invalidNumber: true };
-	return undefined;
+	return null;
 }
 
-export function integerValidator(control: FormControl): { invalidInteger: boolean } | undefined {
+export function integerValidator(control: FormControl): ValidationErrors | null {
 	if (!Number.isInteger(control.value))
 		return { invalidInteger: true };
-	return undefined;
+	return null;
 }
 
 export function lengthValidator(min: number | null = null, max: number | null = null) {
-	return (control: FormControl): { invalidLength: boolean } | undefined => {
+	return (control: FormControl): ValidationErrors | null => {
 		let length = control.value.length;
 		if (length === undefined || min !== null && length < min || max !== null && length > max)
 			return { invalidLength: true };
-		return undefined;
+		return null;
 	}
 }
 
 export function uniqueGroupPropertyValidator(propertyName: string) {
-	return (control: FormArray): { notUnique: boolean } | undefined => {
-		for (let i = 0; i < control.length; i++) {
-			let group: FormGroup = <FormGroup>control.at(i);
-			let value = group.controls[propertyName].value;
-			for (let j = i + 1; j < control.length; j++) {
-				let other: FormGroup = <FormGroup>control.at(j);
-				let otherValue = other.controls[propertyName].value;
-				if (value === otherValue)
-					return { notUnique: value };
+	return (control: AbstractControl): ValidationErrors | null => {
+		if (control instanceof FormArray)
+			for (let i = 0; i < control.length; i++) {
+				let group: FormGroup = <FormGroup>control.at(i);
+				let value = group.controls[propertyName].value;
+				for (let j = i + 1; j < control.length; j++) {
+					let other: FormGroup = <FormGroup>control.at(j);
+					let otherValue = other.controls[propertyName].value;
+					if (value === otherValue)
+						return { notUnique: value };
+				}
 			}
-		}
-		return undefined;
+		return null;
 	}
 }
 
-export function uniqueValidator(control: FormControl): { notUnique: boolean } | undefined {
+export function uniqueValidator(control: FormControl): ValidationErrors | null {
 	const elements = control.value;
 	for (let i = 0; i < elements.length; i++) {
 		for (let j = i + 1; j < elements.length; j++) {
@@ -84,25 +85,25 @@ export function uniqueValidator(control: FormControl): { notUnique: boolean } | 
 				return { notUnique: true };
 		}
 	}
-	return undefined;
+	return null;
 }
 
-export function uniqueControlValidator(control: FormArray): { notUnique: boolean } | undefined {
+export function uniqueControlValidator(control: FormArray): ValidationErrors | null {
 	for (let i = 0; i < control.length; i++) {
 		for (let j = i + 1; j < control.length; j++) {
 			if (control.at(i).value === control.at(j).value)
 				return { notUnique: control.at(i).value };
 		}
 	}
-	return undefined;
+	return null;
 }
 
 // from angular v6 there is a pending call which is new to abstractControls if problems should arise with this function look into that.
 export function lessThanValidator(selfName: string, otherName: string): AsyncValidatorFn {
-	return (group: AbstractControl): Promise<{ [key: string]: any } | null> | Observable<{ [key: string]: any } | null> => {
+	return (control: AbstractControl): Promise<{ [key: string]: any } | null> | Observable<{ [key: string]: any } | null> => {
 		return new Promise((resolve, reject) => {
-			let self = group.get(selfName);
-			let other = group.get(otherName);
+			let self = control.get(selfName);
+			let other = control.get(otherName);
 			if (self?.value && other?.value && Number(self.value) >= Number(other.value)) {
 				resolve({ notLessThan: true });
 			} else {
@@ -112,13 +113,13 @@ export function lessThanValidator(selfName: string, otherName: string): AsyncVal
 	}
 }
 
-export function lessThanValidator2(selfName: string, otherName: string) {
-	return (group: FormGroup): { notLessThan: boolean } | undefined => {
-		let self = group.get(selfName);
-		let other = group.get(otherName);
+export function lessThanValidator2(selfName: string, otherName: string): ValidatorFn {
+	return (control: AbstractControl): ValidationErrors | null => {
+		let self = control.get(selfName);
+		let other = control.get(otherName);
 		if (self?.value && other?.value && Number(self.value) >= Number(other.value))
 			return { notLessThan: true };
-		return undefined;
+		return null;
 	}
 }
 

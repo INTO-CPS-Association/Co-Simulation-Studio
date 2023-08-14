@@ -1,8 +1,8 @@
 import { Component, Input, NgZone, OnInit } from '@angular/core';
-import { ErrorMessage, WarningMessage } from 'src/app/modules/shared/classes/configuration/messages';
-import { MultiModelConfig } from 'src/app/modules/shared/classes/configuration/multi-model-config';
-import { Serializer } from 'src/app/modules/shared/classes/configuration/parser';
-import { OutputConnectionsPair } from 'src/app/modules/shared/classes/models/fmu';
+import { ErrorMessage, WarningMessage } from 'src/app/modules/shared/classes/messages';
+import { MultiModelConfig } from 'src/app/modules/shared/classes/multi-model-config';
+import { Serializer } from 'src/app/modules/shared/classes/parser';
+import { OutputConnectionsPair } from 'src/app/modules/shared/classes/fmu';
 import IntoCpsApp from 'src/app/modules/shared/classes/into-cps-app';
 
 @Component({

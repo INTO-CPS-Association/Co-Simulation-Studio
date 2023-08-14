@@ -1,7 +1,7 @@
 import { Component, Input, NgZone, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { CoSimulationConfig } from 'src/app/modules/shared/classes/configuration/co-simulation-config';
-import { Message, WarningMessage } from 'src/app/modules/shared/classes/configuration/messages';
+import { CoSimulationConfig } from 'src/app/modules/shared/classes/co-simulation-config';
+import { Message, WarningMessage } from 'src/app/modules/shared/classes/messages';
 import { maestroVersions } from 'src/app/modules/shared/services/maestro-api.service';
 import { CoeSimulationService } from '../../services/coe-simulation.service';
 import IntoCpsApp from 'src/app/modules/shared/classes/into-cps-app';

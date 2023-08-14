@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { FmuMaxStepSizeConstraint } from 'src/app/modules/shared/classes/configuration/co-simulation-config';
+import { FmuMaxStepSizeConstraint } from 'src/app/modules/shared/classes/co-simulation-config';
 
 @Component({
   selector: 'app-fmu-max-step-size',

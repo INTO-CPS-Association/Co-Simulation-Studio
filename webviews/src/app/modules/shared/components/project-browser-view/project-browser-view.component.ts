@@ -3,7 +3,7 @@ import * as fs from 'fs'
 import * as Path from "path";
 import { IntoCpsAppMenuHandler } from '../../classes/into-cps-app-menu-handler';
 import IntoCpsApp from '../../classes/into-cps-app';
-import { isResultValid } from '../../classes/configuration/result-config';
+import { isResultValid } from '../../classes/result-config';
 import { Project } from '../../classes/project';
 import { Utilities } from '../../classes/utilities';
 //import { rimraf } from 'rimraf';

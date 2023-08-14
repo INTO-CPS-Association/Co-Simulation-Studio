@@ -32,7 +32,7 @@
 import { CoSimulationConfig } from "./co-simulation-config"
 import * as fs from "fs"
 import * as Path from "path";
-import { checksum } from "../project";
+import { checksum } from "./project";
 
 export function storeResultCrc(outputPath: string, coeConfig: CoSimulationConfig) {
 

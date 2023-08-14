@@ -30,6 +30,8 @@
  */
 
 import { Component } from './component';
+import IntoCpsApp from './into-cps-app';
+import { SettingKeys } from './setting-keys';
 import Settings from './settings';
 import { TextInputIds, TextInputNonLoad } from './text-input-non-load';
 
@@ -43,7 +45,7 @@ class SettingsView {
 	private settings: Settings;
 	private settingsView?: HTMLElement;
 	constructor() {
-		this.settings = IntoCpsApp.IntoCpsApp.getInstance().getSettings();
+		this.settings = IntoCpsApp.getInstance().getSettings();
 		this.settingsView = document.getElementById("settings-div") ?? undefined;
 		Object.keys(SettingKeys).forEach(k => {
 			if (k != "DEFAULT_VALUES" && k != "VALUE_DESCRIPTION" && k != "VALUE_DISPLAYNAME") {

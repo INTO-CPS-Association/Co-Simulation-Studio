@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { ZeroCrossingConstraint } from 'src/app/modules/shared/classes/configuration/co-simulation-config';
-import { InstanceScalarPair } from 'src/app/modules/shared/classes/models/fmu';
+import { ZeroCrossingConstraint } from 'src/app/modules/shared/classes/co-simulation-config';
+import { InstanceScalarPair } from 'src/app/modules/shared/classes/fmu';
 
 @Component({
     selector: 'app-zero-crossing',

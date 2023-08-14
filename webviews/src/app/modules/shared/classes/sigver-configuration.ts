@@ -1,4 +1,4 @@
-import { IntoCpsApp } from "../into-cps-app";
+import { IntoCpsApp } from "./into-cps-app";
 import { CoSimulationConfig } from "./co-simulation-config";
 import { ISerializable } from './serializable';
 

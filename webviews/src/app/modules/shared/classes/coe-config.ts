@@ -30,8 +30,8 @@
  */
 
 import * as Path from 'path';
-import { CoSimulationConfig } from '../co-simulation-config';
-import { Serializer } from '../configuration/parser';
+import { CoSimulationConfig } from './co-simulation-config';
+import { Serializer } from './parser';
 import { Instance, ScalarVariable } from './fmu';
 
 export class CoeConfig {

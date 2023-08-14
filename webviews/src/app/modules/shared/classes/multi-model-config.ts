@@ -34,7 +34,7 @@ import { WarningMessage, ErrorMessage } from "./messages";
 import {
     Fmu, Instance, ScalarVariableType, isTypeCompatipleWithValue,
     isTypeCompatiple, InstanceScalarPair, ScalarVariable
-} from "../models/fmu";
+} from "./fmu";
 import * as Path from 'path';
 import * as fs from 'fs';
 import { ISerializable } from './serializable';

@@ -1,8 +1,8 @@
 import { Component, EventEmitter, Input, NgZone, OnInit, Output } from '@angular/core';
 import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
-import { BoundedDifferenceConstraint, CoSimulationConfig, FixedStepAlgorithm, FmuMaxStepSizeConstraint, ICoSimAlgorithm, LiveGraph, SamplingRateConstraint, VariableStepAlgorithm, VariableStepConstraint, ZeroCrossingConstraint } from 'src/app/modules/shared/classes/configuration/co-simulation-config';
-import { WarningMessage } from 'src/app/modules/shared/classes/configuration/messages';
-import { CausalityType, Fmu, Instance, InstanceScalarPair, ScalarVariable, ScalarVariableType } from 'src/app/modules/shared/classes/models/fmu';
+import { BoundedDifferenceConstraint, CoSimulationConfig, FixedStepAlgorithm, FmuMaxStepSizeConstraint, ICoSimAlgorithm, LiveGraph, SamplingRateConstraint, VariableStepAlgorithm, VariableStepConstraint, ZeroCrossingConstraint } from 'src/app/modules/shared/classes/co-simulation-config';
+import { WarningMessage } from 'src/app/modules/shared/classes/messages';
+import { CausalityType, Fmu, Instance, InstanceScalarPair, ScalarVariable, ScalarVariableType } from 'src/app/modules/shared/classes/fmu';
 import { lessThanValidator2, numberValidator, uniqueGroupPropertyValidator } from 'src/app/modules/shared/classes/validators';
 import { NavigationService } from 'src/app/modules/shared/services/navigation.service';
 import IntoCpsApp from 'src/app/modules/shared/classes/into-cps-app';
