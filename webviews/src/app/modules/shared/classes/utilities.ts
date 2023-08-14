@@ -30,11 +30,12 @@
  */
 
 
-import * as Path from 'path';
-import * as fs from 'fs';
-import { IntoCpsApp } from "./into-cps-app";
+//import * as Path from 'path';
+//import * as fs from 'fs';
+//import { IntoCpsApp } from "./into-cps-app";
 
 export class Utilities {
+
 	public static timeStringToNumberConversion(text: string, setterFunc: (val: number) => void): boolean {
 		let value = Number(text);
 		if (isNaN(value)) {

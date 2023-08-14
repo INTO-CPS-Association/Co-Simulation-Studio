@@ -10,7 +10,8 @@
 		"sourceMap": true,
 		"strict": true,
 		"allowJs": true,
-		"checkJs": false
+		"checkJs": false,
+		"outDir": "./out"
 	},
 	"include": [
 		"src"

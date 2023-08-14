@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { LiveGraph } from '../shared/classes/configuration/co-simulation-config';
+import { LiveGraph } from '../shared/classes/co-simulation-config';
 import { BoundedDifferenceComponent } from './components/bounded-difference/bounded-difference.component';
 import { CoeConfigurationComponent } from './components/coe-configuration/coe-configuration.component';
 import { CoeLaunchComponent } from './components/coe-launch/coe-launch.component';
