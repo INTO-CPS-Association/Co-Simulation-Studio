@@ -3,8 +3,8 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { Subscription } from 'rxjs';
 import { MaestroApiService, maestroVersions } from 'src/app/modules/shared/services/maestro-api.service';
 import { SigverConfigurationService } from '../../services/sigver-configuration.service';
-import * as Fs from "fs";
-import * as Path from "path";
+import * as Fs from "fs"; //FIXME Non-angular library
+import * as Path from "path"; //not used as ive commented the section where it is used
 
 @Component({
 	selector: 'app-sigver-coe-interaction',
@@ -132,9 +132,9 @@ export class SigverCoeInteractionComponent  {
 			file
 				.arrayBuffer()
 				.then((arrBuff) => {
-					const writeStream = Fs.createWriteStream(Path.join(dirPath, file.name));
+					/*const writeStream = Fs.createWriteStream(Path.join(dirPath, file.name)); //FIXME Non-angular library Not sure how to stub it as the "writestream" object is also Fs
 					writeStream.write(Buffer.from(arrBuff));
-					writeStream.close();
+					writeStream.close(); */
 					resolve();
 				})
 				.catch((err) => reject(`Error occurred when writing file to path ${dirPath}: ${err}`));

@@ -5,7 +5,7 @@ import { Reactivity, SigverConfiguration } from 'src/app/modules/shared/classes/
 import { Project } from 'src/app/modules/shared/classes/project';
 import { SigverConfigurationService } from '../../services/sigver-configuration.service';
 import * as Path from "path";
-import * as Fs from "fs";
+import * as Fs from "fs"; //FIXME Non-angular interface
 //import * as FsE from "fs-extra";
 
 
@@ -140,7 +140,7 @@ export class SigverConfigurationComponent {
 
 	getExperimentsPaths(path: string): string[] {
 		let experimentPaths: string[] = [];
-		const files = Fs.readdirSync(path);
+		const files = Fs.readdirSync(path); //FIXME Non-angular interface
 		const coeFileName = files.find((f) => f.endsWith("coe.json"));
 		if (coeFileName && FsE.readJsonSync(Path.join(path, coeFileName)).algorithm.type != "var-step") {
 			experimentPaths.push(path);
@@ -166,10 +166,10 @@ export class SigverConfigurationComponent {
 			if (!coeDir) {
 				resolve();
 			}
-			if (!Fs.existsSync(coeDir) || !Fs.lstatSync(coeDir).isDirectory()) {
+			if (!Fs.existsSync(coeDir) || !Fs.lstatSync(coeDir).isDirectory()) { //FIXME Non-angular interface
 				reject(`"${coeDir}" is not a valid directory`);
 			}
-			Fs.promises
+			Fs.promises //FIXME Non-angular interface
 				.readdir(coeDir)
 				.then((filesInCOEDir) => {
 					var coeFileName = filesInCOEDir.find((fileName) => fileName.toLowerCase().endsWith("coe.json"));
@@ -186,10 +186,10 @@ export class SigverConfigurationComponent {
 
 	loadPriorExperimentsPaths() {
 		let priorExperimentsPaths: string[] = [];
-		let files = Fs.readdirSync(this.experimentPath);
+		let files = Fs.readdirSync(this.experimentPath); //FIXME Non-angular interface
 		for (let i in files) {
 			let fileName = Path.join(this.experimentPath, files[i]);
-			if (Fs.statSync(fileName).isDirectory()) {
+			if (Fs.statSync(fileName).isDirectory()) { //FIXME Non-angular interface
 				priorExperimentsPaths = priorExperimentsPaths.concat(this.getExperimentsPaths(fileName));
 			}
 		}
@@ -205,7 +205,7 @@ export class SigverConfigurationComponent {
 					const existingCoeFile = filesInDir.find((fileName) => fileName.toLowerCase().endsWith("cos.json"));
 					if (existingCoeFile) {
 						const pathToFile = Path.join(Path.dirname(this.sigverConfigurationService.configurationPath), existingCoeFile);
-						Fs.unlinkSync(pathToFile);
+						Fs.unlinkSync(pathToFile); //FIXME Non-angular interface
 					}
 					//Copy the new file to the sigver project
 					this.copyCoeToConfigPath().then((newCoePath) => {
@@ -223,7 +223,7 @@ export class SigverConfigurationComponent {
 
 			const newCoeFileName = "sigver_" + expName[expName.length - 2] + "_" + expName[expName.length - 1] + "_" + "cos.json";
 			const destinationPath = Path.join(Path.dirname(this.sigverConfigurationService.configurationPath), newCoeFileName);
-			Fs.copyFile(this.coePath, destinationPath, (err) => {
+			Fs.copyFile(this.coePath, destinationPath, (err) => { //FIXME Non-angular interface
 				if (err) reject(err);
 				resolve(destinationPath);
 			});

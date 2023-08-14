@@ -5,7 +5,7 @@ import { Component, OnInit } from '@angular/core';
   templateUrl: './sysml-dse-export.component.html',
   styleUrls: ['./sysml-dse-export.component.scss']
 })
-export class SysmlDseExportComponent implements OnInit {
+export class SysmlDseExportComponent implements OnInit { //FIXME non-angular interface
 
   constructor() { }
 

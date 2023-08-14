@@ -29,8 +29,10 @@
  * See the CONTRIBUTORS file for author and contributor information. 
  */
 
-import { FormControl, FormArray, FormGroup, AsyncValidatorFn, AbstractControl } from "@angular/forms";
+import { FormControl, FormArray, FormGroup, AsyncValidatorFn, AbstractControl, ValidatorFn, ValidationErrors} from "@angular/forms";
+
 import { Observable } from 'rxjs';
+//import { ValidationError } from 'xml2js';
 
 function isNumber(x: any): boolean {
 	let number = Number(x);
@@ -119,3 +121,4 @@ export function lessThanValidator2(selfName: string, otherName: string) {
 		return undefined;
 	}
 }
+

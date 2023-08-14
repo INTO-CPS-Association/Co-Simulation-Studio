@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core'; //FIXME OnInit is declared but is never read.
 
-import $ from "jquery";
+import $ from "jquery"; //FIXME not an angular library
 
 export enum TextInputState {
   OK,
@@ -12,6 +12,7 @@ type editButtonGlyphicons = "glyphicon-ok" | "glyphicon-pencil";
 
 @Component({
   selector: 'app-text-input',
+  template: '<input [(ngModel)]="text">',
   templateUrl: './text-input.component.html',
   styleUrls: ['./text-input.component.scss']
 })
@@ -22,18 +23,29 @@ export class TextInputComponent {
   private editOkButton!: HTMLButtonElement;
   private editOkButtonGlyphicon!: HTMLSpanElement;
   private cancelButton!: HTMLButtonElement;
-  private state!: TextInputState;
-  private text!: string;
-  private keyChanged!: (text: string) => boolean;
+  //private state!: TextInputState;
+  //private text!: string;
+  //private keyChanged!: (text: string) => boolean;
+  @Input() text!: string;
+  @Input() keyChanged!: (text: string) => boolean;
+  @Input() loadedCB!: () => void;
+  @Input() state?: TextInputState;
+
+  constructor() {
+    this.state = this.state == null ? TextInputState.OK : this.state
+    this.loadHtml(this.loadedCB);
+  }
+
 
   //PL-TODO
-  //constructor(text: string, keyChanged: (text: string) => boolean, loadedCB: () => void, state?: TextInputState) {
-  constructor() {
-    //this.text = text;
-    //this.keyChanged = keyChanged;
-    //this.state = state == null ? TextInputState.OK : state
-    //this.loadHtml(loadedCB);
-  }
+  /*
+  constructor(text: string, keyChanged: (text: string) => boolean, loadedCB: () => void, state?: TextInputState) {
+    
+    this.text = text;
+    this.keyChanged = keyChanged;
+    this.state = state == null ? TextInputState.OK : state
+    this.loadHtml(loadedCB);
+  }*/
 
   getText() {
     return this.text;
@@ -41,8 +53,8 @@ export class TextInputComponent {
 
   private loadHtml(loadedCB: () => void, state?: TextInputState) {
     let self = this;
-    $("<div>").load("multimodel/components/text-input.html #text-input-elem", function (event: JQueryEventObject) {
-      //PL-TODO self.container = <HTMLDivElement>(<HTMLDivElement>this).firstChild;
+    $("<div>").load("multimodel/components/text-input.html #text-input-elem", function (event: JQueryEventObject) { //FIXME not an angular library - and the JQueryEventObject is deprecated
+      self.container = <HTMLDivElement>(<HTMLDivElement>this).firstChild; //PL-TODO - does not throw errors?
       self.initializeUI(state);
       loadedCB();
     });
@@ -56,7 +68,9 @@ export class TextInputComponent {
     this.cancelButton = <HTMLButtonElement>this.container.querySelector("#cancelButton");
     this.cancelButton.onclick = this.cancelClicked.bind(this);
     this.setTextUI(this.text);
-    this.setState(this.state);
+    if (this.state !== undefined) {
+      this.setState(this.state);
+    }
   }
 
   private setTextUI(text: string) {
