@@ -161,8 +161,82 @@
 		"views": {
 			"co-simulation-studio-workspace": [
 				{
-					"id": "co-simulation-studio-workspace-explorer",
-					"name": "Explorer"
+					"id": "dseView",
+					"name": "DSES",
+					"icon": "media/dep.svg",
+					"contextualTitle": "DSE View",
+					"visibility": "collapsed"
+				},
+				{
+					"id": "fmuView",
+					"name": "FMUS",
+					"icon": "media/dep.svg",
+					"contextualTitle": "FMU View",
+					"visibility": "visible",
+					"initialSize": 500
+				},
+				{
+					"id": "modelcheckView",
+					"name": "Model Checking",
+					"icon": "media/dep.svg",
+					"contextualTitle": "Model Checking View",
+					"visibility": "collapsed"
+				},
+				{
+					"id": "modelView",
+					"name": "Models",
+					"icon": "media/dep.svg",
+					"contextualTitle": "Models View",
+					"visibility": "visible"
+				},
+				{
+					"id": "multimodelView",
+					"name": "Multi-models",
+					"icon": "media/dep.svg",
+					"contextualTitle": "Multi Models View",
+					"visibility": "visible"
+				},
+				{
+					"id": "resourcesView",
+					"name": "Resources",
+					"icon": "media/dep.svg",
+					"contextualTitle": "Resources View",
+					"visibility": "collapsed"
+				},
+				{
+					"id": "sigverView",
+					"name": "Sigver",
+					"icon": "media/dep.svg",
+					"contextualTitle": "Sigver View",
+					"visibility": "collapsed"
+				},
+				{
+					"id": "sysmlView",
+					"name": "SysML",
+					"icon": "media/dep.svg",
+					"contextualTitle": "SysML View",
+					"visibility": "collapsed"
+				},
+				{
+					"id": "TestDataGenView",
+					"name": "Test Data Geneneration",
+					"icon": "media/dep.svg",
+					"contextualTitle": "Test data generation View",
+					"visibility": "collapsed"
+				},
+				{
+					"id": "traceabilityView",
+					"name": "Traceability",
+					"icon": "media/dep.svg",
+					"contextualTitle": "Traceability View",
+					"visibility": "collapsed"
+				},
+				{
+					"id": "usermetricscriptsView",
+					"name": "User Metric Scripts",
+					"icon": "media/dep.svg",
+					"contextualTitle": "User Metric Scripts View",
+					"visibility": "collapsed"
 				}
 			]
 		}

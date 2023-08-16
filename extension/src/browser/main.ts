@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import { LanguageClientOptions } from 'vscode-languageclient';
 import { LanguageClient } from 'vscode-languageclient/browser';
 import { AppEditorProvider } from './appEditorProvider';
+import { TestView } from './testView';
 
 export function activate(context: vscode.ExtensionContext) {
 
@@ -14,6 +15,7 @@ export function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(disposable);
 
 	client.onReady().then(() => {
+		new TestView(context);
 		context.subscriptions.push(AppEditorProvider.register(context, client));
 	});
 
