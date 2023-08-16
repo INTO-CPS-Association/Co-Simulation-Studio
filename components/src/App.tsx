@@ -1,5 +1,6 @@
 import React from 'react';
 import { Stack, Text, Link, FontWeights, IStackTokens, IStackStyles, ITextStyles } from '@fluentui/react';
+import BoundedDifference from './coe/bounded-difference/bounded-difference';
 import logo from './logo.svg';
 import './App.css';
 
