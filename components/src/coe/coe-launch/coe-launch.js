@@ -5,7 +5,8 @@ import React, { Component } from 'react';
 class CoeLaunchComponent extends Component {
   constructor(props) {
     super(props);
-
+    this.GetCoeVersion()
+    
     this.state = {
       online: false,
       correctCoeVersion: false,
@@ -13,9 +14,13 @@ class CoeLaunchComponent extends Component {
       IsMonoriting: false, //FIXME dummy variable
       coeLaunchClick: 0, //FIXME dummy variable
       _coeIsOnlineSub: null,
-      coeVersions: "1.0.0" //FIXME dummy variable 
     };
     };
+
+  GetCoeVersion = () => {
+    let coeVersion = "1.0.0"
+    this.setState({coeVersions: coeVersion}) //FIXME dummy variable 
+  }
 
   onCoeLaunchClick = () => {
     this.coeLaunchClick = this.coeLaunchClick+1;
