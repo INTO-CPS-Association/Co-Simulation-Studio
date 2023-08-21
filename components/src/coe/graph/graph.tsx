@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 //import { HttpClient } from '@angular/common/http'; // This import is not used in React
 //import { NgZone } from '@angular/core'; // This import is not used in React
-//import { LiveGraph } from 'src/app/modules/shared/classes/co-simulation-config'; // Adjust the path accordingly
-//import { Graph } from 'src/app/modules/shared/classes/graph'; // Adjust the path accordingly
-//import { FileSystemService } from 'src/app/modules/shared/services/file-system.service'; // Adjust the path accordingly
+//import { LiveGraph } from 'src/app/modules/shared/classes/co-simulation-config'; 
+//import { Graph } from 'src/app/modules/shared/classes/graph';
+//import { FileSystemService } from 'src/app/modules/shared/services/file-system.service'; 
 
 class GraphComponent extends Component{
   private graph: any; //FIXME
@@ -60,6 +60,19 @@ class GraphComponent extends Component{
   render() {
     return (
       <div className="app-graph">
+        { (
+          //FIXME graph.map need to be defined 
+          <div>
+            test
+            {this.graph.map((g: any, index: number) => (
+              <div key={index} style={{ pageBreakInside: 'avoid', borderStyle: 'solid', margin: '2px', paddingLeft: '2px', borderWidth: '0.1em' }}>
+                <h5>Graph: {g.title}</h5>
+                {/* Uncomment the line below if you have a LineChart component */}
+                {/* <LineChart datasets={this.graph.getDataset(g)} /> */}
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     );
   }
