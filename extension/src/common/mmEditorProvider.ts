@@ -1,20 +1,18 @@
 import * as vscode from 'vscode';
-import { LanguageClient } from 'vscode-languageclient/browser';
 import { MessageHandlerData } from '@estruyf/vscode';
 
-export class AppEditorProvider implements vscode.CustomTextEditorProvider {
+export class MmEditorProvider implements vscode.CustomTextEditorProvider {
 
-	private static readonly viewType = 'cosimulationstudio.editors.appEditor';
+	private static readonly viewType = 'cosimulationstudio.editors.mmEditor';
 
-	public static register(context: vscode.ExtensionContext, client: LanguageClient): vscode.Disposable {
-		const provider = new AppEditorProvider(context, client);
-		const providerRegistration = vscode.window.registerCustomEditorProvider(AppEditorProvider.viewType, provider);
+	public static register(context: vscode.ExtensionContext): vscode.Disposable {
+		const provider = new MmEditorProvider(context);
+		const providerRegistration = vscode.window.registerCustomEditorProvider(MmEditorProvider.viewType, provider);
 		return providerRegistration;
 	}
 
 	constructor(
-		private readonly context: vscode.ExtensionContext,
-		private readonly client: LanguageClient
+		private readonly context: vscode.ExtensionContext
 	) {
 	}
 
@@ -58,6 +56,7 @@ export class AppEditorProvider implements vscode.CustomTextEditorProvider {
 		//return `<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><base href="${baseUri}/"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="icon" type="image/x-icon" href="favicon.ico"><link rel="stylesheet" href="styles.css"></head><body><app-root></app-root><script src="runtime.js" type="module"></script><script src="polyfills.js" type="module"></script><script src="main.js" type="module"></script></body></html>`;
 
 		//><style>html{font-family:sans-serif;-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%}body{margin:0}@media print{*,:after,:before{color:#000!important;text-shadow:none!important;background:0 0!important;box-shadow:none!important}}*{box-sizing:border-box}:after,:before{box-sizing:border-box}html{font-size:10px;-webkit-tap-highlight-color:rgba(0,0,0,0)}body{font-family:Helvetica Neue,Helvetica,Arial,sans-serif;font-size:14px;line-height:1.42857143;color:#333;background-color:#fff}@charset "UTF-8"</style>
+		//return `<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><base href="http://localhost:4200/"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="icon" type="image/x-icon" href="favicon.ico"><link rel="stylesheet" href="styles.css"></head><body><app-root></app-root><script src="runtime.js" type="module"></script><script src="polyfills.js" type="module"></script><script src="scripts.js" defer></script><script src="main.js" type="module"></script></body></html>`;
 		return `<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><base href="${baseUri}/"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="icon" type="image/x-icon" href="favicon.ico"><link rel="stylesheet" href="styles.css"></head><body><app-root></app-root><script src="runtime.js" type="module"></script><script src="polyfills.js" type="module"></script><script src="scripts.js" defer></script><script src="main.js" type="module"></script></body></html>`;
 	}
 
