@@ -1,6 +1,10 @@
 import React from 'react';
 
-class FmuMaxStepSizeComponent extends React.Component<FmuMaxStepSizeComponent_props> {
+class FmuMaxStepSizeComponent extends React.Component<FmuMaxStepSizeComponentProps> {
+  constructor(props: any) {
+    super(props);
+  }
+
   render() {
     const { constraint, formGroup, editing } = this.props;
 
@@ -9,17 +13,29 @@ class FmuMaxStepSizeComponent extends React.Component<FmuMaxStepSizeComponent_pr
     };
 
     return (
-      <div className="app-fmu-max-step-size">
-        {}
+      <div>
+        <div className="form-group">
+          <label className="col-sm-12 control-label" style={{ textAlign: 'left' }}>
+            Constrain Step Size to Maximum bound of FMUs
+          </label>
+        </div>
+        <hr />
+        <div className="form-horizontal">
+          <div className="form-group">
+            <div className="col-sm-9">
+              <p className="form-control-static">Constraint enabled.</p>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
 }
 
 // Define prop types for type checking
-type FmuMaxStepSizeComponent_props = {
-  constraint: any, //FIXME type is imported from 'src/app/modules/shared/classes/co-simulation-config'
-  formGroup: any, //type should be formgroup 
+type FmuMaxStepSizeComponentProps = {
+  constraint: any,
+  formGroup: any,
   editing: boolean
 };
 
