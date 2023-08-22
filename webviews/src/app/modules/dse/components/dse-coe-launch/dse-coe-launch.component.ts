@@ -245,10 +245,8 @@ export class DseCoeLaunchComponent implements OnInit {
     setGenerateCSVOutput() {
         this.generateCSVOutput = !this.generateCSVOutput;
     }
-
     componet = DseCoeLaunch;
     props = this;
-
-
-    
 }
+
+

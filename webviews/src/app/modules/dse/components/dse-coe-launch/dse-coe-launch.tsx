@@ -3,6 +3,7 @@ import {Slider, Checkbox, PrimaryButton, MessageBar, MessageBarType} from '@flue
 
 //use this
 export default function DseCoeLaunch(props: any) {
+	console.log("hello",props)
 	return (
 		<div>
             <h3>DSE Co-simulation</h3>
@@ -29,26 +30,26 @@ export default function DseCoeLaunch(props: any) {
                 <Slider
                     min={1}
                     max={25}
-                    value={props.threadCount}
-                    onChange={props.updateThreadCount()}
+                    defaultValue={props.threadCount}
+                    onChange={(value) =>props.props.updateThreadCount(value.toString())}
                 />
             </div>
-
+				
             <Checkbox
                 label="Generate HTML output"
-                checked={props.generateHTMLOutput}
-                onChange={(e, isChecked) => props.setGenerateHTMLOutput(isChecked)}
+                defaultChecked={props.generateHTMLOutput}
+                onChange={(e, isChecked) => props.props.setGenerateHTMLOutput(isChecked)}
             />
 
             <Checkbox
                 label="Generate CSV output"
-                checked={props.generateCSVOutput}
-                onChange={(e, isChecked) => props.setGenerateCSVOutput(isChecked)}
+                defaultChecked={props.generateCSVOutput}
+                onChange={(e, isChecked) => props.props.setGenerateCSVOutput(isChecked)}
             />
 
             <PrimaryButton
-                disabled={!props.canRun()}
-                onClick={props.runDse()}
+                disabled={!props.props.canRun()}
+                onClick={() => props.props.runDse()}
             >
                 Simulate
             </PrimaryButton>
