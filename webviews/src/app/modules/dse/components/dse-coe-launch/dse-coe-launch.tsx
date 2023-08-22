@@ -20,6 +20,7 @@ export default function DseCoeLaunch(props: any) {
             )}
 
             {/* This is a placeholder for the <app-coe-launch> component. Need to replace this with the equivalent React component */}
+			{/*<app-coe-launch></app-coe-launch> old code it is in the dse-coe-launch.component still*/}
             <div>App COE Launch Component Placeholder</div>
 			
 
