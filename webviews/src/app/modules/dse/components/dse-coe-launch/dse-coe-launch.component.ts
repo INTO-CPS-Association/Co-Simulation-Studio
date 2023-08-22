@@ -8,6 +8,8 @@ import IntoCpsApp from 'src/app/modules/shared/classes/into-cps-app';
 import { SettingKeys } from 'src/app/modules/shared/classes/setting-keys';
 import { DomSanitizer } from '@angular/platform-browser';
 
+
+
 const dialog: any = {};
 
 
@@ -242,4 +244,6 @@ export class DseCoeLaunchComponent implements OnInit {
     setGenerateCSVOutput() {
         this.generateCSVOutput = !this.generateCSVOutput;
     }
+
+    
 }
