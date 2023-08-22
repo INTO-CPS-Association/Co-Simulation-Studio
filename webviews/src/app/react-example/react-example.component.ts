@@ -20,10 +20,15 @@ export class ReactExampleComponent {
     disabled: false
   }
 
+  methodtest()
+  {
+    return true;
+  }
   // example custom react component
   testComponent = ReactExample;
   testProps = {
     name: 'Hello World',
+    x: this,
     stackTokens: { childrenGap: 20 },
     options: [
       { key: 'fruitsHeader', text: 'Fruits', itemType: DropdownMenuItemType.Header },

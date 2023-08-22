@@ -7,6 +7,7 @@ import * as Path from "path";
 import IntoCpsApp from 'src/app/modules/shared/classes/into-cps-app';
 import { SettingKeys } from 'src/app/modules/shared/classes/setting-keys';
 import { DomSanitizer } from '@angular/platform-browser';
+import DseCoeLaunch from './dse-coe-launch';
 
 
 
@@ -244,6 +245,10 @@ export class DseCoeLaunchComponent implements OnInit {
     setGenerateCSVOutput() {
         this.generateCSVOutput = !this.generateCSVOutput;
     }
+
+    componet = DseCoeLaunch;
+    props = this;
+
 
     
 }

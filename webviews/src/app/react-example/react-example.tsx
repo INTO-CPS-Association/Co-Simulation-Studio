@@ -2,6 +2,7 @@ import { Dropdown, Stack, ThemeProvider } from '@fluentui/react';
 import * as React from "react";
 
 export default function ReactExample(props: any) {
+	console.log(props.x.methodtest())
 	return (
 		<div>
 			<h1>{props.name}</h1>

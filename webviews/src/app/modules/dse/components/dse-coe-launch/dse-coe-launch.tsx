@@ -1,21 +1,21 @@
 import React, { useState } from 'react';
 import {Slider, Checkbox, PrimaryButton, MessageBar, MessageBarType} from '@fluentui/react';
 
-
-export default function ReactExample(parseError: string | null, path: any, threadCount: number, generateHTMLOutput: boolean, generateCSVOutput: boolean, simSuccess: boolean, simFailed: boolean, resultPath: any) {
+//use this
+export default function DseCoeLaunch(props: any) {
 	return (
 		<div>
             <h3>DSE Co-simulation</h3>
 
-            {parseError && (
+            {props.parseError && (
                 <MessageBar
                     messageBarType={MessageBarType.error}
-                    onDismiss={resetParseError()}
+                    onDismiss={props.resetParseError()}
                     isMultiline={true}
                 >
                     <p>Error: Could not run config.</p>
-                    <p>Message: {parseError}</p>
-                    <p>Path: {path}</p>
+                    <p>Message: {props.parseError}</p>
+                    <p>Path: {props.path}</p>
                 </MessageBar>
             )}
 
@@ -28,35 +28,35 @@ export default function ReactExample(parseError: string | null, path: any, threa
                 <Slider
                     min={1}
                     max={25}
-                    value={threadCount}
-                    onChange={updateThreadCount()}
+                    value={props.threadCount}
+                    onChange={props.updateThreadCount()}
                 />
             </div>
 
             <Checkbox
                 label="Generate HTML output"
-                checked={generateHTMLOutput}
-                onChange={(e, isChecked) => setGenerateHTMLOutput(isChecked)}
+                checked={props.generateHTMLOutput}
+                onChange={(e, isChecked) => props.setGenerateHTMLOutput(isChecked)}
             />
 
             <Checkbox
                 label="Generate CSV output"
-                checked={generateCSVOutput}
-                onChange={(e, isChecked) => setGenerateCSVOutput(isChecked)}
+                checked={props.generateCSVOutput}
+                onChange={(e, isChecked) => props.setGenerateCSVOutput(isChecked)}
             />
 
             <PrimaryButton
-                disabled={!canRun()}
-                onClick={runDse()}
+                disabled={!props.canRun()}
+                onClick={props.runDse()}
             >
                 Simulate
             </PrimaryButton>
             
-            {simSuccess && <span>Simulation successful</span>}
-            {simFailed && <span>Simulation failed</span>}
+            {props.simSuccess && <span>Simulation successful</span>}
+            {props.simFailed && <span>Simulation failed</span>}
 
-            {resultPath && (
-                <iframe src={resultPath} title="DSE Results" width="100%" height="500" style={{ border: 'none' }} />
+            {props.resultPath && (
+                <iframe src={props.resultPath} title="DSE Results" width="100%" height="500" style={{ border: 'none' }} />
             )}
         </div>
 	);
