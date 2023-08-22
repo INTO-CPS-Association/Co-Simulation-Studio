@@ -22,7 +22,8 @@
       "es2020",
       "dom"
     ],
-    "allowSyntheticDefaultImports":true
+    "allowSyntheticDefaultImports":true,
+    "jsx": "react"
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,

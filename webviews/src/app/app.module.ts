@@ -8,10 +8,16 @@ import { CoeModule } from './modules/coe/coe.module';
 import { DseModule } from './modules/dse/dse.module';
 import { MmModule } from './modules/mm/mm.module';
 import { SharedModule } from './modules/shared/shared.module';
+import { ReactExampleComponent } from './react-example/react-example.component';
+
+import { initializeIcons } from '@fluentui/react/lib/Icons';
+
+initializeIcons();
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    ReactExampleComponent
   ],
   imports: [
     BrowserModule,
