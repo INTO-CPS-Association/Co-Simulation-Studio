@@ -1,9 +1,14 @@
 <div *ngIf="!online" class="alert alert-danger">
-	Co-Simulation Engine offline. No connection at {{ coeSimulationService.coeUrl }}.
-	<button type="button" class="btn btn-sm btn-default" (click)="onCoeLaunchClick()">
-		<span class="glyphicon glyphicon-link"></span> Launch
-	</button>
+    Co-Simulation Engine offline.
+    <ng-container *ngIf="coeSimulationService?.coeUrl; else urlNotDefined">
+        No connection at {{ coeSimulationService.coeUrl }}.
+    </ng-container>
+    <app-react [component]="defaultButton" [props]="defaultButtonProps"></app-react>
 </div>
+
+<ng-template #urlNotDefined>
+    <p>URL Connection is not defined.</p>
+</ng-template>
 <!--PL-TODO 
 <div *ngIf="online && correctCoeVersion" class="alert alert-success">
 	{{coeVersions[coeSimulationService.getMaestroVersion()]}}, version {{ coeSimulationService.coeVersionNumber }},

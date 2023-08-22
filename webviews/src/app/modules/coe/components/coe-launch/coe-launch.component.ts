@@ -1,6 +1,8 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { DefaultButton } from '@fluentui/react';
 import { Subject, Subscription } from 'rxjs';
 import { MaestroApiService, maestroVersions } from 'src/app/modules/shared/services/maestro-api.service';
+
 
 @Component({
   selector: 'app-coe-launch',
@@ -8,6 +10,17 @@ import { MaestroApiService, maestroVersions } from 'src/app/modules/shared/servi
   styleUrls: ['./coe-launch.component.scss']
 })
 export class CoeLaunchComponent {
+
+  defaultButton = DefaultButton;
+  defaultButtonProps = {
+    text: "Launch",
+    onClick: () => {
+      this.onCoeLaunchClick();
+    },
+    iconProps: { iconName: 'Play' },
+    allowDisabledFocus: true,
+    disabled: false
+  }
 
   //FIXME is non-angular interface 
   _coeIsOnlineSub: Subscription;
