@@ -13,7 +13,6 @@ export class DsePageComponent {
   coeconfig: string = '';
 
   constructor() {
-    console.log("DSEPAGECOMPONENT");
   }
 
   coeChangeEvent(config: string) {

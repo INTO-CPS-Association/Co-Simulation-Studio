@@ -33,6 +33,7 @@
 import * as Path from 'path';
 import * as fs from 'fs';
 import { IntoCpsApp } from "./into-cps-app";
+import { CoSimulationStudioApi } from 'src/app/api';
 
 export class Utilities {
 
@@ -40,8 +41,7 @@ export class Utilities {
 		let value = Number(text);
 		if (isNaN(value)) {
 			return false;
-		}
-		else {
+		} else {
 			setterFunc(value);
 			return true;
 		}
@@ -52,26 +52,17 @@ export class Utilities {
 		return app?.getActiveProject()?.getRootFilePath() ?? "";
 	}
 
-	public static getSystemArchitecture() {
-		if (process.arch == "ia32") {
-			return "32";
-		} else if (process.arch == "x64") {
-			return "64";
-		} else {
-			return process.arch;
-		}
+	public static async getSystemArchitecture() {
+		return CoSimulationStudioApi.getSystemArchitecture();
 	}
 
-	public static getSystemPlatform() {
-		if (process.platform == "win32")
-			return "windows";
-		else
-			return process.platform;
+	public static async getSystemPlatform() {
+		return CoSimulationStudioApi.getSystemPlatform();
 	}
 
-	public static relativeProjectPath(path: string): string {
+	public static async relativeProjectPath(path: string): Promise<string> {
 		if (!Path.isAbsolute(path)) {
-			return Path.normalize(path);
+			return await CoSimulationStudioApi.normalize(path);
 		}
 		var root: string = Utilities.projectRoot();
 		return Path.relative(root, path);

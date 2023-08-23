@@ -34,9 +34,9 @@ export namespace SettingKeys {
 	export var ACTIVE_PROJECT = "active_project";
 	export var INSTALL_DIR = "install_dir";
 	export var INSTALL_TMP_DIR = "install_tmp_dir";
-	export var COE_URL = "coe_host_url";
+	export var COE_URL = "cosimulationstudio.coeUrl";
 	export var TRACE_DAEMON_PORT = "traceability_daemon_port";
-	export var COE_REMOTE_HOST = "coe_remote_host";
+	export var COE_REMOTE_HOST = "cosimulationstudio.coeIsRemote";
 	export var COE_JAR_PATH = "coe_jar_path";
 	export var RTTESTER_INSTALL_DIR: string = "RT-Tester Installation Path";
 	export var RTTESTER_MBT_INSTALL_DIR: string = "RT-Tester MBT Installation Path";
@@ -50,7 +50,7 @@ export namespace SettingKeys {
 	export var ENABLE_TRACEABILITY = "enable_traceability";
 	export var LOCAL_UPDATE_SITE = "local_update_site";
 	export var USE_LOCAL_UPDATE_SITE = "use_local_update_site";
-	export var GRAPH_MAX_DATA_POINTS = "graph_max_data_points";
+	export var GRAPH_MAX_DATA_POINTS = "cosimulationstudio.numberOfSamplesInGraph";
 
 	export var DEFAULT_VALUES: { [key: string]: any; } = {};
 	DEFAULT_VALUES[RTTESTER_INSTALL_DIR] = 'C:/opt/rt-tester';

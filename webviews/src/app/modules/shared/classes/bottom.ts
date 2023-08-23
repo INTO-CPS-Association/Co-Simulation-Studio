@@ -30,7 +30,7 @@
  */
 
 
-import { CoeProcess } from '../../coe/classes/coe-process';
+import { CoeProcess } from './coe-process';
 import IntoCpsApp from './into-cps-app';
 
 export class PreviewHandler {
