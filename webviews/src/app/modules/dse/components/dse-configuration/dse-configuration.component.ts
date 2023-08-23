@@ -13,6 +13,7 @@ import * as Path from "path";
 import * as fs from 'fs'
 import { Serializer } from 'src/app/modules/shared/classes/parser';
 import { SettingKeys } from 'src/app/modules/shared/classes/setting-keys';
+import DseConfigurationReact from "./dse-configuration"
 
 
 /*TASKS
@@ -46,6 +47,8 @@ ACTUAL COMPONENT
     styleUrls: ['./dse-configuration.component.scss']
 })
 export class DseConfigurationComponent {
+    component = DseConfigurationReact;
+    props = this;
 
     _path!: string;
     _coeIsOnlineSub: Subscription;
@@ -839,5 +842,7 @@ export class DseConfigurationComponent {
         child.stderr.on('data', function (data: any) {
             console.log('dse/stderr: ' + data);
         });
+
     }
+    
 }
