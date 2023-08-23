@@ -1,6 +1,6 @@
 import { Injectable, NgZone } from '@angular/core';
-import * as Path from "path";
 import * as fs from 'fs' //FIXME needs removal as fs is not angular
+import * as Path from 'path';
 import { CoSimulationConfig, LiveGraph } from '../../shared/classes/co-simulation-config';
 import { BehaviorSubject, Observable, Subject, Subscription } from 'rxjs';
 import { Graph } from '../../shared/classes/graph';
@@ -13,6 +13,7 @@ import { Deferred } from '../../shared/classes/deferred';
 import { SettingsService } from '../../shared/services/settings.service';
 import { Fmu } from '../../shared/classes/fmu';
 import { SettingKeys } from '../../shared/services/settings.service';
+import { CoSimulationStudioApi } from 'src/app/api';
 
 const child_process: any = {};
 
@@ -20,7 +21,7 @@ const child_process: any = {};
 //------------------------------------------------------
 // FUNCITON STUBS THAT NEED TO BE EXTRACTED INTO API
 //------------------------------------------------------
-export function accessSync(path? : string): void {}
+export function accessSync(path?: string): void { }
 
 
 @Injectable({
@@ -47,13 +48,13 @@ export class CoeSimulationService {
     public graph: Graph = new Graph();
     public externalGraphs: Array<DialogHandler> = new Array<DialogHandler>();
     public coeIsOnlineObservable: Observable<boolean> = this._coeIsOnline.asObservable();
-    public coeUrl: string;
 
     set resultDir(resultsDir: string) {
         this._resultDir = resultsDir;
-        this._resultPath = Path.normalize(`${this.resultDir}/outputs.csv`);
-        this._coeConfigPath = Path.normalize(`${this.resultDir}/coe.json`);
-        this._mmConfigPath = Path.normalize(`${this.resultDir}/mm.json`);
+
+        CoSimulationStudioApi.normalize(`${this.resultDir}/outputs.csv`).then(value => this._resultPath = value);
+        CoSimulationStudioApi.normalize(`${this.resultDir}/coe.json`).then(value => this._coeConfigPath = value);
+        CoSimulationStudioApi.normalize(`${this.resultDir}/mm.json`).then(value => this._mmConfigPath = value);
     }
 
     get resultDir(): string {
@@ -66,11 +67,11 @@ export class CoeSimulationService {
         public zone: NgZone,
         public maestroApiService: MaestroApiService) {
 
-        this.graphMaxDataPoints = settings.get(SettingKeys.GRAPH_MAX_DATA_POINTS);
+        settings.get(SettingKeys.GRAPH_MAX_DATA_POINTS).then(value => {
+            this.graphMaxDataPoints = value;
+        });
         this.graph.setProgressCallback((progress: number) => { this.progress = progress });
         this.graph.setGraphMaxDataPoints(this.graphMaxDataPoints);
-
-        this.coeUrl = maestroApiService.coeUrl;
         this._coeIsOnlineSub = this.maestroApiService.startMonitoringOnlineStatus(isOnline => this._coeIsOnline.next(isOnline));
     }
 
@@ -110,10 +111,11 @@ export class CoeSimulationService {
         });
     }
 
-    startSigverSimulation(config: CoSimulationConfig, masterModel: string, resultsDir: string) {
+    async startSigverSimulation(config: CoSimulationConfig, masterModel: string, resultsDir: string) {
         this.config = config;
         this.masterModel = masterModel;
-        this.resultDir = Path.normalize(`${resultsDir}/R_${this.getDateString()}`);
+
+        this.resultDir = await CoSimulationStudioApi.normalize(`${resultsDir}/R_${this.getDateString()}`);
         this.initialize().then(() => {
             const simulationData: any = {
                 startTime: this.config.startTime,
@@ -127,10 +129,10 @@ export class CoeSimulationService {
         }).catch(err => this.errorHandler(err));
     }
 
-    startSimulation(config: CoSimulationConfig) {
+    async startSimulation(config: CoSimulationConfig) {
         this.config = config;
-        const currentDir = Path.dirname(this.config.sourcePath);
-        this.resultDir = Path.normalize(`${currentDir}/R_${this.getDateString()}`);
+        const currentDir = await CoSimulationStudioApi.normalize(this.config.sourcePath);
+        this.resultDir = await CoSimulationStudioApi.normalize(`${currentDir}/R_${this.getDateString()}`);
         this.initialize().then(() => {
             const simulationData: any = {
                 startTime: this.config.startTime,
@@ -189,9 +191,9 @@ export class CoeSimulationService {
                     this.executePostProcessingScript(this._resultPath);
                 }).catch(err => console.log("Unable to write plain results to file: " + err));
             }).catch((err: Response) => this.errorHandler(err));
-        }).finally(() =>
+        }).finally(async () =>
             // Always get whatever results have been generated
-            this.maestroApiService.getResults(Path.normalize(`${this.resultDir}/simulation_results.zip`), this._simulationSessionId).finally(() => {
+            this.maestroApiService.getResults(await CoSimulationStudioApi.normalize(`${this.resultDir}/simulation_results.zip`), this._simulationSessionId).finally(() => {
                 // End the session
                 this.maestroApiService.destroySession(this._simulationSessionId).catch((err: Response) => console.error("Could not destroy session: " + err.statusText));
             })
@@ -226,7 +228,7 @@ export class CoeSimulationService {
         this.errorReport(false, "");
         return this.maestroApiService.createSimulationSession().then(async sessionId => {
             this._simulationSessionId = sessionId;
-            if (this.maestroApiService.isRemoteCoe()) {
+            if (await this.maestroApiService.isRemoteCoe()) {
                 await this.prepareAndUploadFmus().catch(err => this.errorHandler(err));
             }
             return this.prepareAndInitializeCoe();
@@ -251,17 +253,16 @@ export class CoeSimulationService {
         });
     }
 
-    prepareAndInitializeCoe(): Promise<void> {
-        return new Promise<void>((resolve, reject) => {
-            const configJson = new CoeConfig(this.config, this.maestroApiService.isRemoteCoe()).toJSON();
-            Promise.all([
-                this.fileSystem.mkdir(this.resultDir),
-                this.maestroApiService.initializeCoe(configJson, this._simulationSessionId)
-            ]).catch(err => reject(err)).finally(() => {
-                this.fileSystem.writeFile(Path.join(this.resultDir, "config.json"), configJson);
-                resolve();
-            })
-        });
+    async prepareAndInitializeCoe(): Promise<void> {
+
+        const configJson = new CoeConfig(this.config, await this.maestroApiService.isRemoteCoe()).toJSON();
+
+        try {
+            await this.fileSystem.mkdir(this.resultDir);
+            await this.maestroApiService.initializeCoe(configJson, this._simulationSessionId);
+        } finally {
+            await this.fileSystem.writeFile(Path.join(this.resultDir, "config.json"), configJson);
+        }
     }
 
     prepareGraphAndrunSimulation(simulationEndpoint: simulationEndpoints, simulationData: any): Promise<void> {
@@ -322,7 +323,7 @@ export class CoeSimulationService {
         });
     }
 
-    executePostProcessingScript(outputFile: string) {
+    async executePostProcessingScript(outputFile: string) {
 
         let script: string = this.config.postProcessingScript;
         let self = this;
@@ -332,7 +333,7 @@ export class CoeSimulationService {
             return;
 
 
-        let scriptNormalized = Path.normalize(Path.join(this.config.projectRoot, script));
+        let scriptNormalized = await CoSimulationStudioApi.normalize(Path.join(this.config.projectRoot, script));
         var scriptExists = false;
         try {
             //fs.accessSync(scriptNormalized, fs.constants.R_OK); //FIXME cant use fs. in angular?

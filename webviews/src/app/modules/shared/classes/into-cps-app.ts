@@ -31,13 +31,14 @@
 
 import * as Path from 'path';
 import * as fs from 'fs';
-import { CoeProcess } from '../../coe/classes/coe-process';
+import { CoeProcess } from './coe-process';
 import Settings from './settings';
 import { IProject, Project } from './project';
 import { Utilities } from './utilities';
 import { IntoCpsAppEvents } from './into-cps-app-events';
 
 import { SettingKeys } from './setting-keys';
+import { CoSimulationStudioApi } from 'src/app/api';
 
 const remote: any = {
 };
@@ -53,7 +54,7 @@ export default class IntoCpsApp {
 	window: any;
 	coeProcess: CoeProcess | null = null;
 
-	settings: Settings;
+	settings!: Settings;
 
 	activeProject: IProject | null = null;
 	isquitting = false;
@@ -62,46 +63,49 @@ export default class IntoCpsApp {
 		this.app = app;
 		this.platform = processPlatform;
 
-		const intoCpsAppFolder = this.createAppFolderRoot(app);
-		this.createDirectoryStructure(intoCpsAppFolder);
-		// Set calculated default values
-		let defaultValues = SettingKeys.DEFAULT_VALUES;
-		let projRoot = Utilities.getSystemPlatform() == "windows" ? this.app.getPath('documents') : this.app.getPath('home');
-		let defaultProjectFolderPath = Path.join(projRoot, "into-cps-projects");
-		defaultValues[SettingKeys.INSTALL_TMP_DIR] = Path.join(defaultProjectFolderPath, "install_downloads");
-		defaultValues[SettingKeys.INSTALL_DIR] = Path.join(defaultProjectFolderPath, "install");
-		defaultValues[SettingKeys.DEFAULT_PROJECTS_FOLDER_PATH] = defaultProjectFolderPath;
+		this.createAppFolderRoot(app).then(async intoCpsAppFolder => {
+			this.createDirectoryStructure(intoCpsAppFolder);
 
-		this.settings = new Settings(app, intoCpsAppFolder);
+			// Set calculated default values
+			let defaultValues = SettingKeys.DEFAULT_VALUES;
+			let projRoot = await Utilities.getSystemPlatform() == "windows" ? this.app.getPath('documents') : this.app.getPath('home');
+			let defaultProjectFolderPath = Path.join(projRoot, "into-cps-projects");
+			defaultValues[SettingKeys.INSTALL_TMP_DIR] = Path.join(defaultProjectFolderPath, "install_downloads");
+			defaultValues[SettingKeys.INSTALL_DIR] = Path.join(defaultProjectFolderPath, "install");
+			defaultValues[SettingKeys.DEFAULT_PROJECTS_FOLDER_PATH] = defaultProjectFolderPath;
+
+			this.settings = new Settings(app, intoCpsAppFolder);
 
 
-		this.settings.load();
-		// fill-in default values for yet unset values
-		for (var key in defaultValues) {
-			if (this.settings.getSetting(key) == null) {
-				let value: any = SettingKeys.DEFAULT_VALUES[key];
-				this.settings.setSetting(key, value);
+			this.settings.load();
+			// fill-in default values for yet unset values
+			for (var key in defaultValues) {
+				if (this.settings.getSetting(key) == null) {
+					let value: any = SettingKeys.DEFAULT_VALUES[key];
+					this.settings.setSetting(key, value);
+				}
 			}
-		}
-		this.settings.save();
+			this.settings.save();
 
-		//Check for development mode and adjust settings to reflect this
-		if (this.settings.getValue(SettingKeys.DEVELOPMENT_MODE)) {
-			this.settings.setValue(SettingKeys.UPDATE_SITE, this.settings.getValue(SettingKeys.DEV_UPDATE_SITE));
-			this.settings.setValue(SettingKeys.EXAMPLE_REPO, this.settings.getValue(SettingKeys.DEV_EXAMPLE_REPO));
-		} else {
-			this.settings.setValue(SettingKeys.UPDATE_SITE, defaultValues[SettingKeys.UPDATE_SITE]);
-			this.settings.setValue(SettingKeys.EXAMPLE_REPO, defaultValues[SettingKeys.EXAMPLE_REPO]);
-		}
+			//Check for development mode and adjust settings to reflect this
+			if (this.settings.getValue(SettingKeys.DEVELOPMENT_MODE)) {
+				this.settings.setValue(SettingKeys.UPDATE_SITE, this.settings.getValue(SettingKeys.DEV_UPDATE_SITE));
+				this.settings.setValue(SettingKeys.EXAMPLE_REPO, this.settings.getValue(SettingKeys.DEV_EXAMPLE_REPO));
+			} else {
+				this.settings.setValue(SettingKeys.UPDATE_SITE, defaultValues[SettingKeys.UPDATE_SITE]);
+				this.settings.setValue(SettingKeys.EXAMPLE_REPO, defaultValues[SettingKeys.EXAMPLE_REPO]);
+			}
+		});
+
 	}
 
-	public loadPreviousActiveProject() {
+	public async loadPreviousActiveProject() {
 		let activeProjectPath = this.settings.getSetting(SettingKeys.ACTIVE_PROJECT);
 		if (activeProjectPath) {
 			try {
 				if (fs.accessSync(activeProjectPath, fs.constants.R_OK) !== null) {
 
-					this.activeProject = this.loadProject(activeProjectPath);
+					this.activeProject = await this.loadProject(activeProjectPath);
 				} else {
 					console.error("Could not read the active project path from settings: " + activeProjectPath);
 				}
@@ -131,7 +135,7 @@ export default class IntoCpsApp {
 
 	}
 
-	private createAppFolderRoot(app: any): string {
+	private async createAppFolderRoot(app: any): Promise<string> {
 		// Create intoCpsApp folder
 		const userPath = function () {
 			if (app.getPath("exe").indexOf("electron-prebuilt") > -1) {
@@ -146,7 +150,7 @@ export default class IntoCpsApp {
 			}
 		}();
 
-		return Path.normalize(userPath + "/intoCpsApp");
+		return await CoSimulationStudioApi.normalize(userPath + "/intoCpsApp");
 	}
 
 	private createDirectoryStructure(path: string) {
@@ -194,16 +198,16 @@ export default class IntoCpsApp {
 	}
 
 
-	public createProject(name: string, path: string) {
-		let project = new Project(name, path, Path.normalize(path + "/.project.json"));
+	public async createProject(name: string, path: string) {
+		let project = new Project(name, path, await CoSimulationStudioApi.normalize(path + "/.project.json"));
 		project.save();
 		this.setActiveProject(project);
 	}
 
 	// need to fire this to load the projects for the test
-	loadProject(path: string): IProject {
+	async loadProject(path: string): Promise<IProject> {
 		console.info("Loading project from: " + path);
-		let config = Path.normalize(path);
+		let config = await CoSimulationStudioApi.normalize(path);
 		let content = fs.readFileSync(config, "utf8");
 		// TODO load configuration containers and config files
 		let project = SerializationHelper.toInstance(new Project("", "", ""), content.toString());

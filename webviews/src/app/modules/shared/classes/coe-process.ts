@@ -29,15 +29,16 @@
  * See the CONTRIBUTORS file for author and contributor information.
  */
 
-import IntoCpsApp from '../../shared/classes/into-cps-app';
+import IntoCpsApp from './into-cps-app';
 
 import * as Path from "path";
 import * as fs from 'fs';
-import { ISettingsValues } from '../../shared/classes/settings-values';
-import { SettingKeys } from '../../shared/classes/setting-keys';
-import { CoeLogPrinter } from '../../shared/classes/coe-log-printer';
-import { UICrtlType } from '../../shared/classes/coe-server-status-ui-controller';
-import { dependencyCheckJava } from '../../shared/classes/dependency-checker';
+import { ISettingsValues } from './settings-values';
+import { SettingKeys } from './setting-keys';
+import { CoeLogPrinter } from './coe-log-printer';
+import { UICrtlType } from './coe-server-status-ui-controller';
+import { dependencyCheckJava } from './dependency-checker';
+import { CoSimulationStudioApi } from 'src/app/api';
 
 const child_process: any = {};
 
@@ -65,10 +66,8 @@ export class CoeProcess {
 
 	//get the url needed to obtain the version of the coe
 	//FIXME SettingKeys and IntoCpsApp is a non angular class
-	public static getCoeVersionUrl() {
-		let url =
-			IntoCpsApp.getInstance()?.getSettings()
-				.getSetting(SettingKeys.COE_URL) || "localhost:8082";
+	public static async getCoeVersionUrl() {
+		let url = await CoSimulationStudioApi.getConfiguration(SettingKeys.COE_URL) || "localhost:8082";
 		return (url = `http://${url}/version`);
 	}
 

@@ -24,7 +24,7 @@ initializeIcons();
     FormsModule,
     AppRoutingModule,
     HttpClientModule,
-    SharedModule,
+    //SharedModule,
     CoeModule,
     DseModule,
     MmModule

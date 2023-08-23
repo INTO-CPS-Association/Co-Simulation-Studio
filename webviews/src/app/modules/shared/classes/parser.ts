@@ -37,6 +37,7 @@ import {
 import * as Path from 'path';
 import * as fs from 'fs';
 import { Fmu, InstanceScalarPair, Instance, ScalarVariable, CausalityType } from "./fmu";
+import { CoSimulationStudioApi } from 'src/app/api';
 
 export class Parser {
 
@@ -80,16 +81,16 @@ export class Parser {
             var populates: Promise<void>[] = [];
             try {
                 if (Object.keys(data).indexOf(this.FMUS_TAG) >= 0) {
-                    $.each(Object.keys(data[this.FMUS_TAG]), (j, key) => {
+                    $.each(Object.keys(data[this.FMUS_TAG]), async (j, key) => {
                         var description = "";
                         var path = data[this.FMUS_TAG][key];
                         let fmuExists = false;
-                        let fmu: Fmu | undefined = (() => {
+                        let fmu: Fmu | undefined =await (async () => {
                             if ((<string>path).length > 0) {
                                 // The path can be one of two things:
                                 // A full path if the FMU is not located within the project folder.
                                 // A name of the file if the FMU is located within the project folder, and then basepath should be appended.
-                                let pathToFmu = Parser.fileExists(path) ? path : Path.normalize(basePath + "/" + path);
+                                let pathToFmu = Parser.fileExists(path) ? path : await CoSimulationStudioApi.normalize(basePath + "/" + path);
                                 if (Parser.fileExists(pathToFmu)) {
                                     fmuExists = true;
                                     return new Fmu(key, pathToFmu);

@@ -31,7 +31,7 @@
 
 import { MultiModelConfig } from "./multi-model-config"
 import { Parser, Serializer } from "./parser"
-import * as fs from "fs"
+
 import { Instance, ScalarVariable, InstanceScalarPair } from "./fmu";
 import { WarningMessage, ErrorMessage } from "./messages";
 import { FormArray, FormGroup, FormControl, Validators } from "@angular/forms";
@@ -45,6 +45,7 @@ import * as Path from 'path';
 import { checksum } from "./project";
 import IntoCpsApp from "./into-cps-app";
 import { ISerializable } from './serializable';
+import { CoSimulationStudioApi } from 'src/app/api';
 
 export class CoSimulationConfig implements ISerializable {
     //project root required to resolve multimodel path
@@ -56,7 +57,7 @@ export class CoSimulationConfig implements ISerializable {
 
     liveGraphs: LiveGraph[] = [];
     liveGraphColumns: number = 1;
-    liveGraphVisibleRowCount: number=1;
+    liveGraphVisibleRowCount: number = 1;
 
     //optional livestream outputs
     logVariables: Map<Instance, ScalarVariable[]> = new Map<Instance, ScalarVariable[]>();
@@ -114,30 +115,18 @@ export class CoSimulationConfig implements ISerializable {
         };
     }
 
-    saveOverride(): Promise<void> {
+    async saveOverride(): Promise<void> {
         //we consider this an explicit user action. Allowing CRC override
-        this.multiModelCrc = checksum(fs.readFileSync(this.multiModel.sourcePath).toString(), "md5", "hex");
+        this.multiModelCrc = checksum(CoSimulationStudioApi.readFile(this.multiModel.sourcePath).toString(), "md5", "hex");
         return this.save();
     }
 
 
-    save(): Promise<void> {
-        return new Promise<void>((resolve, reject) => {
-            try {
-
-                fs.writeFile(this.sourcePath, JSON.stringify(this.toObject()), error => {
-                    if (error)
-                        reject(error);
-                    else
-                        resolve();
-                });
-            } catch (error) {
-                reject(error);
-            }
-        });
+    async save(): Promise<void> {
+        return await CoSimulationStudioApi.writeFile(this.sourcePath, JSON.stringify(this.toObject()));
     }
 
-    validate(): WarningMessage[] {
+    async validate(): Promise<WarningMessage[]> {
 
         //first re-check mm
         let mmWarnings = this.multiModel.validate();
@@ -154,7 +143,7 @@ export class CoSimulationConfig implements ISerializable {
             messages.push(new ErrorMessage("Start time '" + this.startTime + "'must be smaller than end time '" + this.endTime + "'"));
         }
 
-        let multiModelCrcMatch = this.multiModelCrc == undefined || this.multiModelCrc === checksum(fs.readFileSync(this.multiModel.sourcePath).toString(), "md5", "hex");
+        let multiModelCrcMatch = this.multiModelCrc == undefined || this.multiModelCrc === checksum((await CoSimulationStudioApi.readFile(this.multiModel.sourcePath)).toString(), "md5", "hex");
         if (!multiModelCrcMatch) {
             return [new ErrorMessage("It looks like the multi-model was changed. Press Edit and Save in this screen to accept this change.")];
         }
@@ -170,87 +159,71 @@ export class CoSimulationConfig implements ISerializable {
     *  That is the new approach. To maintain compatibility with the old naming
     *  we still allow projects using Name.mm.json
     */
-    static create(path: string, projectRoot: string, fmuRootPath: string, data: any): Promise<CoSimulationConfig> {
-        return new Promise<CoSimulationConfig>((resolve, reject) => {
-            const parser: Parser = new Parser();
-            let mmPath: string = Path.join(path, "..", "..", "mm.json");
-            let locatedMM: boolean = true;
-            if (!fs.existsSync(mmPath)) {
-                console.warn("Could not find mm.json at: " + mmPath + " Searching for old style...")
-                locatedMM = false;
-                //no we have the old style
-                fs.readdirSync(Path.join(path, "..", "..")).forEach(file => {
-                    if (file.endsWith("mm.json")) {
-                        locatedMM = true;
-                        mmPath = Path.join(path, "..", "..", file);
-                        console.warn("Found deprecated style mm at: " + mmPath);
-                        console.warn("Consider renaming:" + file + " to: mm.json");
-                        return;
-                    }
-                });
-            }
-            // Could not locate mm from path so try the relative saved mm path.
-            if(!locatedMM){
-                console.warn("Unable to locate the multi-model configuration two levels above the co-simulation configuration path. Trying the saved relative multi-model path..");
-                const savedPath = Path.join(IntoCpsApp.getInstance()?.getActiveProject()?.getRootFilePath() ?? "", parser.parseSimpleTagDefault(data, "multimodel_path", ""));
-                if(!savedPath || !fs.existsSync(savedPath)){
-                    console.warn("Unable to load multi model for co-simulation configuration!");
-                } else {
-                    mmPath = savedPath;
+    static async create(path: string, projectRoot: string, fmuRootPath: string, data: any): Promise<CoSimulationConfig> {
+
+        const parser: Parser = new Parser();
+        let mmPath: string = Path.join(path, "..", "..", "mm.json");
+        let locatedMM: boolean = true;
+        if (!await CoSimulationStudioApi.exists(mmPath)) {
+            console.warn("Could not find mm.json at: " + mmPath + " Searching for old style...")
+            locatedMM = false;
+            //no we have the old style
+            (await CoSimulationStudioApi.readdir(Path.join(path, "..", ".."))).forEach(async (file: string) => {
+                if (file.endsWith("mm.json")) {
+                    locatedMM = true;
+                    mmPath = Path.join(path, "..", "..", file);
+                    console.warn("Found deprecated style mm at: " + mmPath);
+                    console.warn("Consider renaming:" + file + " to: mm.json");
+                    return;
                 }
+            });
+        }
+        // Could not locate mm from path so try the relative saved mm path.
+        if (!locatedMM) {
+            console.warn("Unable to locate the multi-model configuration two levels above the co-simulation configuration path. Trying the saved relative multi-model path..");
+            const savedPath = Path.join(IntoCpsApp.getInstance()?.getActiveProject()?.getRootFilePath() ?? "", parser.parseSimpleTagDefault(data, "multimodel_path", ""));
+            if (!savedPath || !await CoSimulationStudioApi.exists(savedPath)) {
+                console.warn("Unable to load multi model for co-simulation configuration!");
+            } else {
+                mmPath = savedPath;
             }
-        
-
-            MultiModelConfig
-                .parse(mmPath, fmuRootPath)
-                .then(multiModel => {
-                    let config = new CoSimulationConfig();
-
-                    config.projectRoot = projectRoot;
-                    config.multiModel = multiModel;
-                    config.sourcePath = path;
-                    config.startTime = parser.parseStartTime(data) || 0;
-                    config.endTime = parser.parseEndTime(data) || 10;
-                    config.logVariables = parser.parseLogVariables(data, multiModel);
-                    config.livestreamInterval = parseFloat(parser.parseSimpleTagDefault(data, "livestreamInterval", "0.0"));
-                    config.algorithm = parser.parseAlgorithm(data, multiModel);
-                    config.visible = parser.parseSimpleTagDefault(data, "visible", false);
-                    config.loggingOn = parser.parseSimpleTagDefault(data, "loggingOn", false);
-                    config.overrideLogLevel = parser.parseSimpleTagDefault(data, "overrideLogLevel", null);
-                    config.enableAllLogCategoriesPerInstance = parser.parseSimpleTagDefault(data, "enableAllLogCategoriesPerInstance", false);
-                    config.multiModelCrc = parser.parseMultiModelCrc(data);
-                    config.postProcessingScript = parser.parseSimpleTagDefault(data, "postProcessingScript", "");
-                    config.liveGraphs = parser.parseGraphs(Parser.GRAPHS_TAG, data, multiModel);
-                    config.liveGraphColumns = parseInt(parser.parseSimpleTagDefault(data, "liveGraphColumns", 1));
-                    config.liveGraphVisibleRowCount = parseInt(parser.parseSimpleTagDefault(data, "liveGraphVisibleRowCount", 1));
-                    config.simulationProgramDelay = parser.parseSimpleTagDefault(data, "simulationProgramDelay", false);
-                    config.parallelSimulation = parser.parseSimpleTagDefault(data, "parallelSimulation", false);
-                    config.stabalization = parser.parseSimpleTagDefault(data, "stabalizationEnabled", false);
-                    config.global_absolute_tolerance = parseFloat(parser.parseSimpleTagDefault(data, "global_absolute_tolerance", 0.0));
-                    config.global_relative_tolerance = parseFloat(parser.parseSimpleTagDefault(data, "global_relative_tolerance", 0.01));
-                    config.convergenceAttempts = parseInt(parser.parseSimpleTagDefault(data, "convergenceAttempts", 5));
+        }
 
 
-                    resolve(config);
-                })
-                .catch(error => reject(error));
-        });
+        const multiModel = await MultiModelConfig.parse(mmPath, fmuRootPath);
+
+        let config = new CoSimulationConfig();
+        config.projectRoot = projectRoot;
+        config.multiModel = multiModel;
+        config.sourcePath = path;
+        config.startTime = parser.parseStartTime(data) || 0;
+        config.endTime = parser.parseEndTime(data) || 10;
+        config.logVariables = parser.parseLogVariables(data, multiModel);
+        config.livestreamInterval = parseFloat(parser.parseSimpleTagDefault(data, "livestreamInterval", "0.0"));
+        config.algorithm = parser.parseAlgorithm(data, multiModel);
+        config.visible = parser.parseSimpleTagDefault(data, "visible", false);
+        config.loggingOn = parser.parseSimpleTagDefault(data, "loggingOn", false);
+        config.overrideLogLevel = parser.parseSimpleTagDefault(data, "overrideLogLevel", null);
+        config.enableAllLogCategoriesPerInstance = parser.parseSimpleTagDefault(data, "enableAllLogCategoriesPerInstance", false);
+        config.multiModelCrc = parser.parseMultiModelCrc(data);
+        config.postProcessingScript = parser.parseSimpleTagDefault(data, "postProcessingScript", "");
+        config.liveGraphs = parser.parseGraphs(Parser.GRAPHS_TAG, data, multiModel);
+        config.liveGraphColumns = parseInt(parser.parseSimpleTagDefault(data, "liveGraphColumns", 1));
+        config.liveGraphVisibleRowCount = parseInt(parser.parseSimpleTagDefault(data, "liveGraphVisibleRowCount", 1));
+        config.simulationProgramDelay = parser.parseSimpleTagDefault(data, "simulationProgramDelay", false);
+        config.parallelSimulation = parser.parseSimpleTagDefault(data, "parallelSimulation", false);
+        config.stabalization = parser.parseSimpleTagDefault(data, "stabalizationEnabled", false);
+        config.global_absolute_tolerance = parseFloat(parser.parseSimpleTagDefault(data, "global_absolute_tolerance", 0.0));
+        config.global_relative_tolerance = parseFloat(parser.parseSimpleTagDefault(data, "global_relative_tolerance", 0.01));
+        config.convergenceAttempts = parseInt(parser.parseSimpleTagDefault(data, "convergenceAttempts", 5));
+        return config;
+
     }
 
-    static parse(path: string, projectRoot: string, fmuRootPath: string): Promise<CoSimulationConfig> {
-        return new Promise<CoSimulationConfig>((resolve, reject) => {
-            fs.access(path, fs.constants.R_OK, error => {
-                if (error) return reject(error);
-
-                fs.readFile(path, (error, content) => {
-                    if (error) return reject(error);
-
-                    this.create(path, projectRoot, fmuRootPath, JSON.parse(content.toString()))
-                        .then(multiModel => resolve(multiModel))
-                        .catch(error => reject(error));
-                });
-            });
-        });
+    static async parse(path: string, projectRoot: string, fmuRootPath: string): Promise<CoSimulationConfig> {
+        //await CoSimulationStudioApi.access(path, CoSimulationStudioApi.R_OK);
+        const content = await CoSimulationStudioApi.readFile(path);
+        return await this.create(path, projectRoot, fmuRootPath, JSON.parse(content.toString()));
     }
 }
 
@@ -266,7 +239,7 @@ export interface ICoSimAlgorithm {
 export class LiveGraph {
     public title = "Live Graph";
     private livestream: Map<Instance, ScalarVariable[]> = new Map<Instance, ScalarVariable[]>();
-    private serializedLiveStream: Map<string,string[]> = new Map<string,string[]>();
+    private serializedLiveStream: Map<string, string[]> = new Map<string, string[]>();
     public id: number;
     public externalWindow!: boolean;
     private static next = 0;
@@ -275,7 +248,7 @@ export class LiveGraph {
         this.id = LiveGraph.next;
     }
 
-    public getSerializedLiveStream(){
+    public getSerializedLiveStream() {
         return this.serializedLiveStream;
     }
 
@@ -286,7 +259,7 @@ export class LiveGraph {
     public setLivestream(livestream: Map<Instance, ScalarVariable[]>) {
         this.livestream = livestream;
     }
-    fromObject(livestream: any, title: any){
+    fromObject(livestream: any, title: any) {
         this.title = title;
         console.log("fromObject");
         Object.keys(livestream).forEach(key => {
@@ -295,7 +268,7 @@ export class LiveGraph {
         });
         console.log("fromObject");
     }
-    toObject() : any {
+    toObject(): any {
 
         let livestream: any = {};
         this.livestream.forEach((svs, instance) => livestream[Serializer.getId(instance)] = svs.map(sv => sv.name));
@@ -303,7 +276,7 @@ export class LiveGraph {
         return {
             title: this.title,
             livestream: livestream,
-            externalWindow:this.externalWindow,
+            externalWindow: this.externalWindow,
         };
     }
 
@@ -332,7 +305,7 @@ export class FixedStepAlgorithm implements ICoSimAlgorithm {
 
     toFormGroup() {
         return new FormGroup({
-            size: new FormControl(this.size, [Validators.required?? numberValidator])
+            size: new FormControl(this.size, [Validators.required ?? numberValidator])
         });
     }
 
@@ -397,7 +370,7 @@ export class ZeroCrossingConstraint implements VariableStepConstraint {
         public id: string = "zc",
         public ports: Array<InstanceScalarPair> = [],
         public order: string = "2", // Can be 1 or 2.
-        public abstol: number = 10**(-3),
+        public abstol: number = 10 ** (-3),
         public safety: number = 0.0
     ) {
         this.name = "order" + ZeroCrossingConstraint.index++;
@@ -407,7 +380,7 @@ export class ZeroCrossingConstraint implements VariableStepConstraint {
     toFormGroup() {
         return new FormGroup({
             id: new FormControl(this.id),
-            ports: new FormControl(this.ports, [Validators.required, lengthValidator(1, 2), uniqueValidator]),
+            //ports: new FormControl(this.ports, [Validators.required, lengthValidator(1, 2), uniqueValidator]),
             order: new FormControl(this.order),
             abstol: new FormControl(this.abstol, [Validators.required, numberValidator]),
             safety: new FormControl(this.safety, [Validators.required, numberValidator])
@@ -459,18 +432,18 @@ export class BoundedDifferenceConstraint implements VariableStepConstraint {
     constructor(
         public id: string = "bd",
         public ports: Array<InstanceScalarPair> = [],
-        public abstol: number = 10**(-3),
-        public reltol: number = 10**(-2),
+        public abstol: number = 10 ** (-3),
+        public reltol: number = 10 ** (-2),
         public safety: number = 0.0,
         public skipDiscrete: boolean = true
     ) {
     }
 
-    
+
     toFormGroup() {
         return new FormGroup({
             id: new FormControl(this.id),
-            ports: new FormControl(this.ports, [Validators.required, lengthValidator(1), uniqueValidator]),
+            //ports: new FormControl(this.ports, [Validators.required, lengthValidator(1), uniqueValidator]),
             abstol: new FormControl(this.abstol, [Validators.required, numberValidator]),
             reltol: new FormControl(this.reltol, [Validators.required, numberValidator]),
             safety: new FormControl(this.safety, [Validators.required, numberValidator]),

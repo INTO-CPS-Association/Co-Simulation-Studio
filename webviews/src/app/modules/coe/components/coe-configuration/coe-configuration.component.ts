@@ -88,16 +88,16 @@ export class CoeConfigurationComponent {
 	}
 
 	//FIXME uses non-angluar interfaces
-	parseConfig() {
+	async parseConfig() {
 		let project = IntoCpsApp.getInstance()?.getActiveProject();
 		if (project == null)
 			return;
-		CoSimulationConfig.parse(this.path, project.getRootFilePath(), project.getFmusPath())
+		CoSimulationConfig.parse(this.path, project.getRootFilePath(), await project.getFmusPath())
 			.then(
-				(config) => {
+				async (config) => {
 					this.config = config;
 
-					this.warnings = this.config.validate();
+					this.warnings = await this.config.validate();
 
 					this.parseError = null;
 
@@ -176,10 +176,10 @@ export class CoeConfigurationComponent {
 		});
 	}
 	//FIXME uses non-angular interface 
-	onSubmit() {
+	async onSubmit() {
 		if (!this.editing) return;
 
-		this.warnings = this.config.validate();
+		this.warnings = await this.config.validate();
 
 		let override = false;
 

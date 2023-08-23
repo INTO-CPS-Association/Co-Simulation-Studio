@@ -38,24 +38,25 @@ import * as Path from 'path';
 import { ProjectSettings } from './project-settings';
 import IntoCpsApp from './into-cps-app';
 import { SettingKeys } from './setting-keys';
+import { CoSimulationStudioApi } from 'src/app/api';
 
 export interface IProject {
 	getName(): string;
 	getRootFilePath(): string;
 	getProjectConfigFilePath(): string;
-	getFmusPath(): string;
+	getFmusPath(): Promise<string>;
 	getSysMlFolderName(): String;
 	save(): void;
 
-	createMultiModel(name: String, jsonContent: String): String;
-	createDse(name: String, jsonContent: String): String;
-	createSigVer(name: String): String;
-	createSysMLDSEConfig(name: String, jsonContent: String): String;
-	createCoSimConfig(multimodelConfigPath: string, name: String, jsonContent: String): string;
+	createMultiModel(name: String, jsonContent: String): Promise<String>;
+	createDse(name: String, jsonContent: String): Promise<String>;
+	createSigVer(name: String): Promise<String>;
+	createSysMLDSEConfig(name: String, jsonContent: String): Promise<String>;
+	createCoSimConfig(multimodelConfigPath: string, name: String, jsonContent: String): Promise<string>;
 
 	getSettings(): ProjectSettings;
 
-	freshMultiModelName(name: String): String;
+	freshMultiModelName(name: String): Promise<String>;
 	freshFilename(path: string, name: string): string
 }
 
@@ -97,14 +98,16 @@ export class Project implements IProject {
 
 	public getRootFilePath(): string { return this.rootPath; }
 	public getProjectConfigFilePath(): string { return this.configPath }
-	public getFmusPath(): string { return Path.normalize(this.getRootFilePath() + "/" + this.PATH_FMUS); }
+	public async getFmusPath(): Promise<string> {
+		return CoSimulationStudioApi.normalize(this.getRootFilePath() + "/" + this.PATH_FMUS);
+	}
 
 	public getSysMlFolderName(): String {
 		return Project.PATH_SYSML;
 	}
 
 	//TODO: replace with proper folder struct
-	public save() {
+	public async save() {
 
 		let folders = [Project.PATH_SYSML, Project.PATH_DSE, this.PATH_FMUS, this.PATH_MODELS, Project.PATH_MULTI_MODELS,
 		Project.PATH_TEST_DATA_GENERATION, Project.PATH_MODEL_CHECKING, Project.PATH_TRACEABILITY, Project.PATH_SIGVER];
@@ -112,7 +115,7 @@ export class Project implements IProject {
 		for (var i = 0; folders.length > i; i++) {
 			try {
 				var folder = folders[i];
-				let path = Path.normalize(this.rootPath + "/" + folder);
+				let path = await CoSimulationStudioApi.normalize(this.rootPath + "/" + folder);
 				if (!fs.existsSync(path)) {
 					fs.mkdir(path, function (err) { });
 				}
@@ -160,65 +163,65 @@ export class Project implements IProject {
 		   }*/
 	}
 
-	public createMultiModel(name: String, jsonContent: String): String {
-		let path = Path.normalize(this.rootPath + "/" + Project.PATH_MULTI_MODELS + "/" + name);
+	public async createMultiModel(name: String, jsonContent: String): Promise<String> {
+		let path = await CoSimulationStudioApi.normalize(this.rootPath + "/" + Project.PATH_MULTI_MODELS + "/" + name);
 
 		if (fs.existsSync(path)) throw new Error('Multi-Model ' + name + ' already exists!');
 
 		fs.mkdirSync(path);
 
-		let fullpath = Path.normalize(path + "/mm.json");
+		let fullpath = await CoSimulationStudioApi.normalize(path + "/mm.json");
 
 		fs.writeFileSync(fullpath, jsonContent == null ? "{}" : String(jsonContent), "utf-8");
 
 		return fullpath;
 	}
 
-	public createSysMLDSEConfig(name: String, jsonContent: String): String {
-		let path = Path.normalize(this.rootPath + "/" + Project.PATH_DSE + "/" + name);
+	public async createSysMLDSEConfig(name: String, jsonContent: String): Promise<String> {
+		let path = await CoSimulationStudioApi.normalize(this.rootPath + "/" + Project.PATH_DSE + "/" + name);
 
 		fs.mkdirSync(path);
 
-		let fullpath = Path.normalize(path + "/" + name + ".dse.json");
+		let fullpath = await CoSimulationStudioApi.normalize(path + "/" + name + ".dse.json");
 
 		fs.writeFileSync(fullpath, jsonContent == null ? "{}" : String(jsonContent), "utf-8");
 
 		return fullpath;
 	}
 
-	public createSigVer(name: String): String {
-		let path = Path.normalize(this.rootPath + "/" + Project.PATH_SIGVER + "/" + name);
+	public async createSigVer(name: String): Promise<String> {
+		let path = await CoSimulationStudioApi.normalize(this.rootPath + "/" + Project.PATH_SIGVER + "/" + name);
 
 		if (fs.existsSync(path)) throw new Error('Configuration ' + name + ' already exists!');
 
 		fs.mkdirSync(path);
 
-		let fullpath = Path.normalize(path + "/" + name + ".sigverConfig.json");
+		let fullpath = await CoSimulationStudioApi.normalize(path + "/" + name + ".sigverConfig.json");
 
 		fs.writeFileSync(fullpath, "{}", "utf-8");
 
 		return fullpath;
 	}
 
-	public createDse(name: String, jsonContent: String): String {
-		let path = Path.normalize(this.rootPath + "/" + Project.PATH_DSE + "/" + name);
+	public async createDse(name: String, jsonContent: String): Promise<String> {
+		let path = await CoSimulationStudioApi.normalize(this.rootPath + "/" + Project.PATH_DSE + "/" + name);
 
 		fs.mkdirSync(path);
 
-		let fullpath = Path.normalize(path + "/" + name + ".dse.json");
+		let fullpath = await CoSimulationStudioApi.normalize(path + "/" + name + ".dse.json");
 
 		fs.writeFileSync(fullpath, String(jsonContent), "utf-8");
 
 		return fullpath;
 	}
 
-	public createCoSimConfig(multimodelConfigPath: string, name: String, jsonContent: String): string {
+	public async createCoSimConfig(multimodelConfigPath: string, name: String, jsonContent: String): Promise<string> {
 		let mmDir = Path.dirname(multimodelConfigPath);
-		let path = Path.normalize(mmDir + "/" + name);
+		let path = await CoSimulationStudioApi.normalize(mmDir + "/" + name);
 
 		fs.mkdirSync(path);
 
-		let fullpath = Path.normalize(path + "/coe.json");
+		let fullpath = await CoSimulationStudioApi.normalize(path + "/coe.json");
 
 		var data = jsonContent == null ? "{\"algorithm\":{\"type\":\"fixed-step\",\"size\":0.1},\"endTime\":10,\"startTime\":0}" : jsonContent;
 		console.info(data);
@@ -237,8 +240,8 @@ export class Project implements IProject {
 	}
 
 
-	public freshMultiModelName(name: string): string {
-		return this.freshFilename(Path.normalize(this.rootPath + "/" + Project.PATH_MULTI_MODELS), name);
+	public async freshMultiModelName(name: string): Promise<string> {
+		return this.freshFilename(await CoSimulationStudioApi.normalize(this.rootPath + "/" + Project.PATH_MULTI_MODELS), name);
 	}
 
 
@@ -311,7 +314,7 @@ export function openProjectViaDirectoryDialog() {
 		}
 	} */
 	// for electron v8
-	dialog.showOpenDialog({ defaultPath: defaultPath, properties: ["openDirectory"] }).then((res: any) => {
+	dialog.showOpenDialog({ defaultPath: defaultPath, properties: ["openDirectory"] }).then(async (res: any) => {
 		try {
 			if (res.canceled) {
 				// catches cancel button pressed event - which handles null path error
@@ -324,9 +327,9 @@ export function openProjectViaDirectoryDialog() {
 				} else {
 					console.info("Opening project at: " + path);
 					try {
-						let project = IntoCpsApp.getInstance()?.loadProject(path);
+						let project = await IntoCpsApp.getInstance()?.loadProject(path);
 						if (project != null)
-						IntoCpsApp.getInstance()?.setActiveProject(project);
+							IntoCpsApp.getInstance()?.setActiveProject(project);
 					} catch (e) {
 						dialog.showErrorBox("Cannot open project", "Invalid project file at: " + path);
 						return;

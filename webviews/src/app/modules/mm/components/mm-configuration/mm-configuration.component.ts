@@ -50,11 +50,12 @@ export class MmConfigurationComponent {
         this.navigationService.registerComponent(this);
     }
 
-    parseConfig() {
+    async parseConfig() {
+
         let project: IProject | undefined | null = IntoCpsApp.getInstance()?.getActiveProject();
 
         MultiModelConfig
-            .parse(this.path, project?.getFmusPath() ?? "")
+            .parse(this.path, await project?.getFmusPath() ?? "")
             .then(config => {
                 /* this.zone.run(() => { */
                 this.parseError = null;

@@ -36,8 +36,8 @@ import {
     isTypeCompatiple, InstanceScalarPair, ScalarVariable
 } from "./fmu";
 import * as Path from 'path';
-import * as fs from 'fs';
 import { ISerializable } from './serializable';
+import { CoSimulationStudioApi } from 'src/app/api';
 
 // Multi-Model
 
@@ -95,7 +95,7 @@ export class MultiModelConfig implements ISerializable {
         return pair;
     }
 
-    static create(path: string, fmuRootPath: string, data: any): Promise<MultiModelConfig> {
+    static async create(path: string, fmuRootPath: string, data: any): Promise<MultiModelConfig> {
         let parser = new Parser();
 
         let mm = new MultiModelConfig();
@@ -103,7 +103,7 @@ export class MultiModelConfig implements ISerializable {
         mm.fmusRootPath = fmuRootPath;
 
         return parser
-            .parseFmus(data, Path.normalize(fmuRootPath))
+            .parseFmus(data, await CoSimulationStudioApi.normalize(fmuRootPath))
             .then(fmus => {
                 mm.fmus = fmus;
 
@@ -114,15 +114,15 @@ export class MultiModelConfig implements ISerializable {
             });
     }
 
-    static parse(path: string, fmuRootPath: string): Promise<MultiModelConfig> {
-        return new Promise<Buffer>((resolve, reject) => {
-            fs.readFile(path, (error, data) => {
-                if (error)
-                    reject(error);
-                else
-                    resolve(data);
-            });
-        }).then(content => this.create(path, fmuRootPath, JSON.parse(content.toString()))).catch(err => { console.log(err); return new MultiModelConfig() });
+    static async parse(path: string, fmuRootPath: string): Promise<MultiModelConfig> {
+        try {
+            const content = await CoSimulationStudioApi.readFile(path);
+            return await this.create(path, fmuRootPath, JSON.parse(content.toString()));
+        } catch (e) {
+            console.log("ERROR", e);
+            return new MultiModelConfig()
+        }
+
     }
 
     public addFmu() {
@@ -251,19 +251,14 @@ export class MultiModelConfig implements ISerializable {
         return messages;
     }
 
-    save(): Promise<void> {
-        return new Promise<void>((resolve, reject) => {
-            let messages = this.validate();
+    async save(): Promise<void> {
 
-            if (messages.length > 0)
-                reject(messages);
+        let messages = this.validate();
 
-            fs.writeFile(this.sourcePath, JSON.stringify(this.toObject()), error => {
-                if (error)
-                    reject(error);
-                else
-                    resolve();
-            });
-        });
+        if (messages.length > 0)
+            return Promise.reject(messages);
+
+        await CoSimulationStudioApi.writeFile(this.sourcePath, JSON.stringify(this.toObject()));
+
     }
 }

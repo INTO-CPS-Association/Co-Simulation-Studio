@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import { MessageHandlerData } from '@estruyf/vscode';
+import { processMessage } from './api';
 
 export class DseEditorProvider implements vscode.CustomTextEditorProvider {
 
@@ -33,31 +34,25 @@ export class DseEditorProvider implements vscode.CustomTextEditorProvider {
 			enableScripts: true,
 		};
 
-		panel.webview.html = this.html(panel.webview);
+		panel.webview.html = this.html(panel.webview, document.uri.toString());
 
-		panel.webview.onDidReceiveMessage(async (message) => {
-
-			const { command, requestId, payload } = message;
-
-			/*					panel.webview.postMessage({
-									command,
-									requestId,
-									payload: await this.client.sendRequest("gitworks/oml/table/add-instance", [document.uri.toString(), payload])
-								} as MessageHandlerData<string>);
-								*/
-
-
-		}, undefined, this.context.subscriptions);
+		panel.webview.onDidReceiveMessage(processMessage(panel), undefined, this.context.subscriptions);
 
 	}
 
-	private html(webview: vscode.Webview): string {
+	private html(webview: vscode.Webview, path: string): string {
+
 		const baseUri = webview.asWebviewUri(vscode.Uri.joinPath(this.context.extensionUri, 'webviews', 'dist', 'webviews'));
+		console.log(baseUri.toString());
 		//return `<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><base href="${baseUri}/"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="icon" type="image/x-icon" href="favicon.ico"><link rel="stylesheet" href="styles.css"></head><body><app-root></app-root><script src="runtime.js" type="module"></script><script src="polyfills.js" type="module"></script><script src="main.js" type="module"></script></body></html>`;
 
 		//><style>html{font-family:sans-serif;-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%}body{margin:0}@media print{*,:after,:before{color:#000!important;text-shadow:none!important;background:0 0!important;box-shadow:none!important}}*{box-sizing:border-box}:after,:before{box-sizing:border-box}html{font-size:10px;-webkit-tap-highlight-color:rgba(0,0,0,0)}body{font-family:Helvetica Neue,Helvetica,Arial,sans-serif;font-size:14px;line-height:1.42857143;color:#333;background-color:#fff}@charset "UTF-8"</style>
-		//return `<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><base href="http://localhost:4200/"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="icon" type="image/x-icon" href="favicon.ico"><link rel="stylesheet" href="styles.css"></head><body><app-root></app-root><script src="runtime.js" type="module"></script><script src="polyfills.js" type="module"></script><script src="scripts.js" defer></script><script src="main.js" type="module"></script></body></html>`;
-		return `<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><base href="${baseUri}/"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="icon" type="image/x-icon" href="favicon.ico"><link rel="stylesheet" href="styles.css"></head><body><app-root></app-root><script src="runtime.js" type="module"></script><script src="polyfills.js" type="module"></script><script src="scripts.js" defer></script><script src="main.js" type="module"></script></body></html>`;
+		//return ``;
+		//return `<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><base href="${baseUri}/"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="icon" type="image/x-icon" href="favicon.ico"><link rel="stylesheet" href="styles.css"></head><body><app-root></app-root><script src="runtime.js" type="module"></script><script src="polyfills.js" type="module"></script><script src="scripts.js" defer></script><script src="main.js" type="module"></script></body></html>`;
+
+		return `<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><base href="${baseUri}/"><title>Webviews</title><base href="/"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="icon" type="image/x-icon" href="favicon.ico"><style>html{font-family:sans-serif;-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%}body{margin:0}@media print{*,:after,:before{color:#000!important;text-shadow:none!important;background:0 0!important;box-shadow:none!important}}*{box-sizing:border-box}:after,:before{box-sizing:border-box}html{font-size:10px;-webkit-tap-highlight-color:rgba(0,0,0,0)}body{font-family:Helvetica Neue,Helvetica,Arial,sans-serif;font-size:14px;line-height:1.42857143;color:#333;background-color:#fff}@charset "UTF-8"</style><link rel="stylesheet" href="styles.css" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="styles.css"></noscript></head><body data-view="dse" data-path="${path}"><app-root></app-root><script src="runtime.js" type="module"></script><script src="polyfills.js" type="module"></script><script src="scripts.js" defer></script><script src="vendor.js" type="module"></script><script src="main.js" type="module"></script></body></html>`;
 	}
 
 }
+
+//https://file%2B.vscode-resource.vscode-cdn.net/home/omar/git7/Co-Simulation-Studio/webviews/dist/webviews
