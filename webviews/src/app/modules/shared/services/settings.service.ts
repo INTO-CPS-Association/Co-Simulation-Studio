@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import Settings from '../classes/settings';
 import IntoCpsApp from '../classes/into-cps-app';
+import { CoSimulationStudioApi } from 'src/app/api';
 
 export { SettingKeys } from "../classes/setting-keys";
 
@@ -8,14 +9,11 @@ export { SettingKeys } from "../classes/setting-keys";
   providedIn: 'root'
 })
 export class SettingsService {
-
-  private settings?: Settings;
-
+ 
   constructor() {
-    this.settings = IntoCpsApp.getInstance()?.getSettings();
   }
 
-  get(key: string) {
-    return this.settings?.getSetting(key);
+  async get(key: string) {
+    return await CoSimulationStudioApi.getConfiguration(key);
   }
 }

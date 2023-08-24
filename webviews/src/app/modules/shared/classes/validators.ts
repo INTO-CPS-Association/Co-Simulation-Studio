@@ -30,9 +30,7 @@
  */
 
 import { FormControl, FormArray, FormGroup, AsyncValidatorFn, AbstractControl, ValidatorFn, ValidationErrors } from "@angular/forms";
-
 import { Observable } from 'rxjs';
-//import { ValidationError } from 'xml2js';
 
 function isNumber(x: any): boolean {
 	let number = Number(x);

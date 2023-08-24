@@ -36,9 +36,7 @@ export class Message {
 }
 
 export class WarningMessage extends Message {
-
 }
 
 export class ErrorMessage extends WarningMessage {
-
 }

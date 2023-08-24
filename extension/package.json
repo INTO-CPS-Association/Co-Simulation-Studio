@@ -9,6 +9,8 @@
 	"scripts": {},
 	"dependencies": {
 		"@estruyf/vscode": "^1.1.0",
+		"axios": "^1.4.0",
+		"node-fetch": "^2.6.13",
 		"vscode-languageclient": "^7.0.0"
 	},
 	"devDependencies": {

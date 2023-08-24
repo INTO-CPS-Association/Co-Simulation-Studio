@@ -18,6 +18,7 @@ export class CoeServerStatusComponent implements OnInit {
 
 }
 
+/*
 
 var globalChild: any;
 //FIXME no-agluar interface
@@ -197,3 +198,4 @@ function createPanel(title: string, content: HTMLElement): HTMLElement {
 
   return divPanel;
 }
+*/

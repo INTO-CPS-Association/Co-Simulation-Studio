@@ -85,9 +85,9 @@ export class CoeSimulationComponent {
     public coeSimulation: CoeSimulationService,
     private zone: NgZone
   ) {
-    this._coeIsOnlineSub = coeSimulation.coeIsOnlineObservable.subscribe(isOnline => {
+    this._coeIsOnlineSub = coeSimulation.coeIsOnlineObservable.subscribe(async isOnline => {
       if (this.required_coe_version) {
-        this.correctCoeVersion = this.required_coe_version == this.coeSimulation.getMaestroVersion();
+        this.correctCoeVersion = this.required_coe_version == (await this.coeSimulation.getMaestroVersion());
       }
       this.online = isOnline;
     });
@@ -97,7 +97,7 @@ export class CoeSimulationComponent {
     this._coeIsOnlineSub.unsubscribe();
   }
 
-  parseConfig() {
+  async parseConfig() {
     //FIXME: This is a non angular Interface
     let project = IntoCpsApp.getInstance()?.getActiveProject();
     this.parsing = true;
@@ -105,13 +105,13 @@ export class CoeSimulationComponent {
     CoSimulationConfig.parse(
       this.path,
       project?.getRootFilePath() ?? "",
-      project?.getFmusPath() ?? ""
+      await project?.getFmusPath() ?? ""
     ).then(config =>
-      this.zone.run(() => {
+      this.zone.run(async () => {
         this.config = config;
 
         this.mmWarnings = this.config.multiModel.validate();
-        this.coeWarnings = this.config.validate();
+        this.coeWarnings = await this.config.validate();
 
         this.parsing = false;
       })

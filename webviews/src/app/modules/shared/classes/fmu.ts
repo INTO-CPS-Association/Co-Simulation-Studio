@@ -42,12 +42,14 @@ export class Fmu {
 	scalarVariables: ScalarVariable[] = [];
 	pathNotFound = true;
 	logCategories: string[] = [];
-	system_platform: string = Utilities.getSystemPlatform() + Utilities.getSystemArchitecture();
+	system_platform!: string;
 	nested = false;
 
 
 	constructor(public name: string = "{FMU}", public path: string = "") {
-
+		async () => {
+			this.system_platform = await Utilities.getSystemPlatform() + Utilities.getSystemArchitecture();
+		}
 	}
 
 	public isNested() { return this.nested; }

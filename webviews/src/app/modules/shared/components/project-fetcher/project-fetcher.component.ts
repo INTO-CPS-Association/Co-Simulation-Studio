@@ -129,12 +129,12 @@ export function fetchProjectThroughGit(url: string, targetFolder: string, update
             //Here you can get the exit code of the script
         });
 
-        child.on('exit', function (code: any) {
+        child.on('exit', async function (code: any) {
             console.log('exit code: ' + code);
             //Here you can get the exit code of the script
 
 
-            let p = IntoCpsApp.getInstance()?.loadProject(repoProjectFile);
+            let p = await IntoCpsApp.getInstance()?.loadProject(repoProjectFile);
             if (p != null)
                 IntoCpsApp.getInstance()?.setActiveProject(p);
 
