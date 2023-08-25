@@ -1,5 +1,31 @@
 import { Dropdown, Stack, ThemeProvider } from '@fluentui/react';
 import * as React from "react";
+import { Component } from 'react';
+
+export class YourComponent extends Component {
+	override state = {
+	  reload: false,
+	  hello: 'world'
+	};
+  
+	refreshPage = () => {
+	  this.setState(
+		{reload: true},
+		() => this.setState({reload: false, hello: 'denmark'})
+	  )
+	}
+
+	override render(): React.ReactNode {
+		return (
+			<div>
+				Here we {this.state.hello} this asdasd
+				<button onClick={this.refreshPage}>Refresh Page</button>
+			</div>
+		);
+	}
+  }
+
+  
 
 export default function ReactExample(props: any) {
 	return (

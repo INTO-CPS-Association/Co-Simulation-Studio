@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { DefaultButton, DropdownMenuItemType } from '@fluentui/react';
-import ReactExample from './react-example';
+import ReactExample, { YourComponent } from './react-example';
 
 @Component({
   selector: 'app-react-example',
@@ -22,6 +22,7 @@ export class ReactExampleComponent {
 
   // example custom react component
   testComponent = ReactExample;
+  yourComponent = YourComponent;
   testProps = {
     name: 'Hello World',
     stackTokens: { childrenGap: 20 },

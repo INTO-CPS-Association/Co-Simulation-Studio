@@ -13,7 +13,7 @@ import * as Path from "path";
 import * as fs from 'fs'
 import { Serializer } from 'src/app/modules/shared/classes/parser';
 import { SettingKeys } from 'src/app/modules/shared/classes/setting-keys';
-import DseConfigurationReact from "./dse-configuration"
+import {DseConfigurationReact} from "./dse-configuration"
 
 
 /*TASKS
@@ -118,6 +118,11 @@ export class DseConfigurationComponent {
     constructor(public maestroApiService: MaestroApiService, private zone: NgZone, public navigationService: NavigationService) {
         this.navigationService.registerComponent(this);
         this._coeIsOnlineSub = this.maestroApiService.startMonitoringOnlineStatus(isOnline => this.online = isOnline);
+    }
+
+    setEditing(edit: boolean): void{
+        this.editing = edit;
+        console.log("editing: " + this.editing);
     }
 
     ngOnDestroy() : void {
