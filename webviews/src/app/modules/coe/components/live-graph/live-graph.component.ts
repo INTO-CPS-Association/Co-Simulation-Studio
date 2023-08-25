@@ -2,6 +2,8 @@ import { Component, Input, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { CoSimulationConfig, LiveGraph } from 'src/app/modules/shared/classes/co-simulation-config';
 import { InstanceScalarPair, ScalarVariable, CausalityType, ScalarVariableType, Instance } from 'src/app/modules/shared/classes/fmu';
+import textfieldcompoent from './textfieldcompoent';
+import checkboxcompoent from './checkboxcomponent';
 
 @Component({
     selector: 'app-live-graph',
@@ -10,7 +12,9 @@ import { InstanceScalarPair, ScalarVariable, CausalityType, ScalarVariableType, 
 })
 export class LiveGraphComponent {
 
-
+    props = this
+    textfieldcompoent_ = textfieldcompoent
+    checkboxcomponent_ = checkboxcompoent
     //FIXME: This Uses a non Angular interface
     @Input()
     graph!: LiveGraph;
@@ -55,7 +59,7 @@ export class LiveGraphComponent {
      }
    */
 
-    liveStreamSearchName: string = '';
+    
 
     customTrackBy(index: number, obj: any): any {
         return index;
@@ -71,6 +75,9 @@ export class LiveGraphComponent {
         return variable.causality === CausalityType.Local
     }
 
+    setgraph_externalwindow(value: boolean){
+        this.graph.externalWindow = value
+    }
 
     //FIXME: This Uses a non Angular interface
     getScalarVariableTypeName(type: ScalarVariableType) {
@@ -109,9 +116,12 @@ export class LiveGraphComponent {
                 this.graph.getLivestream().delete(instance);
         }
     }
-
+    liveStreamSearchName: string = '';
     onLiveStreamKey(event: any) {
         this.liveStreamSearchName = event.target.value;
+    }
+    setlivestreamkey(x:string){
+        this.liveStreamSearchName = x;
     }
 
 }

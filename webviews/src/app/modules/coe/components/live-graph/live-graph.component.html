@@ -3,7 +3,8 @@
         <div class="form-forizontal">
             <div *ngIf="editing" class="form-group">
                 <label class="col-md-4 col-sm-5 control-label" style="text-align: right">Filter</label>
-                <input #box (keyup)="onLiveStreamKey($event)" class="col-sm-7 col-md-8 form-control">
+                <app-react [component]="textfieldcompoent_" [props]="props" ></app-react>
+                <!-- <input #box (keyup)="onLiveStreamKey($event)" class="col-sm-7 col-md-8 form-control"> -->
             </div>
         </div>
     </div>
@@ -25,7 +26,8 @@
                     <label>
                                 <!-- <input type="checkbox" [disabled]="!editing" name="externalWindow" [checked]="graph.externalWindow"
                         formControlName="externalWindow" > -->
-                        <input name="externalWindow" [(ngModel)]="graph.externalWindow" [ngModelOptions]="{standalone: true}" type="checkbox" [disabled]="!editing" [checked]="graph.externalWindow">
+                        <!-- <input name="externalWindow" [(ngModel)]="graph.externalWindow" [ngModelOptions]="{standalone: true}" type="checkbox" [disabled]="!editing" [checked]="graph.externalWindow"> -->
+                        <app-react [component]="checkboxcomponent_" [props]="props" ></app-react>
                     </label>
                 </div>
             </div>
