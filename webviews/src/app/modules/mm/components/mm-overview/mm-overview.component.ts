@@ -33,12 +33,12 @@ export class MmOverviewComponent {
 
     }
 
-    parseConfig() {
+    async parseConfig() {
         //FIXME IntoCpsApp is a non angular Class
         let project = IntoCpsApp.getInstance()?.getActiveProject();
 
         MultiModelConfig
-            .parse(this.path, project?.getFmusPath() ?? "")
+            .parse(this.path, await project?.getFmusPath() ?? "")
             .then(config => this.zone.run(() => { this.config = config; this.warnings = this.config.validate(); })).catch(err => console.log(err));
     }
 

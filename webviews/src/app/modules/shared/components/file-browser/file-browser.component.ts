@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import * as Path from "path";
 import * as fs from "fs";
+import { CoSimulationStudioApi } from 'src/app/api';
 
 @Component({
     selector: 'app-file-browser',
@@ -8,13 +9,15 @@ import * as fs from "fs";
     styleUrls: ['./file-browser.component.scss']
 })
 export class FileBrowserComponent implements OnInit {
-    
+
     @Input()
     basePath = "";
 
     @Input()
     set path(path: string) {
-        this._path = path.replace(Path.normalize(`${this.basePath}/`), "");
+        CoSimulationStudioApi.normalize(`${this.basePath}/`).then(value => {
+            this._path = path.replace(value, "");
+        });
     }
     get path(): string {
         return this._path;
@@ -52,11 +55,11 @@ export class FileBrowserComponent implements OnInit {
 
     }
     //FIXME uses some fs code here 
-    onChange(path: string) {
+    async onChange(path: string) {
         this.path = path;
 
-        fs.access(Path.normalize(`${this.basePath}/${this.path}`), fs.constants.R_OK, error => {
-            this.pathChange.emit(Path.normalize(error ? this.path : `${this.basePath}/${this.path}`));
+        fs.access(await CoSimulationStudioApi.normalize(`${this.basePath}/${this.path}`), fs.constants.R_OK, async error => {
+            this.pathChange.emit(await CoSimulationStudioApi.normalize(error ? this.path : `${this.basePath}/${this.path}`));
         });
     }
 }

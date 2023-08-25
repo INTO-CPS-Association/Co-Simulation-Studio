@@ -1,26 +1,24 @@
 import * as vscode from 'vscode';
-import { LanguageClientOptions } from 'vscode-languageclient';
-import { LanguageClient } from 'vscode-languageclient/browser';
-import { AppEditorProvider } from './appEditorProvider';
+import { CoeEditorProvider } from '../common/coeEditorProvider';
+import { DseEditorProvider } from '../common/dseEditorProvider';
+import { DseTreeDataProvider } from '../common/dseTreeDataProvider';
+import { FmuTreeDataProvider } from '../common/fmuTreeDataProvider';
+import { MmEditorProvider } from '../common/mmEditorProvider';
+import { ModelTreeDataProvider } from '../common/modelTreeDataProvider';
+import { MultiModelTreeDataProvider } from '../common/multiModelTreeDataProvider';
+import { SysMLTreeDataProvider } from '../common/sysmlTreeDataProvider';
 
 export function activate(context: vscode.ExtensionContext) {
-
 	vscode.workspace.getConfiguration().update('workbench.iconTheme', 'vscode-icons');
 
-	const clientOptions: LanguageClientOptions = {};
-	const client = createWorkerLanguageClient(context, clientOptions);
+	context.subscriptions.push(CoeEditorProvider.register(context));
+	context.subscriptions.push(DseEditorProvider.register(context));
+	context.subscriptions.push(MmEditorProvider.register(context));
 
-	const disposable = client.start();
-	context.subscriptions.push(disposable);
+	context.subscriptions.push(vscode.window.createTreeView('cosim-dses', { treeDataProvider: new DseTreeDataProvider(context) }));
+	context.subscriptions.push(vscode.window.createTreeView('cosim-fmus', { treeDataProvider: new FmuTreeDataProvider(context) }));
+	context.subscriptions.push(vscode.window.createTreeView('cosim-models', { treeDataProvider: new ModelTreeDataProvider(context) }));
+	context.subscriptions.push(vscode.window.createTreeView('cosim-multi-models', { treeDataProvider: new MultiModelTreeDataProvider(context) }));
+	context.subscriptions.push(vscode.window.createTreeView('cosim-sysml', { treeDataProvider: new SysMLTreeDataProvider(context) }));
 
-	client.onReady().then(() => {
-		context.subscriptions.push(AppEditorProvider.register(context, client));
-	});
-
-}
-
-function createWorkerLanguageClient(context: vscode.ExtensionContext, clientOptions: LanguageClientOptions) {
-	const main = vscode.Uri.joinPath(context.extensionUri, 'language-server/dist/browserMain.js');
-	const worker = new Worker(main.toString(true));
-	return new LanguageClient('co-simulation-studio', 'Co-Simulation Studio', clientOptions, worker);
 }

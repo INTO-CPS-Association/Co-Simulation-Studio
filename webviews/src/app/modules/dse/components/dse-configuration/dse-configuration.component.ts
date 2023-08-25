@@ -1,45 +1,20 @@
-
-import { Component, EventEmitter, Input, NgZone, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, NgZone, Output } from '@angular/core';
 import { FormGroup, FormArray, FormControl } from '@angular/forms';
 import { Subscription } from 'rxjs';
-import { IDseAlgorithm, DseConfiguration, ExhaustiveSearch, GeneticSearch, DseParameter, DseParameterConstraint, ExternalScript, InternalFunction, DseObjectiveConstraint, ParetoRanking, ParetoDimension, DseScenario } from 'src/app/modules/shared/classes/dse-configuration';
-import { WarningMessage } from 'src/app/modules/shared/classes/messages';
+import { DseConfiguration, DseObjectiveConstraint, DseParameter, DseParameterConstraint, DseScenario, ExhaustiveSearch, ExternalScript, GeneticSearch, IDseAlgorithm, InternalFunction, ParetoDimension, ParetoRanking } from 'src/app/modules/shared/classes/dse-configuration';
 import { Instance, ScalarVariable, isCausalityCompatible, CausalityType, ScalarValuePair, ScalarVariableType } from 'src/app/modules/shared/classes/fmu';
+import IntoCpsApp from 'src/app/modules/shared/classes/into-cps-app';
+import { WarningMessage } from 'src/app/modules/shared/classes/messages';
 import { Project } from 'src/app/modules/shared/classes/project';
+import { SettingKeys } from 'src/app/modules/shared/classes/setting-keys';
 import { MaestroApiService } from 'src/app/modules/shared/services/maestro-api.service';
 import { NavigationService } from 'src/app/modules/shared/services/navigation.service';
-import IntoCpsApp from 'src/app/modules/shared/classes/into-cps-app';
-import * as Path from "path";
-import * as fs from 'fs'
+
+import * as Path from 'path';
+import * as fs from 'fs';
+
 import { Serializer } from 'src/app/modules/shared/classes/parser';
-import { SettingKeys } from 'src/app/modules/shared/classes/setting-keys';
 
-
-/*TASKS
-replace function calls with unified API
-for now stub with dummy data
-Get UI functional
-use console.log or simple data to enable UI
-*/
-/*
-------------------------------------------------------
-FUNCTIONS THAT NEED TO BE EXTRACTED INTO API //PL-TODO
-------------------------------------------------------
-*/
-export function readdirSync(path: string) : string[] {
-    return ["a.txt", "b.txt"];
-};
-export function isDirectory(path: string) : boolean {
-
-    return true;
-}
-
-
-/*
-------------------------------------------------------
-ACTUAL COMPONENT
-------------------------------------------------------
-*/
 @Component({
     selector: 'app-dse-configuration',
     templateUrl: './dse-configuration.component.html',
@@ -47,16 +22,16 @@ ACTUAL COMPONENT
 })
 export class DseConfigurationComponent {
 
-    _path!: string;
-    _coeIsOnlineSub: Subscription;
+     _path!: string;
+     _coeIsOnlineSub: Subscription;
     @Input()
     set path(path: string) {
         this._path = path;
 
         if (path) {
-            let app: IntoCpsApp | undefined = IntoCpsApp.getInstance() ?? undefined; //intoCPSapp???
-            let p: string = app?.getActiveProject()?.getRootFilePath() ?? "";
-            this.cosimConfig = this.loadCosimConfigs(Path.join(p, Project.PATH_MULTI_MODELS));
+            //let app: IntoCpsApp = IntoCpsApp.getInstance();
+            //let p: string = app.getActiveProject().getRootFilePath();
+            //this.cosimConfig = this.loadCosimConfigs(Path.join(p, Project.PATH_MULTI_MODELS));
 
         }
     }
@@ -92,42 +67,40 @@ export class DseConfigurationComponent {
     dseWarnings: WarningMessage[] = [];
     coeWarnings: WarningMessage[] = [];
 
-    onlineInterval!: number;
+     onlineInterval!: number;
 
-    selectedParameterInstance!: Instance;
+     selectedParameterInstance!: Instance;
 
-    newParameter!: ScalarVariable;
+     newParameter!: ScalarVariable | null;
 
-    algorithmConstructors = [
+     algorithmConstructors = [
         ExhaustiveSearch,
         GeneticSearch
     ];
 
     //Collection of arrays to use for drop-boxes. Some may be expanded as the backend is developed
-    geneticPopulationDistribution = ["random"];//To add in when backend works["random", "uniform"];
-    geneticParentSelectionStrategy = ["random"];//["random", "algorithmObjectiveSpace","algorithmDesignSpace"];
-    internalFunctionTypes = ["max", "min", "mean"];
-    externalScriptParamTp = ["model output", "constant", "simulation value"];
-    simulationValue = ["step-size", "time"];
-    paretoDirections = ["-", "+"];
+     geneticPopulationDistribution = ["random"];//To add in when backend works["random", "uniform"];
+     geneticParentSelectionStrategy = ["random"];//["random", "algorithmObjectiveSpace","algorithmDesignSpace"];
+     internalFunctionTypes = ["max", "min", "mean"];
+     externalScriptParamTp = ["model output", "constant", "simulation value"];
+     simulationValue = ["step-size", "time"];
+     paretoDirections = ["-", "+"];
 
 
-    constructor(public maestroApiService: MaestroApiService, private zone: NgZone, public navigationService: NavigationService) {
+    constructor(private maestroApiService: MaestroApiService, private zone: NgZone, private navigationService: NavigationService) {
         this.navigationService.registerComponent(this);
         this._coeIsOnlineSub = this.maestroApiService.startMonitoringOnlineStatus(isOnline => this.online = isOnline);
     }
 
-    ngOnDestroy() : void {
+    ngOnDestroy() {
         clearInterval(this.onlineInterval);
         this.maestroApiService.stopMonitoringOnlineStatus(this._coeIsOnlineSub);
     }
 
-    parseConfig(mmPath: string) : void {
+    async parseConfig(mmPath: string) {
         let project = IntoCpsApp.getInstance()?.getActiveProject();
-        if (project == null)
-            return;
         DseConfiguration
-            .parse(this.path, project.getRootFilePath(), project.getFmusPath(), mmPath)
+            .parse(this.path, project?.getRootFilePath() ?? "", await project?.getFmusPath() ?? "", mmPath)
             .then(config => {
                 this.zone.run(() => {
                     this.config = config;
@@ -149,7 +122,7 @@ export class DseConfigurationComponent {
 
                     // Create a form group for validation
                     this.form = new FormGroup({
-                        //searchAlgorithm: this.algorithmFormGroups.get(this.config.searchAlgorithm), //PL-TODO
+                        //searchAlgorithm: this.algorithmFormGroups.get(this.config.searchAlgorithm),
                         paramConstraints: new FormArray(this.config.paramConst.map(c => new FormControl(c))),
 
                         objConstraints: new FormArray(this.config.objConst.map(c => new FormControl(c))),
@@ -180,15 +153,14 @@ export class DseConfigurationComponent {
 
         this.warnings = this.config.validate();
 
-        let override = false; //override doesn't do anything but change state - there has to be something dependent on the state of override //FIXME
+        let override = false;
 
         if (this.warnings.length > 0) {
 
-            //PL-TODO
-            const electron: any = {};
+            //const electron = require("electron");
             let dialog: any = {};
             /* let res = dialog.showMessageBox({ title: 'Validation failed', message: 'Do you want to save anyway?', buttons: ["No", "Yes"] });
-  
+
             if (res == 0) {
                 return;
             } else {
@@ -200,12 +172,12 @@ export class DseConfigurationComponent {
             res.catch(() => {
                 return
             });
-            res.then(function (res: any) {
+            res.then((res: any) => {
                 if (res.response == 0) {
                     return;
                 } else {
                     override = true;
-                    //PL-TODO this.warnings = [];
+                    this.warnings = [];
                 }
             })
         }
@@ -222,28 +194,23 @@ export class DseConfigurationComponent {
     /*
      * Method to state that the multi-model has been chosen for the DSE config
      */
-    onMMSubmit() { //FIXME
+    /* onMMSubmit() {
         if (!this.editingMM) return;
         this.editingMM = false;
         if (this.mmPath !='')
         {
             this.mmSelected = true;
         }
-    }
+    } */
 
-
-    
 
 
     getFiles(path: string): string[] {
         var fileList: string[] = [];
-        
-        
-        var files = readdirSync(path); //stubbed function
-        
+        var files = fs.readdirSync(path);
         for (var i in files) {
             var name = Path.join(path, files[i]);
-            if (isDirectory(name)) { //stubbed function
+            if (fs.statSync(name).isDirectory()) {
                 fileList = fileList.concat(this.getFiles(name));
             } else {
                 fileList.push(name);
@@ -252,8 +219,6 @@ export class DseConfigurationComponent {
 
         return fileList;
     }
-
-
 
     loadCosimConfigs(path: string): string[] {
         var files: string[] = this.getFiles(path);
@@ -279,7 +244,8 @@ export class DseConfigurationComponent {
         try {
             if (Path.isAbsolute(mmPath)) {
                 // console.warn("Could not find mm at: " + mmPath + " initiating search or possible alternatives...")
-                readdirSync(Path.join(this.coeconfig, "..", "..")).forEach(file => {            //stubbed function readdirSync
+                //no we have the old style
+                fs.readdirSync(Path.join(this.coeconfig, "..", "..")).forEach(file => {
                     if (file.endsWith("mm.json")) {
                         mmPath = Path.join(this.coeconfig, "..", "..", file);
                         console.log("Found mm at: " + mmPath);
@@ -293,6 +259,8 @@ export class DseConfigurationComponent {
         } catch (error) {
             console.error("Path was not a correct path.. " + mmPath + " error: " + error);
         }
+
+
     }
 
     /*
@@ -329,9 +297,9 @@ export class DseConfigurationComponent {
     /*
      * Get the parameters for a selected FMU instance (selected instance set as a state variable)
      */
-    getParameters(): ScalarVariable[] {
+    getParameters(): (ScalarVariable|null)[] {
         if (!this.selectedParameterInstance)
-            return [];
+            return [null];
 
         return this.selectedParameterInstance.fmu.scalarVariables
             .filter(variable => isCausalityCompatible(variable.causality, CausalityType.Parameter) && !this.selectedParameterInstance.initialValues.has(variable));
@@ -386,7 +354,7 @@ export class DseConfigurationComponent {
      */
     setDSEParameter(instance: Instance, variableName: string, newValue: any) {
 
-        // this will not work with the python scripts as it will try to run on an array, this will be commented out for now and removed in an up-coming commit //FIXME
+        // this will not work with the python scripts as it will try to run on an array, this will be commented out for now and removed in an up-coming commit
         /* if (!newValue.includes(",")){
             if (instance.fmu.getScalarVariable(variableName).type === ScalarVariableType.Real)
                 newValue = parseFloat(newValue);
@@ -464,12 +432,12 @@ export class DseConfigurationComponent {
     }
 
     //Utility method to obtain an instance from the multimodel by its string id encoding
-    private getParameter(dse: DseConfiguration, id: string): Instance | null { //FIXME Entire function is never read
+     getParameter(dse: DseConfiguration, id: string): Instance | null {
         let ids = this.parseId(id);
 
         let fmuName = ids[0];
         let instanceName = ids[1];
-        //let scalarVariableName = ids[2]; //value never called //FIXME
+        let scalarVariableName = ids[2];
         return dse.getInstanceOrCreate(fmuName, instanceName);
     }
 
@@ -639,7 +607,7 @@ export class DseConfigurationComponent {
         return e.setParameterType(param, newTp);
     }
 
-    removeExternalScriptParameter(e: ExternalScript, value: string) {
+    removeExternalScriptParameter(e: ExternalScript, value: any) {
         e.removeParameter(value);
     }
 
@@ -651,7 +619,7 @@ export class DseConfigurationComponent {
 
 
     addInternalFunction() {
-        //let intf = this.config.addInternalFunction(); //value never used //FIXME
+        let intf = this.config.addInternalFunction();
         this.objNames = this.getObjectiveNames();
     }
 
@@ -769,7 +737,6 @@ export class DseConfigurationComponent {
     addScenario() {
         let s = this.config.addScenario();
         let sArray = <FormArray>this.form.get('scenarios');
-
         if (s != null)
             sArray.push(new FormControl(this.getScenario(s)));
     }
@@ -815,11 +782,11 @@ export class DseConfigurationComponent {
     runDse() {
         console.log('running from config');
         var spawn = require('child_process').spawn;
-        let installDir = IntoCpsApp.getInstance()?.getSettings().getValue(SettingKeys.INSTALL_DIR);
+        let installDir = IntoCpsApp.getInstance()?.getSettings().getValue(SettingKeys.INSTALL_DIR) ?? "";
 
-        let absoluteProjectPath = IntoCpsApp.getInstance()?.getActiveProject()?.getRootFilePath();
-        let experimentConfigName = this._path.slice(absoluteProjectPath?.length ?? 0 + 1, this._path.length);
-        let multiModelConfigName = this.coeconfig.slice(absoluteProjectPath?.length ?? 0 + 1, this.coeconfig.length);
+        let absoluteProjectPath = IntoCpsApp.getInstance()?.getActiveProject()?.getRootFilePath() ?? "";
+        let experimentConfigName = this._path.slice(absoluteProjectPath.length + 1, this._path.length);
+        let multiModelConfigName = this.coeconfig.slice(absoluteProjectPath.length + 1, this.coeconfig.length);
         // check if python is installed.
         /* dependencyCheckPythonVersion(); */
 

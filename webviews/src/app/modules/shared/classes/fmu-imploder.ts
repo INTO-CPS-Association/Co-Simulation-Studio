@@ -41,6 +41,7 @@ import { Serializer } from "./parser";
 import * as fs from "fs"
 import * as xml2js from 'xml2js';
 import * as path from "path"
+import { CoSimulationStudioApi } from 'src/app/api';
 
 type valueReference = number;
 type name = string;
@@ -52,9 +53,9 @@ class InstanceScalars {
 
 
 class XMLMD {
-    public static GetXMLMD() {
+    public static async GetXMLMD() {
         let parser = new DOMParser();
-        let templatePath = path.join(__dirname, path.normalize("../resources/into-cps/model-description-template.xml"));
+        let templatePath = path.join(__dirname, await CoSimulationStudioApi.normalize("../resources/into-cps/model-description-template.xml"));
 
         let data = fs.readFileSync(templatePath).toString();
         let xml = parser.parseFromString(data, "text/xml");
