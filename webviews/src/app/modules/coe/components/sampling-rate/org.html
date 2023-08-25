@@ -3,8 +3,7 @@
         <label class="col-sm-3 control-label">ID</label>
         <div class="col-sm-9">
             <p *ngIf="!editing" class="form-control-static">{{constraint.id}}</p>
-            <!-- <input *ngIf="editing" [(ngModel)]="constraint.id" formControlName="id" class="form-control"> -->
-            <app-react [component]="_inputcomponent_id" [props]="props"></app-react>
+            <input *ngIf="editing" [(ngModel)]="constraint.id" formControlName="id" class="form-control">
             <div *ngIf="formGroup.hasError('required', 'id')" class="alert alert-danger">This field is required.</div>
             <div *ngIf="formGroup.parent?.hasError('notUnique') && formGroup.parent?.errors?.['notUnique'] === constraint.id" class="alert alert-danger">ID is not unique.</div>
         </div>
@@ -14,8 +13,7 @@
         <label class="col-sm-3 control-label">Base</label>
         <div class="col-sm-9">
             <p *ngIf="!editing" class="form-control-static">{{constraint.base}}</p>
-            <!-- <input *ngIf="editing" [(ngModel)]="constraint.base" formControlName="base" class="form-control"> -->
-            <app-react [component]="_inputcomponent_base" [props]="props"></app-react>
+            <input *ngIf="editing" [(ngModel)]="constraint.base" formControlName="base" class="form-control">
             <div *ngIf="formGroup.hasError('required', 'base')" class="alert alert-danger">This field is required.</div>
             <div *ngIf="formGroup.hasError('invalidInteger', 'base')" class="alert alert-danger">Only integers are allowed.</div>
         </div>
@@ -25,8 +23,7 @@
         <label class="col-sm-3 control-label">Rate</label>
         <div class="col-sm-9">
             <p *ngIf="!editing" class="form-control-static">{{constraint.rate}}</p>
-            <!-- <input *ngIf="editing" [(ngModel)]="constraint.rate" formControlName="rate" class="form-control"> -->
-            <app-react [component]="_inputcomponent_rate" [props]="props"></app-react>
+            <input *ngIf="editing" [(ngModel)]="constraint.rate" formControlName="rate" class="form-control">
             <div *ngIf="formGroup.hasError('required', 'rate')" class="alert alert-danger">This field is required.</div>
             <div *ngIf="formGroup.hasError('invalidInteger', 'rate')" class="alert alert-danger">Only integers are allowed.</div>
         </div>
@@ -36,7 +33,7 @@
         <label class="col-sm-3 control-label">Start Time</label>
         <div class="col-sm-9">
             <p *ngIf="!editing" class="form-control-static">{{constraint.startTime}}</p>
-           <!--  <input *ngIf="editing" [(ngModel)]="constraint.startTime" formControlName="startTime" class="form-control">-->
+            <input *ngIf="editing" [(ngModel)]="constraint.startTime" formControlName="startTime" class="form-control">
             <div *ngIf="formGroup.hasError('required', 'startTime')" class="alert alert-danger">This field is required.</div>
             <div *ngIf="formGroup.hasError('invalidInteger', 'startTime')" class="alert alert-danger">Only integers are allowed.</div>
         </div>
