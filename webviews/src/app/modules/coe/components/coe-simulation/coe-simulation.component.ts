@@ -1,7 +1,7 @@
 import { Component, Input, NgZone, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { CoSimulationConfig } from 'src/app/modules/shared/classes/configuration/co-simulation-config';
-import { Message, WarningMessage } from 'src/app/modules/shared/classes/configuration/messages';
+import { CoSimulationConfig } from 'src/app/modules/shared/classes/co-simulation-config';
+import { Message, WarningMessage } from 'src/app/modules/shared/classes/messages';
 import { maestroVersions } from 'src/app/modules/shared/services/maestro-api.service';
 import { CoeSimulationService } from '../../services/coe-simulation.service';
 import IntoCpsApp from 'src/app/modules/shared/classes/into-cps-app';
@@ -85,9 +85,9 @@ export class CoeSimulationComponent {
     public coeSimulation: CoeSimulationService,
     private zone: NgZone
   ) {
-    this._coeIsOnlineSub = coeSimulation.coeIsOnlineObservable.subscribe(isOnline => {
+    this._coeIsOnlineSub = coeSimulation.coeIsOnlineObservable.subscribe(async isOnline => {
       if (this.required_coe_version) {
-        this.correctCoeVersion = this.required_coe_version == this.coeSimulation.getMaestroVersion();
+        this.correctCoeVersion = this.required_coe_version == (await this.coeSimulation.getMaestroVersion());
       }
       this.online = isOnline;
     });
@@ -97,7 +97,7 @@ export class CoeSimulationComponent {
     this._coeIsOnlineSub.unsubscribe();
   }
 
-  parseConfig() {
+  async parseConfig() {
     //FIXME: This is a non angular Interface
     let project = IntoCpsApp.getInstance()?.getActiveProject();
     this.parsing = true;
@@ -105,13 +105,13 @@ export class CoeSimulationComponent {
     CoSimulationConfig.parse(
       this.path,
       project?.getRootFilePath() ?? "",
-      project?.getFmusPath() ?? ""
+      await project?.getFmusPath() ?? ""
     ).then(config =>
-      this.zone.run(() => {
+      this.zone.run(async () => {
         this.config = config;
 
         this.mmWarnings = this.config.multiModel.validate();
-        this.coeWarnings = this.config.validate();
+        this.coeWarnings = await this.config.validate();
 
         this.parsing = false;
       })

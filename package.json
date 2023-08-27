@@ -10,45 +10,259 @@
 	"activationEvents": [
 		"*"
 	],
-	"browser": "./extension/dist/browserMain",
+	"main": "./extension/out/node/main.js",
+	"browser": "./extension/dist/browserMain.js",
 	"contributes": {
+		"commands": [
+			{
+				"command": "cosimulationstudio.commands.createCosimConfig",
+				"title": "Create Co-Simulation Configuration"
+			}
+		],
+		"configuration": {
+			"title": "Co-Simulation Studio",
+			"properties": {
+				"cosimulationstudio.developmentMode": {
+					"title": "Development Mode",
+					"type": "boolean",
+					"default": false
+				},
+				"cosimulationstudio.activeProjectLocation": {
+					"title": "Active Project Location",
+					"type": "string",
+					"default": "${workspaceFolder}"
+				},
+				"cosimulationstudio.downloadsInstallationLocation": {
+					"title": "Downloads Installation Location",
+					"type": "string",
+					"default": "${userHome}/into-cps-projects/install"
+				},
+				"cosimulationstudio.downloadsLocation": {
+					"title": "Downloads Location",
+					"type": "string",
+					"default": "${userHome}/into-cps-projects/install_downloads"
+				},
+				"cosimulationstudio.coeUrl": {
+					"title": "COE URL",
+					"type": "string",
+					"default": "localhost:8082"
+				},
+				"cosimulationstudio.traceabilityDaemonPort": {
+					"title": "Traceability Daemon Port",
+					"type": "string",
+					"default": "8083"
+				},
+				"cosimulationstudio.coeIsRemote": {
+					"title": "COE Is Remote",
+					"type": "boolean",
+					"default": false
+				},
+				"cosimulationstudio.coeJarLocation": {
+					"title": "COE .jar Location",
+					"type": "string",
+					"default": "${userHome}/into-cps-projects/install_downloads"
+				},
+				"cosimulationstudio.rtTesterInstallationLocation": {
+					"title": "RT-Tester Installation Location",
+					"type": [
+						"string",
+						"null"
+					],
+					"default": null
+				},
+				"cosimulationstudio.rtTesterMbtInstallationLocation": {
+					"title": "RT-Tester MBT Installation Location",
+					"type": [
+						"string",
+						"null"
+					],
+					"default": null
+				},
+				"cosimulationstudio.rtTesterRttui3ExecutableLocation": {
+					"title": "RT-Tester RTTUI3 Executable Location",
+					"type": [
+						"string",
+						"null"
+					],
+					"default": null
+				},
+				"cosimulationstudio.pythonExecutableForRtTester": {
+					"title": "Python Executable for RT-Tester",
+					"type": [
+						"string",
+						"null"
+					],
+					"default": null
+				},
+				"cosimulationstudio.updateSite": {
+					"title": "Update Site",
+					"type": "string",
+					"default": "https://raw.githubusercontent.com/INTO-CPS-Association/INTO-CPS-Association.github.io/master/download/"
+				},
+				"cosimulationstudio.developmentModeUpdateSite": {
+					"title": "Development Mode Update Site",
+					"type": "string",
+					"default": "https://raw.githubusercontent.com/INTO-CPS-Association/INTO-CPS-Association.github.io/development/download/"
+				},
+				"cosimulationstudio.examplesUrl": {
+					"title": "Examples URL",
+					"type": "string",
+					"default": "https://raw.githubusercontent.com/INTO-CPS-Association/INTO-CPS-Association.github.io/master/examples/examples.json"
+				},
+				"cosimulationstudio.developmentModeExamplesUrl": {
+					"title": "Development Mode Examples URL",
+					"type": "string",
+					"default": "https://raw.githubusercontent.com/INTO-CPS-Association/INTO-CPS-Association.github.io/development/examples/examples.json"
+				},
+				"cosimulationstudio.defaultProjectLocation": {
+					"title": "Default Project Location",
+					"type": "string",
+					"default": "${userHome}/into-cps-projects"
+				},
+				"cosimulationstudio.enableTraceability": {
+					"title": "Enable Traceability",
+					"type": "boolean",
+					"default": false
+				},
+				"cosimulationstudio.localUpdateSite": {
+					"title": "Local Update Site",
+					"type": [
+						"string",
+						"null"
+					],
+					"default": null
+				},
+				"cosimulationstudio.enableLocalUpdateSite": {
+					"title": "Enable Local Update Site",
+					"type": "boolean",
+					"default": false
+				},
+				"cosimulationstudio.numberOfSamplesInGraph": {
+					"title": "Number of Samples in Graph",
+					"type": "integer",
+					"default": 1000
+				}
+			}
+		},
 		"customEditors": [
 			{
-				"viewType": "cosimulationstudio.editors.appEditor",
-				"displayName": "App Editor",
+				"viewType": "cosimulationstudio.editors.dseEditor",
+				"displayName": "DSE Editor",
 				"selector": [
 					{
-						"filenamePattern": "*.json"
+						"filenamePattern": "*.dse.json"
+					}
+				],
+				"priority": "default"
+			},
+			{
+				"viewType": "cosimulationstudio.editors.mmEditor",
+				"displayName": "MM Editor",
+				"selector": [
+					{
+						"filenamePattern": "*.mm.json"
+					}
+				],
+				"priority": "default"
+			},
+			{
+				"viewType": "cosimulationstudio.editors.coeEditor",
+				"displayName": "MM Editor",
+				"selector": [
+					{
+						"filenamePattern": "coe.json"
+					},
+					{
+						"filenamePattern": "*.coe.json"
 					}
 				],
 				"priority": "default"
 			}
 		],
+		"menus": {
+			"view/item/context": [
+				{
+					"command": "cosimulationstudio.commands.createCosimConfig",
+					"when": "viewItem == mm"
+				}
+			]
+		},
 		"viewsContainers": {
 			"activitybar": [
 				{
-					"id": "co-simulation-studio-workspace",
-					"icon": "$(repo)",
+					"id": "cosim-workspace",
+					"icon": "./resources/intocps.png",
 					"title": "Co-Simulation Studio Workspace"
 				}
 			]
 		},
 		"views": {
-			"co-simulation-studio-workspace": [
+			"cosim-workspace": [
 				{
-					"id": "co-simulation-studio-workspace-explorer",
-					"name": "Explorer"
+					"id": "cosim-dses",
+					"name": "DSEs",
+					"visibility": "visible"
+				},
+				{
+					"id": "cosim-fmus",
+					"name": "FMUs",
+					"visibility": "visible"
+				},
+				{
+					"id": "cosim-model-checking",
+					"name": "Model Checking",
+					"visibility": "collapsed"
+				},
+				{
+					"id": "cosim-models",
+					"name": "Models",
+					"visibility": "visible"
+				},
+				{
+					"id": "cosim-multi-models",
+					"name": "Multi-Models",
+					"visibility": "visible"
+				},
+				{
+					"id": "cosim-resources",
+					"name": "Resources",
+					"visibility": "collapsed"
+				},
+				{
+					"id": "cosim-sigver",
+					"name": "SigVer",
+					"visibility": "collapsed"
+				},
+				{
+					"id": "cosim-sysml",
+					"name": "SysML",
+					"visibility": "visible"
+				},
+				{
+					"id": "cosim-test-data-generation",
+					"name": "Test Data Generation",
+					"visibility": "collapsed"
+				},
+				{
+					"id": "cosim-traceability",
+					"name": "Traceability",
+					"visibility": "collapsed"
+				},
+				{
+					"id": "cosim-usermetricscripts",
+					"name": "User Metric Scripts",
+					"visibility": "collapsed"
 				}
 			]
 		}
 	},
 	"scripts": {
 		"vscode:prepublish": "npm run compile",
-		"compile": "cd components && npm run build && cd ../webviews && npm run build && cd .. && webpack",
+		"compile": "cd extension && tsc -b && && cd ../components && npm run build && cd ../webviews && npm run build && cd .. && webpack",
 		"watch": "webpack --watch",
 		"package": "webpack --mode production --devtool hidden-source-map",
-		"lint": "eslint ./extension/src ./language-server/src --ext .ts,.tsx",
-		"postinstall": "cd components && npm install && cd ../webviews && npm install && cd ../extension && npm install && cd ../language-server && npm install && cd ..",
+		"lint": "eslint ./extension/src --ext .ts,.tsx",
+		"postinstall": "cd components && npm install && cd ../webviews && npm install && cd ../extension && npm install && cd ..",
 		"chrome": "vscode-test-web --host=0.0.0.0 --quality=insiders --extensionDevelopmentPath=. --extensionId=vscode-icons-team.vscode-icons"
 	},
 	"devDependencies": {

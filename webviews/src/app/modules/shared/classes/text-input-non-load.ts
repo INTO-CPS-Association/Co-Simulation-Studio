@@ -30,20 +30,21 @@
  */
 
 import { TextInputState } from '../components/text-input/text-input.component';
-import {Component} from "./component";
+import { Component } from "./component";
 import { glyphiconEditButton } from './types';
 
 export class TextInputIds {
+
     textId?: string;
     editOkButton?: string;
     cancelButton?: string;
+
     constructor(textId?: string, editOkButton?: string, cancelButton?: string) {
         if (textId == null && editOkButton == null && cancelButton == null) {
             this.textId = "text";
             this.editOkButton = "editOkButton";
             this.cancelButton = "cancelButton";
-        }
-        else {
+        } else {
             this.textId = textId;
             this.editOkButton = editOkButton;
             this.cancelButton = cancelButton;
@@ -53,6 +54,7 @@ export class TextInputIds {
 }
 
 export class TextInputNonLoad {
+
     private container: HTMLElement;
     private textField!: HTMLInputElement;
     private editOkButton!: HTMLButtonElement;
@@ -62,6 +64,7 @@ export class TextInputNonLoad {
     private text: string;
     private keyChanged: (text: string) => boolean;
     private ids: TextInputIds;
+
     constructor(container: HTMLElement, text: string, keyChanged: (text: string) => boolean, ids: TextInputIds, state?: TextInputState) {
         this.text = text;
         this.container = container;
@@ -100,8 +103,7 @@ export class TextInputNonLoad {
             this.setButtonGlyphicon(this.editOkButtonGlyphicon, "glyphicon-pencil", "glyphicon-ok");
             this.textField.readOnly = true;
             Component.hide(this.cancelButton);
-        }
-        else if (state == TextInputState.EDIT) {
+        } else if (state == TextInputState.EDIT) {
             this.setButtonGlyphicon(this.editOkButtonGlyphicon, "glyphicon-ok", "glyphicon-pencil");
             this.textField.readOnly = false;
             Component.show(this.cancelButton);
@@ -109,35 +111,29 @@ export class TextInputNonLoad {
     }
 
     hideElement(element: HTMLElement) {
-        if (!element.classList.contains("hidden")) {
+        if (!element.classList.contains("hidden"))
             element.classList.add("hidden");
-        }
     }
 
     showElement(element: HTMLElement) {
-        if (element.classList.contains("hidden")) {
+        if (element.classList.contains("hidden"))
             element.classList.remove("hidden");
-        }
     }
 
     private setButtonGlyphicon(iconElement: HTMLElement, classToAdd: glyphiconEditButton, classToRemove: glyphiconEditButton) {
-        if (iconElement.classList.contains(classToRemove)) {
+        if (iconElement.classList.contains(classToRemove))
             iconElement.classList.remove(classToRemove);
-        }
-        if (!iconElement.classList.contains(classToAdd))
-        { iconElement.classList.add(classToAdd); }
+        if (!iconElement.classList.contains(classToAdd)) { iconElement.classList.add(classToAdd); }
     }
     private okEditClicked(event?: MouseEvent) {
         if (this.state == TextInputState.OK) {
             this.setState(TextInputState.EDIT);
-        }
-        else if (this.state == TextInputState.EDIT) {
+        } else if (this.state == TextInputState.EDIT) {
             let previousText = this.text;
             this.text = this.getTextUI();
             if (this.keyChanged(this.getTextUI())) {
                 this.setState(TextInputState.OK);
-            }
-            else {
+            } else {
                 this.setTextUI(previousText);
                 this.text = previousText;
                 alert("Invalid");
@@ -149,8 +145,7 @@ export class TextInputNonLoad {
         if (this.keyChanged(this.text)) {
             this.setTextUI(this.text);
             this.okEditClicked();
-        }
-        else {
+        } else {
             alert("The key already exists");
         }
 
@@ -159,6 +154,5 @@ export class TextInputNonLoad {
     getContainer() {
         return this.container;
     }
-
 
 }

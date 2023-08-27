@@ -26,9 +26,9 @@ export class CoeLaunchComponent {
 
   //FIXME is non-angular interface 
   constructor(public coeSimulationService: MaestroApiService) {
-    this._coeIsOnlineSub = coeSimulationService.startMonitoringOnlineStatus(isOnline => {
+    this._coeIsOnlineSub = coeSimulationService.startMonitoringOnlineStatus(async isOnline => {
       if (this.required_coe_version) {
-        this.correctCoeVersion = this.required_coe_version == coeSimulationService.getMaestroVersion();
+        this.correctCoeVersion = this.required_coe_version == (await coeSimulationService.getMaestroVersion());
       }
       this.online = isOnline;
     });

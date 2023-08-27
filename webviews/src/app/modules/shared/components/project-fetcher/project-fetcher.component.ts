@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import * as Path from 'path';
-import * as fs from 'fs';
+import * as fs from 'fs'; //FIXME not an angular library
 import IntoCpsApp from '../../classes/into-cps-app';
 
 const dialog: any = {};
@@ -19,7 +19,7 @@ export class ProjectFetcherComponent implements OnInit {
 
 }
 
-function launchProjectExplorer() {
+function launchProjectExplorer() { //FIXME  function is declared but its value is never read.
 
     dialog.showOpenDialog({ properties: ["openDirectory", "createDirectory"] }).then((res: any) => {
         console.log(res);
@@ -30,7 +30,7 @@ function launchProjectExplorer() {
     }).catch((error: any) => { console.error(error); return; });
 }
 
-function openFromGit() {
+function openFromGit() { //FIXME  function is declared but its value is never read.
 
     var p: HTMLInputElement = <HTMLInputElement>document.getElementById("basic-url");
     var dest: HTMLInputElement = <HTMLInputElement>document.getElementById("projectRootPathText");
@@ -57,7 +57,7 @@ function openFromGit() {
         if (progress != null)
             progress.innerHTML = output.split("\n").pop() ?? "";
 
-    }).then(code => window.top?.close());
+    }).then(code => window.top?.close()); //FIXME keyword is declared but its value is never read.
 }
 
 export function parsePercentage(data: string): string | null {
@@ -75,8 +75,8 @@ export function parsePercentage(data: string): string | null {
 
 export function fetchProjectThroughGit(url: string, targetFolder: string, updates: (data: string) => void) {
     return new Promise((resolve, reject) => {
-        //PL-TODO var spawn = require('child_process').spawn;
-        var spawn = function(...args: any) {};
+        var spawn = require('child_process').spawn; //PL-TODO //FIXED by enforcing any type on line below
+        var spawn: any = function(...args: any) {};
 
         let childCwd = targetFolder;
 
@@ -92,7 +92,7 @@ export function fetchProjectThroughGit(url: string, targetFolder: string, update
 
         var repoExists = false;
         try {
-            fs.accessSync(repoProjectFile, fs.constants.R_OK);
+            fs.accessSync(repoProjectFile, fs.constants.R_OK); //FIXME not an angular library
             repoExists = true;
 
         } catch (e) {
@@ -129,12 +129,12 @@ export function fetchProjectThroughGit(url: string, targetFolder: string, update
             //Here you can get the exit code of the script
         });
 
-        child.on('exit', function (code: any) {
+        child.on('exit', async function (code: any) {
             console.log('exit code: ' + code);
             //Here you can get the exit code of the script
 
 
-            let p = IntoCpsApp.getInstance()?.loadProject(repoProjectFile);
+            let p = await IntoCpsApp.getInstance()?.loadProject(repoProjectFile);
             if (p != null)
                 IntoCpsApp.getInstance()?.setActiveProject(p);
 

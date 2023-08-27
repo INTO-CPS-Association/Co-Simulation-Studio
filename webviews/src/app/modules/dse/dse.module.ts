@@ -24,7 +24,8 @@ import { CoeModule } from '../coe/coe.module';
     CoeModule
   ],
   exports: [
-    DsePageComponent
+    DsePageComponent,
+    DseConfigurationComponent
   ]
 })
 export class DseModule { }

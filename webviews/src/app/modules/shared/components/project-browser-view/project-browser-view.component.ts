@@ -3,9 +3,10 @@ import * as fs from 'fs'
 import * as Path from "path";
 import { IntoCpsAppMenuHandler } from '../../classes/into-cps-app-menu-handler';
 import IntoCpsApp from '../../classes/into-cps-app';
-import { isResultValid } from '../../classes/configuration/result-config';
+import { isResultValid } from '../../classes/result-config';
 import { Project } from '../../classes/project';
 import { Utilities } from '../../classes/utilities';
+import { CoSimulationStudioApi } from 'src/app/api';
 //import { rimraf } from 'rimraf';
 
 //import {w2ui} from 'w2ui';
@@ -278,16 +279,17 @@ export class BrowserController {
 
     // set and refresh the prowser content
     //FIXME intocps is non-angular
-    private refreshProjectBrowser() {
+    private async refreshProjectBrowser() {
         let app: IntoCpsApp | undefined = IntoCpsApp.getInstance() ?? undefined;
         if (this.rootItem)
             this.rootItem.deactivate();
         if (app?.getActiveProject() != null) {
-            this.rootItem = this.addFSItem(app.getActiveProject()?.getRootFilePath() ?? "") ?? undefined;
+            this.rootItem = await this.addFSItem(app.getActiveProject()?.getRootFilePath() ?? "") ?? undefined;
         }
     }
+
     //FIXME both fs and election code in this method
-    public addFSItem(path: string, parent?: ProjectBrowserItem): ProjectBrowserItem | undefined | null {
+    public async addFSItem(path: string, parent?: ProjectBrowserItem): Promise<ProjectBrowserItem | undefined | null> {
         let self = this;
         let result: ProjectBrowserItem = new ProjectBrowserItem(this, path, parent);
         let stat: any;
@@ -298,7 +300,7 @@ export class BrowserController {
             // unable to access path, this happens with emacs json plugin
             return;
         }
-        let pathComponents = Utilities.relativeProjectPath(path).split(Path.sep);
+        let pathComponents = (await Utilities.relativeProjectPath(path)).split(Path.sep);
 
         function menuEntry(text: string, icon: any, callback: (item: ProjectBrowserItem) => void) {
             return new MenuEntry(result, text, icon, callback);
@@ -662,7 +664,7 @@ export class BrowserController {
                     });
                 result.menuEntries = [menuEntryCreate];
             }
-            else if (this.isOvertureProject(path)) {
+            else if (await this.isOvertureProject(path)) {
                 result.img = "into-cps-icon-projbrowser-overture";
                 result.expanded = false;
                 let menuEntryExportFmuSourceCode = menuEntry("Export Source Code FMU", "glyphicon glyphicon-export",
@@ -721,12 +723,12 @@ export class BrowserController {
         return result;
     }
 
-    public addFSFolderContent(path: string, parent?: ProjectBrowserItem): ProjectBrowserItem[] {
+    public async addFSFolderContent(path: string, parent?: ProjectBrowserItem): Promise<ProjectBrowserItem[]> {
         let result: ProjectBrowserItem[] = [];
         let self = this;
-        fs.readdirSync(path).forEach(function (name: string) {
+        fs.readdirSync(path).forEach(async (name: string) => {
             let filePath: string = Path.join(path, name);
-            let ret = self.addFSItem(filePath, parent);
+            let ret = await self.addFSItem(filePath, parent);
             if (ret != null) {
                 result.push(ret);
             }
@@ -737,9 +739,9 @@ export class BrowserController {
     /*
     Utility function to determin if the container holds an Overture Project. TODO: Should this be annotated in the container instead.
      */
-    private isOvertureProject(path: string): boolean {
+    private async isOvertureProject(path: string): Promise<boolean> {
 
-        let projectFile = Path.normalize(Path.join(path, ".project"));
+        let projectFile = await CoSimulationStudioApi.normalize(Path.join(path, ".project"));
 
         try {
             if (fs.accessSync(projectFile, fs.constants.R_OK) !== null) {

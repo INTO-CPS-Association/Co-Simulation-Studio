@@ -1,8 +1,8 @@
 import { Component, EventEmitter, Input, NgZone, OnInit, Output } from '@angular/core';
 import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
-import { ErrorMessage, WarningMessage } from 'src/app/modules/shared/classes/configuration/messages';
-import { MultiModelConfig } from 'src/app/modules/shared/classes/configuration/multi-model-config';
-import { CausalityType, Fmu, Instance, InstanceScalarPair, isCausalityCompatible, isTypeCompatiple, ScalarValuePair, ScalarVariable, ScalarVariableType } from 'src/app/modules/shared/classes/models/fmu';
+import { ErrorMessage, WarningMessage } from 'src/app/modules/shared/classes/messages';
+import { MultiModelConfig } from 'src/app/modules/shared/classes/multi-model-config';
+import { CausalityType, Fmu, Instance, InstanceScalarPair, isCausalityCompatible, isTypeCompatiple, ScalarValuePair, ScalarVariable, ScalarVariableType } from 'src/app/modules/shared/classes/fmu';
 import { IProject } from 'src/app/modules/shared/classes/project';
 import { uniqueControlValidator } from 'src/app/modules/shared/classes/validators';
 import { NavigationService } from 'src/app/modules/shared/services/navigation.service';
@@ -50,11 +50,12 @@ export class MmConfigurationComponent {
         this.navigationService.registerComponent(this);
     }
 
-    parseConfig() {
+    async parseConfig() {
+
         let project: IProject | undefined | null = IntoCpsApp.getInstance()?.getActiveProject();
 
         MultiModelConfig
-            .parse(this.path, project?.getFmusPath() ?? "")
+            .parse(this.path, await project?.getFmusPath() ?? "")
             .then(config => {
                 /* this.zone.run(() => { */
                 this.parseError = null;

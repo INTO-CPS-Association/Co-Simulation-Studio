@@ -4,14 +4,14 @@
 		<span class="glyphicon glyphicon-link"></span> Launch
 	</button>
 </div>
-<!--PL-TODO 
 <div *ngIf="online && correctCoeVersion" class="alert alert-success">
-	{{coeVersions[coeSimulationService.getMaestroVersion()]}}, version {{ coeSimulationService.coeVersionNumber }},
+	{{coeVersions[(coeSimulationService.getMaestroVersion()| async)??0]}}, version {{
+	coeSimulationService.coeVersionNumber
+	}},
 	online at {{ coeSimulationService.coeUrl }}.
 </div>
 <div *ngIf="online && !correctCoeVersion" class="alert alert-warning">
 	{{coeVersions[required_coe_version]}} is required!!
-	{{coeVersions[coeSimulationService.getMaestroVersion()]}}, version {{ coeSimulationService.coeVersionNumber }}, is
+	{{coeVersions[(coeSimulationService.getMaestroVersion() | async)??0]}}, version {{ coeSimulationService.coeVersionNumber }}, is
 	online at {{ coeSimulationService.coeUrl }}.
 </div>
--->

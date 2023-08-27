@@ -2,12 +2,13 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import JSZip from 'jszip';
 import { map, Subject, Subscription, timeout, timer } from 'rxjs';
-import { CoeProcess } from '../../coe/classes/coe-process';
+import { CoeProcess } from '../classes/coe-process';
 import * as fs from 'fs'
 import { SettingsService } from './settings.service';
 
 import IntoCpsApp from '../classes/into-cps-app';
 import { SettingKeys } from './settings.service';
+import { CoSimulationStudioApi } from 'src/app/api';
 
 // Verificaiton DTO utilised by Maestro
 interface IVerificationDTO {
@@ -43,10 +44,12 @@ export class MaestroApiService {
   _timerSubscription!: Subscription;
 
   coeVersionNumber: string = "";
-  coeUrl: string = "";
+  coeUrl?: string;
 
   constructor(private httpClient: HttpClient, public settings: SettingsService) {
-    this.coeUrl = this.settings.get(SettingKeys.COE_URL);
+    this.settings.get(SettingKeys.COE_URL).then(value => {
+      this.coeUrl = value;
+    })
     this._coe = IntoCpsApp.getInstance()?.getCoeProcess() ?? undefined;
   }
 
@@ -58,7 +61,7 @@ export class MaestroApiService {
       Simulation API entry points methods
   */
   getCoeVersionNumber(): Promise<string | undefined> {
-    return this.httpClient.get<string>(`http://${this.coeUrl}/version`).pipe(timeout(2000), map((response: any) => {
+    return CoSimulationStudioApi.httpGet<string>(`http://${this.coeUrl}/version`).pipe(timeout(2000), map((response: any) => {
       //This regex match expects the coe version number to have the format x.x.x
       this.coeVersionNumber = response.version.match('[\\d\\.]+')[0];
       return this.coeVersionNumber;
@@ -67,7 +70,7 @@ export class MaestroApiService {
 
   stopSimulation(simulationSessionId: string): Promise<Response> {
     return new Promise<Response>((resolve, reject) => {
-      this.httpClient.get(`http://${this.coeUrl}/stopsimulation/${simulationSessionId}`)
+      CoSimulationStudioApi.httpGet(`http://${this.coeUrl}/stopsimulation/${simulationSessionId}`)
         .subscribe((res: any) => { resolve(res) }, (err: Response) => reject(err));
     });
   }
@@ -78,7 +81,7 @@ export class MaestroApiService {
 
   createSimulationSession(): Promise<string> {
     return new Promise<string>((resolve, reject) => {
-      this.httpClient.get(`http://${this.coeUrl}/createSession`).subscribe((response: any) => resolve(response.sessionId), (err: Response) => reject(err));
+      CoSimulationStudioApi.httpGet(`http://${this.coeUrl}/createSession`).subscribe((response: any) => resolve(response.sessionId), (err: Response) => reject(err));
     });
   }
 
@@ -106,7 +109,7 @@ export class MaestroApiService {
   getResults(resultsPath: string, simulationSessionId: string): Promise<void> {
     return new Promise<void>((resolve, reject) => {
       var resultsStream = fs.createWriteStream(resultsPath);
-      this.httpClient.get(`http://${this.coeUrl}/result/${simulationSessionId}/zip`).subscribe((response: any) => {
+      CoSimulationStudioApi.httpGet(`http://${this.coeUrl}/result/${simulationSessionId}/zip`).subscribe((response: any) => {
         if (response.statusCode != 200) {
           reject(response);
         }
@@ -120,7 +123,7 @@ export class MaestroApiService {
 
   destroySession(simulationSessionId: string): Promise<void> {
     return new Promise<void>((resolve, reject) => {
-      this.httpClient.get(`http://${this.coeUrl}/destroy/${simulationSessionId}`).subscribe((response: any) => {
+      CoSimulationStudioApi.httpGet(`http://${this.coeUrl}/destroy/${simulationSessionId}`).subscribe((response: any) => {
         if (response.statusCode != 200) {
           reject(response);
         } else {
@@ -198,12 +201,12 @@ export class MaestroApiService {
     return `ws://${this.coeUrl}/attachSession/${simulationSessionId}`;
   }
 
-  getMaestroVersion(): maestroVersions | undefined {
-    if (!this.coeVersionNumber) {
-      return undefined;
+  async getMaestroVersion(): Promise<maestroVersions> {
+    if (!await this.getCoeVersionNumber()) {
+      return maestroVersions.maestroV1;
     }
 
-    let version: maestroVersions | undefined;
+    let version: maestroVersions;
 
     switch (Number.parseInt(this.coeVersionNumber.split('.')[0])) {
       case 1:
@@ -212,6 +215,8 @@ export class MaestroApiService {
       case 2:
         version = maestroVersions.maestroV2;
         break;
+      default:
+        version = maestroVersions.maestroV1;
     }
 
     if (!version) {
@@ -220,8 +225,8 @@ export class MaestroApiService {
     return version;
   }
 
-  isRemoteCoe(): boolean {
-    return this.settings.get(SettingKeys.COE_REMOTE_HOST);
+  async isRemoteCoe(): Promise<boolean> {
+    return CoSimulationStudioApi.getConfiguration(SettingKeys.COE_REMOTE_HOST);
   }
 
   getCoeProcess(): CoeProcess | undefined {
@@ -231,23 +236,21 @@ export class MaestroApiService {
     return this._coe;
   }
 
-  inferMaestroVersionFromJarContent(): Promise<maestroVersions> {
-    return new Promise<maestroVersions>(async (resolve, reject) => {
-      // read the contents of the maestro jar
-      fs.readFile(this._coe?.getCoePath() ?? "", (err, data) => {
-        if (err) {
-          reject("Unable to infer maestro version from jar: " + err);
-        } else {
-          JSZip.loadAsync(data).then((zip: any) => {
-            if (Object.keys(zip.files).findIndex(file => file.toLowerCase().endsWith(".mabl")) > -1) {
-              resolve(maestroVersions.maestroV2);
-            } else {
-              resolve(maestroVersions.maestroV1);
-            }
-          });
-        }
-      });
-    });
+  async inferMaestroVersionFromJarContent(): Promise<maestroVersions> {
+
+    // read the contents of the maestro jar
+    const data = await CoSimulationStudioApi.readFile(this._coe?.getCoePath() ?? "");
+
+    //reject("Unable to infer maestro version from jar: " + err);
+
+    const zip = await JSZip.loadAsync(data)
+
+    if (Object.keys(zip.files).findIndex(file => file.toLowerCase().endsWith(".mabl")) > -1) {
+      return maestroVersions.maestroV2;
+    } else {
+      return maestroVersions.maestroV1;
+    }
+
   }
 
   private isCoeOnline() {

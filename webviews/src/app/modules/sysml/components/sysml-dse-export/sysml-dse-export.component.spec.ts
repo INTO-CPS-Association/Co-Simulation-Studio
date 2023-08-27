@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { SysmlDseExportComponent } from './sysml-dse-export.component';
+import { SysmlDseExportComponent } from './sysml-dse-export.component'; //FIXME non-angular interface
 
 describe('SysmlDseExportComponent', () => {
   let component: SysmlDseExportComponent;

@@ -33,19 +33,20 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { ISettingsValues } from './settings-values';
 import { SettingKeys } from './setting-keys';
+import { CoSimulationStudioApi } from 'src/app/api';
 
 export default class Settings implements ISettingsValues {
 	app: any;
 	userDataPath!: string;
 	intoCpsAppFolder: string;
-	settingsFile: string;
+	settingsFile!: string;
 	counter: number;
 	intoCpsDataObject: any = { "into-cps-settings-version": "0.0.1" };
 
 	constructor(app: any, intoCpsAppFolder: string) {
 		this.app = app;
 		this.intoCpsAppFolder = intoCpsAppFolder;
-		this.settingsFile = path.normalize(this.intoCpsAppFolder + "/settings.json");
+		CoSimulationStudioApi.normalize(this.intoCpsAppFolder + "/settings.json").then(value => this.settingsFile = value);
 		this.counter = 0;
 	}
 

@@ -7,6 +7,7 @@ import * as Path from "path";
 import IntoCpsApp from 'src/app/modules/shared/classes/into-cps-app';
 import { SettingKeys } from 'src/app/modules/shared/classes/setting-keys';
 import { DomSanitizer } from '@angular/platform-browser';
+import { CoSimulationStudioApi } from 'src/app/api';
 
 const dialog: any = {};
 
@@ -198,7 +199,7 @@ export class DseCoeLaunchComponent implements OnInit {
         child.stderr.on('data', function (data: any) {
             stderrChunks = stderrChunks.concat(data);
         });
-        child.stderr.on('end', () => {
+        child.stderr.on('end', async () => {
             var stderrContent = Buffer.concat(stderrChunks).toString();
             console.log('stderr chars:', stderrContent.length);
 
@@ -222,7 +223,7 @@ export class DseCoeLaunchComponent implements OnInit {
                 this.simsuccess = true;
                 this.simulation = false;
                 console.log("end DSE sim");
-                this.resultpath = Path.normalize(`${this.resultdir}/results.html`);
+                this.resultpath = await CoSimulationStudioApi.normalize(`${this.resultdir}/results.html`);
             }
         });
     }

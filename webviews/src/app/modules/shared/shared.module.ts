@@ -20,6 +20,7 @@ import { TextInputComponent } from './components/text-input/text-input.component
 import { FormsModule } from '@angular/forms';
 import { PanelComponent } from './components/panel/panel.component';
 import { SafePipe } from './pipes/safe.pipe';
+import { ReactComponent } from './components/react/react.component';
 
 
 @NgModule({
@@ -39,7 +40,8 @@ import { SafePipe } from './pipes/safe.pipe';
     FileBrowserComponent,
     TextInputComponent,
     PanelComponent,
-    SafePipe
+    SafePipe,
+    ReactComponent
   ],
   imports: [
     CommonModule,
@@ -50,7 +52,8 @@ import { SafePipe } from './pipes/safe.pipe';
     LineChartComponent,
     PanelComponent,
     FileBrowserComponent,
-    SafePipe
+    SafePipe,
+    ReactComponent
   ]
 })
 export class SharedModule { }

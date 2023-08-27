@@ -1,8 +1,8 @@
 import { Component, EventEmitter, Input, NgZone, OnInit, Output } from '@angular/core';
 import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
-import { BoundedDifferenceConstraint, CoSimulationConfig, FixedStepAlgorithm, FmuMaxStepSizeConstraint, ICoSimAlgorithm, LiveGraph, SamplingRateConstraint, VariableStepAlgorithm, VariableStepConstraint, ZeroCrossingConstraint } from 'src/app/modules/shared/classes/configuration/co-simulation-config';
-import { WarningMessage } from 'src/app/modules/shared/classes/configuration/messages';
-import { CausalityType, Fmu, Instance, InstanceScalarPair, ScalarVariable, ScalarVariableType } from 'src/app/modules/shared/classes/models/fmu';
+import { BoundedDifferenceConstraint, CoSimulationConfig, FixedStepAlgorithm, FmuMaxStepSizeConstraint, ICoSimAlgorithm, LiveGraph, SamplingRateConstraint, VariableStepAlgorithm, VariableStepConstraint, ZeroCrossingConstraint } from 'src/app/modules/shared/classes/co-simulation-config';
+import { WarningMessage } from 'src/app/modules/shared/classes/messages';
+import { CausalityType, Fmu, Instance, InstanceScalarPair, ScalarVariable, ScalarVariableType } from 'src/app/modules/shared/classes/fmu';
 import { lessThanValidator2, numberValidator, uniqueGroupPropertyValidator } from 'src/app/modules/shared/classes/validators';
 import { NavigationService } from 'src/app/modules/shared/services/navigation.service';
 import IntoCpsApp from 'src/app/modules/shared/classes/into-cps-app';
@@ -19,6 +19,7 @@ export class CoeConfigurationComponent {
 	_allowChangingAlgorithm: boolean = true;
 	_editing: boolean = false;
 
+	// FIXME Fmu is non-angular interface
 	public Fmu_x = Fmu;
 
 	@Input()
@@ -43,9 +44,12 @@ export class CoeConfigurationComponent {
 	change = new EventEmitter<string>();
 
 	form!: FormGroup;
+	// FIXME ICosimAlgorithm is a non-angular interface 
 	algorithms: ICoSimAlgorithm[] = [];
 	algorithmFormGroups = new Map<ICoSimAlgorithm, FormGroup>();
+	//FIXME InstanceScalarPair Is a non-angular interface 
 	outputPorts: Array<InstanceScalarPair> = [];
+	//FIXME Instrance ScalarPair is a non-angular interface 
 	newConstraint!: any /* new (...args: any[]) => VariableStepConstraint*/;
 
 	set editing(editing: boolean) {
@@ -60,6 +64,7 @@ export class CoeConfigurationComponent {
 	isLoaded: boolean = false;
 	logVariablesSearchName: string = "";
 	parseError: string | null = null;
+	// FIXME warningmessage is non-angular interface
 	warnings: WarningMessage[] = [];
 	loglevels: string[] = ["Not set", "ERROR", "WARN", "INFO", "DEBUG", "TRACE"];
 
@@ -68,26 +73,31 @@ export class CoeConfigurationComponent {
 	// Otherwise they will all be connected.
 	zeroCrossings: number = 0;
 
+	// FIXME CoSim is Non-angular interface 
 	config!: CoSimulationConfig;
 
+	//FIXME uses non-angluar interfaces
 	algorithmConstructors = [FixedStepAlgorithm, VariableStepAlgorithm];
 
+	//FIXME uses non-angluar interfaces
 	constraintConstructors = [ZeroCrossingConstraint, BoundedDifferenceConstraint, SamplingRateConstraint, FmuMaxStepSizeConstraint];
 
+	//FIXME Navigationservice non-angluar interfaces
 	constructor(private zone: NgZone, private navigationService: NavigationService) {
 		this.navigationService.registerComponent(this);
 	}
 
-	parseConfig() {
+	//FIXME uses non-angluar interfaces
+	async parseConfig() {
 		let project = IntoCpsApp.getInstance()?.getActiveProject();
 		if (project == null)
 			return;
-		CoSimulationConfig.parse(this.path, project.getRootFilePath(), project.getFmusPath())
+		CoSimulationConfig.parse(this.path, project.getRootFilePath(), await project.getFmusPath())
 			.then(
-				(config) => {
+				async (config) => {
 					this.config = config;
 
-					this.warnings = this.config.validate();
+					this.warnings = await this.config.validate();
 
 					this.parseError = null;
 
@@ -109,7 +119,7 @@ export class CoeConfigurationComponent {
 					// Create a form group for validation
 					this.form = new FormGroup(
 						{
-							//PL-TODO
+							//PL-TODO these should be fixed in issue 78
 							//startTime: new FormControl(config.startTime, [Validators.required, numberValidator]),
 							//endTime: new FormControl(config.endTime, [Validators.required, numberValidator]),
 							liveGraphs: new FormArray(
@@ -119,11 +129,13 @@ export class CoeConfigurationComponent {
 							//livestreamInterval: new FormControl(config.livestreamInterval, [Validators.required, numberValidator]),
 							//liveGraphColumns: new FormControl(config.liveGraphColumns, [Validators.required, numberValidator]),
 							//liveGraphVisibleRowCount: new FormControl(config.liveGraphVisibleRowCount, [Validators.required, numberValidator]),
+							//FIXME Line below does not work 
 							//algorithm: this.algorithmFormGroups.get(this.config.algorithm),
 							//global_absolute_tolerance: new FormControl(config.global_absolute_tolerance, [Validators.required, numberValidator]),
 							//global_relative_tolerance: new FormControl(config.global_relative_tolerance, [Validators.required, numberValidator]),
 						},
-						//lessThanValidator2("startTime", "endTime"),
+						//FIXME need to be tested 
+						lessThanValidator2("startTime", "endTime"),
 						null
 					);
 					console.log("Parsing finished!");
@@ -136,11 +148,12 @@ export class CoeConfigurationComponent {
 			)
 			.catch((error) => console.error(`Error during parsing of config: ${error}`));
 	}
-
+	//FIXME uses non-angular interface 
 	public setPostProcessingScript(config: CoSimulationConfig, path: string) {
 		config.postProcessingScript = config.getProjectRelativePath(path);
 	}
 
+	//FIXME uses non-angular interface 
 	onNavigate(): boolean {
 		if (!this.editing) return true;
 
@@ -153,6 +166,7 @@ export class CoeConfigurationComponent {
 		}
 	}
 
+	//FIXME uses non-angular interface 
 	onAlgorithmChange(algorithm: ICoSimAlgorithm) {
 		this.zone.run(() => {
 			this.config.algorithm = algorithm;
@@ -161,11 +175,11 @@ export class CoeConfigurationComponent {
 			this.form.addControl("algorithm", this.algorithmFormGroups.get(algorithm));
 		});
 	}
-
-	onSubmit() {
+	//FIXME uses non-angular interface 
+	async onSubmit() {
 		if (!this.editing) return;
 
-		this.warnings = this.config.validate();
+		this.warnings = await this.config.validate();
 
 		let override = false;
 
@@ -191,19 +205,20 @@ export class CoeConfigurationComponent {
 
 		this.editing = false;
 	}
-
+	//FIXME uses non-angular interface 
 	getOutputs(scalarVariables: Array<ScalarVariable>) {
 		return scalarVariables.filter((variable) => variable.causality === CausalityType.Output || variable.causality === CausalityType.Local);
 	}
 
+	//FIXME uses non-angular interface 
 	getFilterTypes(scalarVariables: Array<InstanceScalarPair>, types: ScalarVariableType[]) {
 		return scalarVariables.filter((v) => types.indexOf(v.scalarVariable.type) > -1);
 	}
-
+	//FIXME uses non-angular interface 
 	restrictToCheckedLogVariables(instance: Instance, scalarVariables: Array<ScalarVariable>) {
 		return scalarVariables.filter((variable) => this.isLogVariableChecked(instance, variable));
 	}
-
+	//FIXME uses non-angular interface 
 	addConstraint(value: any) {
 		if (!this.newConstraint) return;
 
@@ -213,7 +228,7 @@ export class CoeConfigurationComponent {
 		algorithm.constraints.push(constraint);
 		formArray.push(constraint.toFormGroup());
 	}
-
+	//FIXME uses non-angular interface 
 	removeConstraint(constraint: VariableStepConstraint) {
 		let algorithm = <VariableStepAlgorithm>this.config.algorithm;
 		let formArray = <FormArray>this.form.get("algorithm")?.get("constraints");
@@ -222,21 +237,21 @@ export class CoeConfigurationComponent {
 		algorithm.constraints.splice(index, 1);
 		formArray.removeAt(index);
 	}
-
+	//FIXME uses non-angular interface 
 	addLiveGraph() {
 		let g = new LiveGraph();
 		this.config.liveGraphs.push(g);
 		let formArray = <FormArray>this.form.get("liveGraphs");
 		formArray.push(g.toFormGroup());
 	}
-
+	//FIXME uses non-angular interface 
 	removeGraph(graph: LiveGraph) {
 		let formArray = <FormArray>this.form.get("liveGraphs");
 		let index = this.config.liveGraphs.indexOf(graph);
 		this.config.liveGraphs.splice(index, 1);
 		formArray.removeAt(index);
 	}
-
+	//FIXME uses non-angular interface 
 	getConstraintName(constraint: any) {
 		if (constraint === ZeroCrossingConstraint || constraint instanceof ZeroCrossingConstraint) return "Zero Crossing";
 		if (constraint === FmuMaxStepSizeConstraint || constraint instanceof FmuMaxStepSizeConstraint) return "FMU Max Step Size";
@@ -244,7 +259,7 @@ export class CoeConfigurationComponent {
 		if (constraint === SamplingRateConstraint || constraint instanceof SamplingRateConstraint) return "Sampling Rate";
 		return undefined;
 	}
-
+	//FIXME uses non-angular interface 
 	isLogVariableChecked(instance: Instance, output: ScalarVariable) {
 		let variables = this.config.logVariables.get(instance);
 
@@ -252,15 +267,15 @@ export class CoeConfigurationComponent {
 
 		return variables.indexOf(output) !== -1;
 	}
-
+	//FIXME uses non-angular interface 
 	isLocal(variable: ScalarVariable): boolean {
 		return variable.causality === CausalityType.Local;
 	}
-
+	//FIXME uses non-angular interface 
 	getScalarVariableTypeName(type: ScalarVariableType) {
 		return ScalarVariableType[type];
 	}
-
+	//FIXME uses non-angular interface 
 	onLogVariableChange(enabled: boolean, instance: Instance, output: ScalarVariable) {
 		let variables = this.config.logVariables.get(instance);
 
@@ -276,7 +291,7 @@ export class CoeConfigurationComponent {
 			if (variables.length == 0) this.config.logVariables.delete(instance);
 		}
 	}
-
+	//FIXME uses non-angular interface 
 	onLogVariablesKey(event: any) {
 		this.logVariablesSearchName = event.target.value;
 	}

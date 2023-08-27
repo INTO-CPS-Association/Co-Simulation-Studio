@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { SamplingRateConstraint } from 'src/app/modules/shared/classes/configuration/co-simulation-config';
+import { SamplingRateConstraint } from 'src/app/modules/shared/classes/co-simulation-config';
 
 @Component({
   selector: 'app-sampling-rate',

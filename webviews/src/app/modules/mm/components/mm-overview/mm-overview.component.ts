@@ -1,8 +1,8 @@
 import { Component, Input, NgZone, OnInit } from '@angular/core';
-import { ErrorMessage, WarningMessage } from 'src/app/modules/shared/classes/configuration/messages';
-import { MultiModelConfig } from 'src/app/modules/shared/classes/configuration/multi-model-config';
-import { Serializer } from 'src/app/modules/shared/classes/configuration/parser';
-import { OutputConnectionsPair } from 'src/app/modules/shared/classes/models/fmu';
+import { ErrorMessage, WarningMessage } from 'src/app/modules/shared/classes/messages';
+import { MultiModelConfig } from 'src/app/modules/shared/classes/multi-model-config';
+import { Serializer } from 'src/app/modules/shared/classes/parser';
+import { OutputConnectionsPair } from 'src/app/modules/shared/classes/fmu';
 import IntoCpsApp from 'src/app/modules/shared/classes/into-cps-app';
 
 @Component({
@@ -33,12 +33,12 @@ export class MmOverviewComponent {
 
     }
 
-    parseConfig() {
+    async parseConfig() {
         //FIXME IntoCpsApp is a non angular Class
         let project = IntoCpsApp.getInstance()?.getActiveProject();
 
         MultiModelConfig
-            .parse(this.path, project?.getFmusPath() ?? "")
+            .parse(this.path, await project?.getFmusPath() ?? "")
             .then(config => this.zone.run(() => { this.config = config; this.warnings = this.config.validate(); })).catch(err => console.log(err));
     }
 
