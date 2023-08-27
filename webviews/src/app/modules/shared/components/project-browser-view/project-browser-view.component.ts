@@ -26,7 +26,7 @@ export class ProjectBrowserViewComponent implements OnInit {
     }
 
 }
-
+//FIXME Resolved the PL-todo however not sure if the callback now has the functionallity that was intented
 export class MenuEntry {
     id: string;
     text: string;
@@ -35,7 +35,8 @@ export class MenuEntry {
     callback: (item: ProjectBrowserItem) => void;
     private static idCounter: number = 0;
     constructor(item: ProjectBrowserItem, text: string, icon: any,
-        callback: any /*PL-TODO (item: ProjectBrowserItem) => void*/ = undefined) {
+        callback: (item: ProjectBrowserItem) => void)
+         {
         this.id = "MenuEntry_" + (MenuEntry.idCounter++).toString();
         this.item = item;
         this.text = text;
@@ -60,6 +61,7 @@ export class ProjectBrowserItem {
     nodes: ProjectBrowserItem[] = [];
     parent!: ProjectBrowserItem;
     group: boolean = false;
+    //FIXME fs is non-angular interface
     fsWatch?: fs.FSWatcher;
     opensInMainWindow: boolean = false;
 
@@ -72,6 +74,7 @@ export class ProjectBrowserItem {
         this.controller = controller;
         this.id = "ProjectBrowserItem_" + (ProjectBrowserItem.idCounter++).toString();
         this.path = path;
+        //FIXME FS is non-angular
         this.isDirectory = fs.existsSync(path) && fs.statSync(path).isDirectory();
         this.text = Path.basename(path);
         if (parent == null) {
@@ -84,7 +87,7 @@ export class ProjectBrowserItem {
             this.expanded = true;
         }
     }
-
+    //FIXME substr is depricated -> can propperly be replacted by this.text.slice(0, this.text.indexOf("."))
     removeFileExtensionFromText(): void {
         this.text = this.text.substr(0, this.text.indexOf("."));
     }
@@ -119,6 +122,7 @@ export class ProjectBrowserItem {
     watch() {
         let self = this;
         if (this.isDirectory) {
+            //FIXME fs in non-angular, line 125-127
             if (this.fsWatch != undefined) throw "Directory is already being watched";
             let exists = (p: string) => { try { fs.statSync(p); return true; } catch (e) { return false; } };
             this.fsWatch = fs.watch(this.path, (event: any, which: any) => {
@@ -135,7 +139,7 @@ export class ProjectBrowserItem {
             });
         }
     }
-
+    //FIXME fs in non-angular
     unwatch() {
         if (this.fsWatch != undefined) {
             this.fsWatch.close();
@@ -206,7 +210,7 @@ export class BrowserController {
     private browser!: HTMLDivElement;
     public tree!: W2UI.W2Sidebar;
     rootItem?: ProjectBrowserItem;
-
+    //FIXME intocepsapp in non-angular
     private menuHandler: IntoCpsAppMenuHandler | null = null;
 
     constructor(menuHandler: IntoCpsAppMenuHandler) {
@@ -220,7 +224,7 @@ export class BrowserController {
             name: "sidebar",
             menu: []
         });
-
+        //FIXME jQueryeventObject is deprecated vscode suggests Use `{@link JQuery.Event }`.
         this.tree.on("expand", (event: JQueryEventObject) => {
             let item: ProjectBrowserItem = <ProjectBrowserItem>((<any>event).object);
             item.expand();
@@ -241,7 +245,7 @@ export class BrowserController {
             let entry: MenuEntry = <MenuEntry>((<any>event).menuItem);
             entry.callback(entry.item);
         });
-
+        //FIXME see last fixme (deprecation)
         this.tree.on("dblClick", (event: JQueryEventObject) => {
             // Remove auto expansion on double click
             event.preventDefault();
@@ -259,7 +263,7 @@ export class BrowserController {
             }
         });
 
-
+        //FIXME see last fixme (deprecation)
         this.tree.on("click", (event: JQueryEventObject) => {
             event.preventDefault();
             let item: ProjectBrowserItem = <ProjectBrowserItem>((<any>event).object);
@@ -267,13 +271,14 @@ export class BrowserController {
         });
 
         this.refreshProjectBrowser();
-
+        //FIXME uncomented??
         /*    IntoCpsApp.getInstance().on(IntoCpsAppEvents.PROJECT_CHANGED, () => {
                this.refreshProjectBrowser();
            }); */
     }
 
     // set and refresh the prowser content
+    //FIXME intocps is non-angular
     private async refreshProjectBrowser() {
         let app: IntoCpsApp | undefined = IntoCpsApp.getInstance() ?? undefined;
         if (this.rootItem)
@@ -283,6 +288,7 @@ export class BrowserController {
         }
     }
 
+    //FIXME both fs and election code in this method
     public async addFSItem(path: string, parent?: ProjectBrowserItem): Promise<ProjectBrowserItem | undefined | null> {
         let self = this;
         let result: ProjectBrowserItem = new ProjectBrowserItem(this, path, parent);
@@ -296,7 +302,7 @@ export class BrowserController {
         }
         let pathComponents = (await Utilities.relativeProjectPath(path)).split(Path.sep);
 
-        function menuEntry(text: string, icon: any, callback?: (item: ProjectBrowserItem) => void) {
+        function menuEntry(text: string, icon: any, callback: (item: ProjectBrowserItem) => void) {
             return new MenuEntry(result, text, icon, callback);
         }
 
@@ -326,7 +332,7 @@ export class BrowserController {
         if (Path.basename(path).startsWith(".")) {
             return null;
         }
-        if (stat.isFile()) {
+        if (stat.isFile()) { //might be able to solve this one using angular document.baseURI
             let projectPath: any = {}; //PL-TODO RTTester.getRelativePathInProject(result.path);
             if (pathComponents[0] == Project.PATH_TEST_DATA_GENERATION) {
                 result.menuEntries = [];
@@ -387,7 +393,9 @@ export class BrowserController {
                 result.img = "into-cps-icon-projbrowser-dse-result";
                 result.removeFileExtensionFromText();
                 result.dblClickHandler = function (item: ProjectBrowserItem) {
-                    // self.menuHandler.openWithSystemEditor(item.path);
+                    if(self.menuHandler != null && item != null && self.menuHandler.openWithSystemEditor != undefined){
+                    self.menuHandler.openWithSystemEditor(item.path);
+                    }
                     console.log(item.path);
                     self.menuHandler?.openHTMLInMainView?.(item.path, "DSE Results View");
                     return null;
@@ -413,6 +421,7 @@ export class BrowserController {
                 parent.opensInMainWindow = false;
                 let url = "file://" + path;
                 parent.dblClickHandler = function (item: ProjectBrowserItem) {
+                    //FIXME 
                     //PL-TODO let authWindow = new BrowserWindow({ width: 800, height: 600, webPreferences: { nodeIntegration: false, enableRemoteModule: true } });
 
                     //PL-TODO authWindow.loadURL(url);
@@ -571,6 +580,7 @@ export class BrowserController {
                     } else if (pathComponents.length == 3) {
                         let queryFileExists = () => {
                             try {
+                                //FIXME uses fs
                                 fs.statSync(Path.join(result.path, "query.json"));
                                 return true;
                             } catch (e) { return false; }
@@ -598,6 +608,7 @@ export class BrowserController {
                         if (pathComponents[3] == "Simulation") {
                             result.menuEntries.push(menuEntry("Generate Simulation FMU", "into-cps-icon-rtt-mbt-generate",
                                 function (item: ProjectBrowserItem) {
+                                    //FIXME RTTEster is unknown 
                                     //PL-TODO let cmd: any = RTTester.genericMBTPythonCommandSpec(path, "rtt-mbt-fmi2gen-sim.py");
                                     //PL-TODO cmd.title = "Generate Simulation FMU";
                                     //PL-TODO self.menuHandler?.runRTTesterCommand(cmd);
