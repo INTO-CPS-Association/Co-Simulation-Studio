@@ -1,3 +1,8 @@
+<p>
+	<app-react [component]="coePageComponent" [props]="coePageProps"></app-react>
+</p>
+
+
 <app-panel id="Configuration" [title]="'Configuration'" [open]="false">
     <app-coe-configuration [path]="path" (change)="sim.parseConfig()"></app-coe-configuration>
 </app-panel>
