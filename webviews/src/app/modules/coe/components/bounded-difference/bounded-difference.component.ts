@@ -15,8 +15,7 @@ export class BoundedDifferenceComponent {
     BoundedDifferenceComponent = BoundedDifferenceReactComponent;
     BoundedDifferenceProps = this;
 
-   
-    
+
     //------------Inputs-----------
     // FIXME non-agular interface 
     @Input()
