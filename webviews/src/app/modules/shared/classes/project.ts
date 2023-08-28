@@ -32,11 +32,7 @@
 
 // See the CONTRIBUTORS file for author and contributor information. 
 
-
-import * as fs from 'fs';
-import * as Path from 'path';
 import { ProjectSettings } from './project-settings';
-import IntoCpsApp from './into-cps-app';
 import { SettingKeys } from './setting-keys';
 import { CoSimulationStudioApi } from 'src/app/api';
 

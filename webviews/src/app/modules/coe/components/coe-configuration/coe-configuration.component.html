@@ -5,7 +5,6 @@
 		<span class="glyphicon glyphicon-floppy-saved" aria-hidden="true"></span>
 		Save
 	</button>
-
 	<div class="form-horizontal">
 		<div class="panel-group" id="accordion">
 			<div class="panel panel-primary">
@@ -31,7 +30,6 @@
 								time.</div>
 						</div>
 					</div>
-
 					<div class="form-group">
 						<label class="col-sm-5 col-md-4 control-label">End time</label>
 						<div class="col-sm-7 col-md-8">
@@ -48,7 +46,6 @@
 								start time.</div>
 						</div>
 					</div>
-
 					<div class="form-group">
 						<label class="col-sm-5 col-md-4 control-label">Algorithm</label>
 						<div class="col-sm-7 col-md-8">
@@ -63,7 +60,6 @@
 							</select>
 						</div>
 					</div>
-
 					<hr />
 					<div formGroupName="algorithm">
 						<!-- FIXED STEP -->
@@ -143,7 +139,7 @@
 													[ngValue]="constraint">{{ getConstraintName(constraint) }}</option>
 											</select>
 											<span class="input-group-btn">
-												<button type="button" (click)="addConstraint(newConstraint.value)"
+												<button type="button" (click)="addConstraint($any(newConstraint).value)"
 													class="btn btn-default"><span
 														class="glyphicon glyphicon-plus"></span> Add</button>
 											</span>
@@ -497,8 +493,10 @@
 							<p *ngIf="!editing" class="form-control-static">
 								{{ config.postProcessingScript }}
 							</p>
+							<!--
 							<app-file-browser *ngIf="editing" [basePath]="path" [path]="config.postProcessingScript"
 								(pathChange)="setPostProcessingScript(config, $event)"></app-file-browser>
+								-->
 						</div>
 					</div>
 				</div>

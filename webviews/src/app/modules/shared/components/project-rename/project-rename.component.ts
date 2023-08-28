@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import * as Path from 'path';
-
+import { CoSimulationStudioApi } from 'src/app/api';
 
 @Component({
   selector: 'app-project-rename',
@@ -18,25 +17,22 @@ export class ProjectRenameComponent {
     return results == null ? null : results[1];
   }
 
-  rename() {
+  async rename(): Promise<void> {
 
     var n: HTMLInputElement = <HTMLInputElement>document.getElementById("newName");
 
-
     let oldPath = decodeURIComponent(this.gup("data", undefined) ?? "");
-    let newPath = Path.join(oldPath, '..', n.value)
+    let newPath = await CoSimulationStudioApi.join(oldPath, '..', n.value)
     console.log("Renaming from " + oldPath + " to " + newPath);
 
-    var fs: any = {} // PL-TODO require('fs-extra');
-
-    fs.move(oldPath, newPath, function (err: any) { //FIXME
-      if (err) {
-        console.error("Move faild " + oldPath + " -> " + newPath);
-        return console.error(err);
-      }
+    try {
+      await CoSimulationStudioApi.move(oldPath, newPath);
       console.error("Move completed " + oldPath + " -> " + newPath);
       window.top?.close();
-    })
+    } catch (e) {
+      console.error("Move faild " + oldPath + " -> " + newPath);
+    }
+
   }
 
 }

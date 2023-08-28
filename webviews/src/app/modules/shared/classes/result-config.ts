@@ -29,48 +29,36 @@
  * See the CONTRIBUTORS file for author and contributor information. 
  */
 
+import { CoSimulationStudioApi } from 'src/app/api';
 import { CoSimulationConfig } from "./co-simulation-config"
-import * as fs from "fs"
-import * as Path from "path";
 import { checksum } from "./project";
 
-export function storeResultCrc(outputPath: string, coeConfig: CoSimulationConfig) {
+export async function storeResultCrc(outputPath: string, coeConfig: CoSimulationConfig): Promise<void> {
 
-    let coeCrc = checksum(fs.readFileSync(coeConfig.sourcePath).toString(), "md5", "hex");
+    let coeCrc = checksum(await CoSimulationStudioApi.readFile(coeConfig.sourcePath), "md5", "hex");
     let mmCrc = coeConfig.multiModelCrc;
-    let resultCrc = checksum(fs.readFileSync(outputPath).toString(), "md5", "hex");
+    let resultCrc = checksum(await CoSimulationStudioApi.readFile(outputPath), "md5", "hex");
 
     let res = { mm_config_crc: mmCrc, coe_config_crc: coeCrc, output_crc: resultCrc }
 
     let data = JSON.stringify(res);
-    let file = Path.join(Path.dirname(outputPath), "result.json");
+    let file = await CoSimulationStudioApi.join(await CoSimulationStudioApi.dirname(outputPath), "result.json");
     console.info(data);
 
-    return new Promise<void>((resolve, reject) => {
-        try {
+    await CoSimulationStudioApi.writeFile(file, data);
 
-            fs.writeFile(file, data, error => {
-                if (error)
-                    reject(error);
-                else
-                    resolve();
-            });
-        } catch (error) {
-            reject(error);
-        }
-    });
 }
 
-export function isResultValid(outputPath: string): boolean {
+export async function isResultValid(outputPath: string): Promise<boolean> {
 
-    let dir = Path.dirname(outputPath);
-    let resultPath = Path.join(dir, "result.json");
+    let dir = await CoSimulationStudioApi.dirname(outputPath);
+    let resultPath = await CoSimulationStudioApi.join(dir, "result.json");
 
-    if (!fs.existsSync(resultPath)) {
+    if (!await CoSimulationStudioApi.exists(resultPath)) {
         return true;//no check
     }
 
-    let data = fs.readFileSync(resultPath, 'utf8');
+    let data = await CoSimulationStudioApi.readFile(resultPath);
 
     let obj = JSON.parse(data);
     //let res = { mm_config_crc: mmCrc, coe_config: coeCrc, result: resultCrc }
@@ -78,37 +66,39 @@ export function isResultValid(outputPath: string): boolean {
 
     let mmCrc = obj["mm_config_crc"];
     if (mmCrc != null) {
-        let mmPath = Path.join(dir, "..", "..", "mm.json")
+        let mmPath = await CoSimulationStudioApi.join(dir, "..", "..", "mm.json")
         //console.debug("MM path: " + mmPath);
-        let crc = checksum(fs.readFileSync(mmPath).toString(), "md5", "hex");
+        let crc = checksum(await CoSimulationStudioApi.readFile(mmPath), "md5", "hex");
         //console.debug("crc: " + mmCrc + " == " + crc);
         ok = ok && (crc == mmCrc);
     }
+    
     let coeCrc = obj["coe_config_crc"];
     if (coeCrc != null) {
 
-        let coePath = Path.join(dir, "..", "coe.json")
-        if (!fs.existsSync(coePath)) {
+        let coePath = await CoSimulationStudioApi.join(dir, "..", "coe.json");
+        if (!await CoSimulationStudioApi.exists(coePath)) {
             //Backwards compatibility
-            let file = fs.readdirSync(Path.join(dir, "..")).find(file => file.endsWith("coe.json"));
-            coePath = Path.join(dir, "..", file ?? "");
+            let file = (await CoSimulationStudioApi.readdir(await CoSimulationStudioApi.join(dir, ".."))).find(file => file.endsWith("coe.json"));
+            coePath = await CoSimulationStudioApi.join(dir, "..", file ?? "");
             console.debug("Found old style coe at: " + coePath);
         }
         //console.debug("COE path: " + coePath);
-        let crc = checksum(fs.readFileSync(coePath).toString(), "md5", "hex");
+        let crc = checksum(await CoSimulationStudioApi.readFile(coePath), "md5", "hex");
         //console.debug("crc: " + coeCrc + " == " + crc);
         ok = ok && (crc == coeCrc);
 
     }
+
     let outputCrc = obj["output_crc"];
     if (outputCrc != null) {
         //console.debug("Output path: " + outputPath);
-        let crc = checksum(fs.readFileSync(outputPath).toString(), "md5", "hex");
+        let crc = checksum(await CoSimulationStudioApi.readFile(outputPath), "md5", "hex");
         //console.debug("crc: " + outputCrc + " == " + crc);
         ok = ok && (crc == outputCrc);
 
     }
 
-
     return ok;
+
 }

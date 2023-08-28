@@ -29,10 +29,6 @@
  * See the CONTRIBUTORS file for author and contributor information. 
  */
 
-
-import * as Path from 'path';
-import * as fs from 'fs';
-import { IntoCpsApp } from "./into-cps-app";
 import { CoSimulationStudioApi } from 'src/app/api';
 
 export class Utilities {
@@ -47,9 +43,8 @@ export class Utilities {
 		}
 	}
 
-	public static projectRoot(): string {
-		let app: IntoCpsApp | null = IntoCpsApp.getInstance();
-		return app?.getActiveProject()?.getRootFilePath() ?? "";
+	public static async projectRoot(): Promise<string> {
+		return await CoSimulationStudioApi.getRootFilePath();
 	}
 
 	public static async getSystemArchitecture() {
@@ -61,24 +56,24 @@ export class Utilities {
 	}
 
 	public static async relativeProjectPath(path: string): Promise<string> {
-		if (!Path.isAbsolute(path)) {
+		if (!await CoSimulationStudioApi.isAbsolute(path)) {
 			return await CoSimulationStudioApi.normalize(path);
 		}
-		var root: string = Utilities.projectRoot();
-		return Path.relative(root, path);
+		var root: string = await Utilities.projectRoot();
+		return await CoSimulationStudioApi.relative(root, path);
 	}
 
-	public static absoluteProjectPath(path: string): string {
-		if (Path.isAbsolute(path)) {
-			return Path.resolve(path);
+	public static async absoluteProjectPath(path: string): Promise<string> {
+		if (await CoSimulationStudioApi.isAbsolute(path)) {
+			return await CoSimulationStudioApi.resolve(path);
 		}
-		var root: string = Utilities.projectRoot();
-		return Path.resolve(root, path);
+		var root: string = await Utilities.projectRoot();
+		return await CoSimulationStudioApi.resolve(root, path);
 	}
 
-	public static pathIsInFolder(path: string, folder: string): boolean {
-		var aPath: string[] = Utilities.absoluteProjectPath(path).split(Path.sep);
-		var aFolder: string[] = Utilities.absoluteProjectPath(folder).split(Path.sep);
+	public static async pathIsInFolder(path: string, folder: string): Promise<boolean> {
+		var aPath: string[] = (await Utilities.absoluteProjectPath(path)).split(await CoSimulationStudioApi.sep());
+		var aFolder: string[] = (await Utilities.absoluteProjectPath(folder)).split(await CoSimulationStudioApi.sep());
 		var res: boolean = true;
 		if (aPath.length < aFolder.length) {
 			res = false;
@@ -88,24 +83,6 @@ export class Utilities {
 				res = false;
 		}
 		return res;
-	}
-
-	public static copyFile(source: string, target: string, callback: (error: string) => void) {
-		// found at: http://stackoverflow.com/a/14387791
-		let cbCalled = false;
-		let error = false;
-		let rd = fs.createReadStream(source);
-		rd.on("error", report);
-		let wr = fs.createWriteStream(target);
-		wr.on("error", report);
-		wr.on("close", () => { report("undefined"); });
-		rd.pipe(wr);
-		function report(error: string) {
-			if (!cbCalled) {
-				callback(error);
-				cbCalled = true;
-			}
-		}
 	}
 
 	public static pathToUri(path: string) {

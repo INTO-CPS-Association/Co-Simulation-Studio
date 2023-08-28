@@ -31,7 +31,6 @@
 
 import { Validators, FormControl, FormGroup } from "@angular/forms";
 import { numberValidator } from "./validators";
-import * as fs from "fs"
 import { DseParser } from "./dse-parser"
 import { Serializer } from "./parser";
 import {

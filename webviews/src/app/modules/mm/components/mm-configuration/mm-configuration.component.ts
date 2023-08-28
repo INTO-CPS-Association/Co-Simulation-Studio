@@ -6,8 +6,7 @@ import { CausalityType, Fmu, Instance, InstanceScalarPair, isCausalityCompatible
 import { IProject } from 'src/app/modules/shared/classes/project';
 import { uniqueControlValidator } from 'src/app/modules/shared/classes/validators';
 import { NavigationService } from 'src/app/modules/shared/services/navigation.service';
-import * as Path from "path";
-import IntoCpsApp from 'src/app/modules/shared/classes/into-cps-app';
+import { CoSimulationStudioApi } from 'src/app/api';
 
 @Component({
     selector: 'app-mm-configuration',
@@ -21,10 +20,10 @@ export class MmConfigurationComponent {
     @Input()
     set path(path: string) {
         this._path = path;
-
         if (path)
             this.parseConfig();
     }
+
     get path(): string {
         return this._path;
     }
@@ -51,11 +50,8 @@ export class MmConfigurationComponent {
     }
 
     async parseConfig() {
-
-        let project: IProject | undefined | null = IntoCpsApp.getInstance()?.getActiveProject();
-
         MultiModelConfig
-            .parse(this.path, await project?.getFmusPath() ?? "")
+            .parse(this.path, await CoSimulationStudioApi.getFmusPath())
             .then(config => {
                 /* this.zone.run(() => { */
                 this.parseError = null;
@@ -71,12 +67,13 @@ export class MmConfigurationComponent {
                     fmus: new FormArray(this.config.fmus.map(fmu =>
                         new FormControl(this.getFmuName(fmu),
                             [Validators.required, Validators.pattern("[^{^}]*")])),
-                            <any>uniqueControlValidator),
+                        <any>uniqueControlValidator),
+
                     instances: new FormArray(this.config.fmus.map(fmu =>
                         new FormArray(this.getInstances(fmu)!.map(instance => //added ! exclamation mark as it is the non-null assertion operator in TypeScript. Otherwise it throws an error saying fmu can be undefined due to the ? optional operator.
                             new FormControl(instance.name, [Validators.required,
                             Validators.pattern("[^\.]*")])), <any>uniqueControlValidator)))
-                            
+
                 });
                 this.warnings = this.config.validate();
                 /*  }); */
@@ -87,39 +84,36 @@ export class MmConfigurationComponent {
     onNavigate(): boolean {
         if (!this.editing)
             return true;
-
         if (this.form?.valid) {
             if (confirm("Save your work before leaving?"))
                 this.onSubmit();
-
             return true;
         } else {
             return confirm("The changes to the configuration are invalid and can not be saved. Continue anyway?");
         }
     }
 
-    onSubmit() {
-        if (!this.editing) return;
-
+    async onSubmit() {
+        if (!this.editing)
+            return;
         this.warnings = this.config?.validate() ?? [];
-
-        if (this.warnings.length > 0) return;
-        this.config?.save()
-            .then(() => {
-                this.selectOutputInstance(null);
-                this.selectParameterInstance(null);
-                this.change.emit(this.path);
-            }).catch(error => console.error("Error when submitting changes to mm: " + error));
-
+        if (this.warnings.length > 0)
+            return;
+        try {
+            await this.config?.save();
+            this.selectOutputInstance(null);
+            this.selectParameterInstance(null);
+            this.change.emit(this.path);
+        } catch (e) {
+            console.error("Error when submitting changes to mm: " + e);
+        }
         this.editing = false;
     }
 
     addFmu() {
         let fmu = this.config?.addFmu();
-
         let formArray = <FormArray>this.form?.get('fmus');
         let fmuArray = <FormArray>this.form?.get('instances');
-
         fmuArray.push(new FormArray([], <any>uniqueControlValidator)); //PL-TODO UniqueControlValidator threw same error down here previous fix (<any>) made this compile
         formArray.push(new FormControl(this.getFmuName(fmu), [Validators.required, Validators.pattern("[^{^}]*")]));
     }
@@ -127,14 +121,11 @@ export class MmConfigurationComponent {
     removeFmu(fmu: Fmu) {
         let fmuArray = <FormArray>this.form?.get('fmus');
         let index = this.config?.fmus.indexOf(fmu);
-
         if (this.selectedInstanceFmu === fmu)
             this.selectInstanceFmu(null);
-
         this.config?.fmuInstances
             .filter(instance => instance.fmu === fmu)
             .forEach(instance => this.removeInstanceFromForm(instance));
-
         if (index != null)
             fmuArray.removeAt(index);
         this.config?.removeFmu(fmu);
@@ -154,11 +145,9 @@ export class MmConfigurationComponent {
         fmu.name = `{${name}}`;
     }
 
-    setFmuPath(fmu: Fmu, path: string) {
-        fmu
-            .updatePath(path)
+    async setFmuPath(fmu: Fmu, path: string): Promise<void> {
+        fmu.updatePath(path)
             .then(() => this.zone.run(() => { })).catch(error => console.error("Error in setting FMUpath: " + error));
-
         this.selectOutputInstance(null);
     }
 
@@ -324,17 +313,14 @@ export class MmConfigurationComponent {
         }
     }
 
-
-    createDisplayFmuPath(fmusRootPath: string, path: string): string {
+    async createDisplayFmuPath(fmusRootPath: string, path: string): Promise<string> {
 
         if (path.startsWith(fmusRootPath)) {
-            return Path.basename(path);
-        }
-        else {
+            return await CoSimulationStudioApi.basename(path);
+        } else {
             return path;
         }
     }
-
 
     getWarnings() {
         return this.warnings.filter(w => !(w instanceof ErrorMessage));

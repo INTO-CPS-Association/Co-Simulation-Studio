@@ -35,7 +35,6 @@ import {
     Fmu, Instance, ScalarVariableType, isTypeCompatipleWithValue,
     isTypeCompatiple, InstanceScalarPair, ScalarVariable
 } from "./fmu";
-import * as Path from 'path';
 import { ISerializable } from './serializable';
 import { CoSimulationStudioApi } from 'src/app/api';
 

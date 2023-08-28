@@ -29,29 +29,31 @@
  * See the CONTRIBUTORS file for author and contributor information. 
  */
 
-import * as Path from 'path';
 import { CoSimulationConfig } from './co-simulation-config';
 import { Serializer } from './parser';
 import { Instance, ScalarVariable } from './fmu';
+import { CoSimulationStudioApi } from 'src/app/api';
 
 export class CoeConfig {
 
 	constructor(private coSimConfig: CoSimulationConfig, private remoteCoe: boolean = false) {
 	}
 
-	toJSON(implodeMM?: any): string {
+	async toJSON(implodeMM?: any): Promise<string> {
 		let fmus: any = {};
-		this.coSimConfig.multiModel.fmus.forEach(fmu => {
+
+		for await (const fmu of this.coSimConfig.multiModel.fmus) {
 			let fmuPath;
-			if (this.remoteCoe) fmuPath = Path.join("session:", Path.basename(fmu.path));
-			else if (fmu.isNested()) {
+			if (this.remoteCoe) {
+				fmuPath = await CoSimulationStudioApi.join("session:", await CoSimulationStudioApi.basename(fmu.path));
+			} else if (fmu.isNested()) {
 				fmuPath = "coe:/" + fmu.path;
-			}
-			else {
+			} else {
 				fmuPath = "file:///" + fmu.path
 			}
 			fmus[fmu.name] = fmuPath.replace(/\\/g, "/").replace(/ /g, "%20");
-		});
+		}
+
 		// Add the implode fmu
 		if (implodeMM) {
 			for (let key in implodeMM.fmus) {
@@ -115,16 +117,12 @@ export class CoeConfig {
 
 		if (data["graphs"])
 			delete data["graphs"];
-
-
-
 		if (!data["livestreamInterval"])
 			delete data["livestreamInterval"];
 		if (!data["visible"])
 			delete data["visible"];
 		if (!data["loggingOn"])
 			delete data["loggingOn"];
-
 		if (data["overrideLogLevel"] === null || data["overrideLogLevel"] === "Not set")
 			delete data["overrideLogLevel"];
 

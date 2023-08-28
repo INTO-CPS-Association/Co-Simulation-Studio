@@ -5,7 +5,6 @@
 		<p>Path: {{path}}</p>
 	</div>
 </div>
-
 <form *ngIf="config" [formGroup]="$any(form)" (ngSubmit)="onSubmit()" #configForm="ngForm">
 	<button *ngIf="!editing" class="btn btn-default" (click)="editing = true">
 		<span class="glyphicon glyphicon-edit" aria-hidden="true"></span> Edit
@@ -13,14 +12,11 @@
 	<button *ngIf="editing" class="btn btn-default" [disabled]="!configForm.form.valid">
 		<span class="glyphicon glyphicon-floppy-saved" aria-hidden="true"></span> Save
 	</button>
-
-
 	<h4>FMUs
 		<button *ngIf="editing" type="button" (click)="addFmu()" class="btn btn-default btn-xs">
 			<span class="glyphicon glyphicon-plus"></span>
 		</button>
 	</h4>
-
 	<div class="row">
 		<div class="col-md-3">
 			<label>Keys</label>
@@ -29,7 +25,6 @@
 			<label>Paths</label>
 		</div>
 	</div>
-
 	<div id="fmu{{i}}" class="row" *ngFor="let fmu of config.fmus; let i=index">
 		<div class="col-md-3 form-group">
 			<p *ngIf="!editing" class="form-control-static">{{getFmuName(fmu)}}</p>
@@ -53,11 +48,8 @@
 			</button>
 		</div>
 	</div>
-
 	<hr>
-
 	<h4>FMU instances</h4>
-
 	<div class="row">
 		<div class="col-md-6">
 			<label>FMU</label>
@@ -93,11 +85,8 @@
 			</div>
 		</div>
 	</div>
-
 	<hr>
-
 	<h4>Connections</h4>
-
 	<div class="row">
 		<div class="col-md-3">
 			<h5>
@@ -108,7 +97,6 @@
 				 class="list-group-item" id="outputinstance{{instance.name}}">{{instance.fmu.name}}.{{instance.name}}</a>
 			</ul>
 		</div>
-
 		<div class="col-md-3">
 			<h5>
 				<label>Output variable</label>
@@ -120,18 +108,15 @@
 				</a>
 			</ul>
 		</div>
-
 		<div class="col-md-3">
 			<h5>
 				<label>Input instance</label>
 			</h5>
-
 			<ul *ngIf="selectedOutput" class="list-group">
 				<a *ngFor="let instance of config.fmuInstances" (click)="selectInputInstance(instance)" [class.active]="selectedInputInstance === instance"
 				 class="list-group-item" id="inputinstance{{instance.name}}">{{instance.fmu.name}}.{{instance.name}}</a>
 			</ul>
 		</div>
-
 		<div class="col-md-3">
 			<h5>
 				<label>Input variable</label>
@@ -145,11 +130,8 @@
 			</ul>
 		</div>
 	</div>
-
 	<hr>
-
 	<h4>Initial values of parameters</h4>
-
 	<div class="row">
 		<div class="col-md-3">
 			<h5>
@@ -181,7 +163,6 @@
 					</div>
 				</div>
 			</div>
-
 			<div *ngIf="selectedParameterInstance">
 				<div *ngFor="let initialValue of getInitialValues(); let i=index" class="row">
 					<div class="col-md-2">
@@ -211,9 +192,7 @@
 			</div>
 		</div>
 	</div>
-
 	<hr>
-
 	<div *ngIf="warnings.length > 0">
 		<strong>Please fix the following issues before saving:</strong>
 		<div *ngIf="getErrors().length>0">
@@ -224,7 +203,6 @@
 		</div>
 		<hr>
 	</div>
-
 	<button *ngIf="!editing" class="btn btn-default" (click)="editing = true">
 		<span class="glyphicon glyphicon-edit" aria-hidden="true"></span> Edit
 	</button>

@@ -11,7 +11,6 @@ export class MmPageComponent {
   path!: string;
   
   constructor() {
-    console.log("MMPAGECOMPONENT");
   }
 
 }

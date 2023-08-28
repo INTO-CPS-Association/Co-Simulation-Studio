@@ -1,9 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import * as Path from 'path';
-import * as fs from 'fs'; //FIXME not an angular library
-import IntoCpsApp from '../../classes/into-cps-app';
-
-const dialog: any = {};
+import { CoSimulationStudioApi } from 'src/app/api';
 
 @Component({
     selector: 'app-project-fetcher',
@@ -73,77 +69,78 @@ export function parsePercentage(data: string): string | null {
     return null;
 }
 
-export function fetchProjectThroughGit(url: string, targetFolder: string, updates: (data: string) => void) {
-    return new Promise((resolve, reject) => {
-        var spawn = require('child_process').spawn; //PL-TODO //FIXED by enforcing any type on line below
-        var spawn: any = function(...args: any) {};
+export async function fetchProjectThroughGit(url: string, targetFolder: string, updates: (data: string) => void) {
 
-        let childCwd = targetFolder;
+    var spawn = require('child_process').spawn; //PL-TODO //FIXED by enforcing any type on line below
+    var spawn: any = function (...args: any) { };
 
-        var name = url.substring(url.lastIndexOf('/') + 1);
+    let childCwd = targetFolder;
 
-        let index = name.lastIndexOf('.git');
-        if (index > 0) {
-            name = name.substring(0, index);
-        }
+    var name = url.substring(url.lastIndexOf('/') + 1);
 
-        let repoPath = Path.join(childCwd, name);
-        let repoProjectFile = Path.join(repoPath, ".project.json");
+    let index = name.lastIndexOf('.git');
+    if (index > 0) {
+        name = name.substring(0, index);
+    }
 
-        var repoExists = false;
-        try {
-            fs.accessSync(repoProjectFile, fs.constants.R_OK); //FIXME not an angular library
-            repoExists = true;
+    let repoPath = await CoSimulationStudioApi.join(childCwd, name);
+    let repoProjectFile = Path.join(repoPath, ".project.json");
 
-        } catch (e) {
+    var repoExists = false;
+    try {
+        fs.accessSync(repoProjectFile, fs.constants.R_OK); //FIXME not an angular library
+        repoExists = true;
 
-        }
+    } catch (e) {
 
-        var mkdirp = require('mkdirp');
-        mkdirp.sync(childCwd);
+    }
 
-        var child: any = null;
+    var mkdirp = require('mkdirp');
+    mkdirp.sync(childCwd);
 
-        if (!repoExists) {
-            child = spawn('git', ['clone', "--depth", "1", "--progress", url], {
-                detached: false,
-                cwd: childCwd
-            });
-        } else {
-            child = spawn('git', ['pull', "--depth", "1", "--progress"], {
-                detached: false,
-                cwd: repoPath
-            });
-        }
+    var child: any = null;
 
-        child.stdout.on('data', (data: any) => {
-            if (updates) updates(data.toString());
+    if (!repoExists) {
+        child = spawn('git', ['clone', "--depth", "1", "--progress", url], {
+            detached: false,
+            cwd: childCwd
         });
-
-        child.stderr.on('data', (data: any) => {
-            if (updates) updates(data.toString());
+    } else {
+        child = spawn('git', ['pull', "--depth", "1", "--progress"], {
+            detached: false,
+            cwd: repoPath
         });
+    }
 
-        child.on('close', function (code: any) {
-            console.log('closing code: ' + code);
-            //Here you can get the exit code of the script
-        });
-
-        child.on('exit', async function (code: any) {
-            console.log('exit code: ' + code);
-            //Here you can get the exit code of the script
-
-
-            let p = await IntoCpsApp.getInstance()?.loadProject(repoProjectFile);
-            if (p != null)
-                IntoCpsApp.getInstance()?.setActiveProject(p);
-
-            if (code === 0)
-                resolve(code);
-            else
-                reject(code);
-        });
-        //    var fork = require("child_process").fork,
-        //   child = fork(__dirname + "/start-coe.js");
+    child.stdout.on('data', (data: any) => {
+        if (updates) updates(data.toString());
     });
+
+    child.stderr.on('data', (data: any) => {
+        if (updates) updates(data.toString());
+    });
+
+    child.on('close', function (code: any) {
+        console.log('closing code: ' + code);
+        //Here you can get the exit code of the script
+    });
+
+    child.on('exit', async function (code: any) {
+        console.log('exit code: ' + code);
+        //Here you can get the exit code of the script
+
+
+        let p = await IntoCpsApp.getInstance()?.loadProject(repoProjectFile);
+        if (p != null)
+            IntoCpsApp.getInstance()?.setActiveProject(p);
+
+        if (code === 0)
+            resolve(code);
+        else
+            reject(code);
+    });
+
+    //    var fork = require("child_process").fork,
+    //   child = fork(__dirname + "/start-coe.js");
+
 }

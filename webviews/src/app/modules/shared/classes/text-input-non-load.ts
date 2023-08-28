@@ -125,6 +125,7 @@ export class TextInputNonLoad {
             iconElement.classList.remove(classToRemove);
         if (!iconElement.classList.contains(classToAdd)) { iconElement.classList.add(classToAdd); }
     }
+    
     private okEditClicked(event?: MouseEvent) {
         if (this.state == TextInputState.OK) {
             this.setState(TextInputState.EDIT);
@@ -148,7 +149,6 @@ export class TextInputNonLoad {
         } else {
             alert("The key already exists");
         }
-
     }
 
     getContainer() {

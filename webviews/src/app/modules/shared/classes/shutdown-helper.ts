@@ -29,22 +29,15 @@
  * See the CONTRIBUTORS file for author and contributor information. 
  */
 
+import { CoSimulationStudioApi } from 'src/app/api';
+import {Converter} from 'showdown';
 
-import { IntoCpsApp } from "./into-cps-app";
-import * as fs from 'fs';
-import * as Path from 'path';
-
-export function getHtml(markdownFilePath: string): string | null {
-	var showdown = require('showdown'),
-		converter = new showdown.Converter()
-
-	//let markdownFilePath = Path.join(IntoCpsApp.getInstance().getActiveProject().getRootFilePath(), "Readme.md");
-	if (fs.existsSync(markdownFilePath)) {
-		var text = "" + fs.readFileSync(markdownFilePath);
-		text = text.split("](").join("](" + IntoCpsApp.getInstance().getActiveProject().getRootFilePath() + "/")
-		let html = converter.makeHtml(text);
-
-		return html;
+export async function getHtml(markdownFilePath: string): Promise<string | null> {
+	const converter = new Converter()
+	if (await CoSimulationStudioApi.exists(markdownFilePath)) {
+		var text = "" + await CoSimulationStudioApi.readFile(markdownFilePath);
+		text = text.split("](").join("](" + await CoSimulationStudioApi.getRootFilePath() + "/")
+		return converter.makeHtml(text);
 	}
 	return null;
 }

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-//FIXME None non-angular interfaces found
+
 @Component({
   selector: 'app-checkbox-setting',
   templateUrl: './checkbox-setting.component.html',

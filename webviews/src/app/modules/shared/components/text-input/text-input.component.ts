@@ -9,7 +9,6 @@ export enum TextInputState {
 
 type editButtonGlyphicons = "glyphicon-ok" | "glyphicon-pencil";
 
-
 @Component({
   selector: 'app-text-input',
   template: '<input [(ngModel)]="text">',

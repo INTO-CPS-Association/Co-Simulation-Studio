@@ -38,9 +38,7 @@ import {
 import { CoeConfig } from "./coe-config"
 import IntoCpsApp from "./into-cps-app";
 import { Serializer } from "./parser";
-import * as fs from "fs"
 import * as xml2js from 'xml2js';
-import * as path from "path"
 import { CoSimulationStudioApi } from 'src/app/api';
 
 type valueReference = number;

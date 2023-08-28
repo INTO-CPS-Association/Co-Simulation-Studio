@@ -1,9 +1,5 @@
 import { Injectable } from '@angular/core';
-import Settings from '../classes/settings';
-import IntoCpsApp from '../classes/into-cps-app';
 import { CoSimulationStudioApi } from 'src/app/api';
-
-export { SettingKeys } from "../classes/setting-keys";
 
 @Injectable({
   providedIn: 'root'

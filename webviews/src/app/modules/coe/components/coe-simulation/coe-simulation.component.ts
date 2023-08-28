@@ -1,12 +1,10 @@
 import { Component, Input, NgZone, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
+import { CoSimulationStudioApi } from 'src/app/api';
 import { CoSimulationConfig } from 'src/app/modules/shared/classes/co-simulation-config';
 import { Message, WarningMessage } from 'src/app/modules/shared/classes/messages';
 import { maestroVersions } from 'src/app/modules/shared/services/maestro-api.service';
 import { CoeSimulationService } from '../../services/coe-simulation.service';
-import IntoCpsApp from 'src/app/modules/shared/classes/into-cps-app';
-
-const shell: any = {};
 
 @Component({
   selector: 'app-coe-simulation',
@@ -98,21 +96,18 @@ export class CoeSimulationComponent {
   }
 
   async parseConfig() {
-    //FIXME: This is a non angular Interface
-    let project = IntoCpsApp.getInstance()?.getActiveProject();
+
     this.parsing = true;
 
     CoSimulationConfig.parse(
       this.path,
-      project?.getRootFilePath() ?? "",
-      await project?.getFmusPath() ?? ""
+      await CoSimulationStudioApi.getRootFilePath(),
+      await CoSimulationStudioApi.getFmusPath()
     ).then(config =>
       this.zone.run(async () => {
         this.config = config;
-
         this.mmWarnings = this.config.multiModel.validate();
         this.coeWarnings = await this.config.validate();
-
         this.parsing = false;
       })
     ).catch(error => console.error("error when parsing co-sim-config: " + error));
@@ -138,12 +133,13 @@ export class CoeSimulationComponent {
       this.postScriptOutput = "";
       this.simulating = true;
     });
-    //FIXME: This is a non angular Interface
+
     const errorReportCB = (hasError: boolean, message: string, hasWarning?: boolean, stopped?: boolean) => {
       this.zone.run(() => {
         this.errorHandler(hasError, message, hasWarning, stopped);
       });
     }
+
     const simCompletedCB = () => {
       this.zone.run(() => {
         this.hasRunSimulation = true;
@@ -151,7 +147,6 @@ export class CoeSimulationComponent {
       });
     }
 
-    //FIXME: This is a non angular Interface
     const postScriptOutputReportCB = (hasError: boolean, message: string) => {
       this.zone.run(() => {
         this.postScriptOutputHandler(hasError, message);
@@ -167,8 +162,8 @@ export class CoeSimulationComponent {
     }
   }
 
-  onOpenResultsFolder() {
-    shell.openPath(this.coeSimulation.getResultsDir());
+  async onOpenResultsFolder(): Promise<void> {
+    await CoSimulationStudioApi.openPath(this.coeSimulation.getResultsDir());
   }
 
   stopSimulation() {
@@ -178,7 +173,6 @@ export class CoeSimulationComponent {
     this.coeSimulation.stop();
   }
 
-  //FIXME: This is a non angular Interface
   errorHandler(hasError: boolean, message: string, hasWarning: boolean = false, stopped?: boolean) {
     if (stopped) {
       var warning = new Message("Co-simulation stopped. COE status OK");
@@ -201,7 +195,6 @@ export class CoeSimulationComponent {
     if (hasError) this.simulating = false;
   }
 
-  //FIXME: This is a non angular Interface
   postScriptOutputHandler(hasError: boolean, message: string) {
     this.hasPostScriptOutput = true;
     this.hasPostScriptOutputError = hasError;

@@ -29,8 +29,6 @@
  * See the CONTRIBUTORS file for author and contributor information. 
  */
 
-import * as fs from 'fs';
-import * as Path from 'path';
 let JSZip = require("jszip");
 import { NgZone } from '@angular/core';
 //import { reject } from 'bluebird';
@@ -44,7 +42,6 @@ export class Fmu {
 	logCategories: string[] = [];
 	system_platform!: string;
 	nested = false;
-
 
 	constructor(public name: string = "{FMU}", public path: string = "") {
 		async () => {

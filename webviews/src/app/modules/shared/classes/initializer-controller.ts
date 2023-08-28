@@ -29,7 +29,8 @@
  * See the CONTRIBUTORS file for author and contributor information. 
  */
 'use strict'
-import { IntoCpsAppEvents } from "./IntoCpsAppEvents";
+
+
 import { SettingKeys } from "./settings/SettingKeys";
 import { IntoCpsApp } from "./IntoCpsApp";
 import { CreateTDGProjectController } from "./rttester/CreateTDGProject";
@@ -43,17 +44,16 @@ import * as AddLTLQueryDialog from "./rttester/AddLTLQueryDialog";
 import { BrowserController } from "./proj/projbrowserview";
 import { IntoCpsAppMenuHandler } from "./IntoCpsAppMenuHandler";
 import { ViewController, IViewController } from "./iViewController";
-import * as CustomFs from "./custom-fs";
+import * as CustomFs from "../../../../../../extension/src/node/custom-fs";
 import * as SystemUtil from "./SystemUtil";
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 import { AppComponent } from './angular2-app/app.component';
-import * as fs from 'fs';
-import * as Path from 'path';
 import { DseConfiguration } from "./intocps-configurations/dse-configuration"
 import * as ShowdownHelper from "./showdownHelper";
-import { Overture } from "./overture";
+import { Overture } from "../../../../../../extension/src/node/overture";
 import { StatusBarHandler, PreviewHandler } from "./bottom"
 import { FmuImploder } from "./intocps-configurations/fmuImploder"
+
 interface MyWindow extends Window {
     ng2app: AppComponent;
 }
@@ -61,7 +61,6 @@ interface MyWindow extends Window {
 declare var window: MyWindow;
 declare var w2prompt: any;
 declare var w2alert: any;
-
 
 import { CoeViewController } from "./angular2-app/coe/CoeViewController";
 import { MmViewController } from "./angular2-app/mm/MmViewController";

@@ -31,11 +31,9 @@
 
 import { MultiModelConfig } from "./multi-model-config";
 import {
-    CoSimulationConfig, ICoSimAlgorithm, FixedStepAlgorithm, FmuMaxStepSizeConstraint, VariableStepAlgorithm, VariableStepConstraint,
+    ICoSimAlgorithm, FixedStepAlgorithm, FmuMaxStepSizeConstraint, VariableStepAlgorithm, VariableStepConstraint,
     ZeroCrossingConstraint, BoundedDifferenceConstraint, SamplingRateConstraint, LiveGraph
 } from "./co-simulation-config";
-import * as Path from 'path';
-import * as fs from 'fs';
 import { Fmu, InstanceScalarPair, Instance, ScalarVariable, CausalityType } from "./fmu";
 import { CoSimulationStudioApi } from 'src/app/api';
 
@@ -63,62 +61,58 @@ export class Parser {
     protected ALGORITHM_TYPE_VAR_CONSTRAINTS_TAG: string = "constraints";
 
     constructor() { }
-    public static fileExists(filePath: string) {
+
+    public static async fileExists(filePath: string): Promise<boolean> {
         try {
-            return fs.statSync(filePath).isFile() || fs.statSync(filePath).isDirectory();
-        }
-        catch (err) {
+            return await CoSimulationStudioApi.isFile(filePath) || await CoSimulationStudioApi.isDirectory(filePath);
+        } catch (e) {
             return false;
         }
     }
+
     //Parse fmus json tag
-    parseFmus(data: any, basePath: string): Promise<Fmu[]> {
+    async parseFmus(data: any, basePath: string): Promise<Fmu[]> {
 
         var fmus: Fmu[] = [];
+        var populates: Promise<void>[] = [];
 
-        return new Promise<Fmu[]>((resolve, reject) => {
-
-            var populates: Promise<void>[] = [];
-            try {
-                if (Object.keys(data).indexOf(this.FMUS_TAG) >= 0) {
-                    $.each(Object.keys(data[this.FMUS_TAG]), async (j, key) => {
-                        var description = "";
-                        var path = data[this.FMUS_TAG][key];
-                        let fmuExists = false;
-                        let fmu: Fmu | undefined =await (async () => {
-                            if ((<string>path).length > 0) {
-                                // The path can be one of two things:
-                                // A full path if the FMU is not located within the project folder.
-                                // A name of the file if the FMU is located within the project folder, and then basepath should be appended.
-                                let pathToFmu = Parser.fileExists(path) ? path : await CoSimulationStudioApi.normalize(basePath + "/" + path);
-                                if (Parser.fileExists(pathToFmu)) {
-                                    fmuExists = true;
-                                    return new Fmu(key, pathToFmu);
-                                }
-                            }
-                            if (!fmuExists) {
-                                return new Fmu(key);
-                            }
-                            // If the FMU has been removed from the directory, then return the FMU without a path
-
-                            return;
-                        })();
-                        if (fmuExists) {
-                            if (fmu != null)
-                                populates.push(fmu.populate());
+        if (Object.keys(data).indexOf(this.FMUS_TAG) >= 0) {
+            $.each(Object.keys(data[this.FMUS_TAG]), async (j, key) => {
+                var description = "";
+                var path = data[this.FMUS_TAG][key];
+                let fmuExists = false;
+                let fmu: Fmu | undefined = await (async () => {
+                    if ((<string>path).length > 0) {
+                        // The path can be one of two things:
+                        // A full path if the FMU is not located within the project folder.
+                        // A name of the file if the FMU is located within the project folder, and then basepath should be appended.
+                        let pathToFmu = (await Parser.fileExists(path)) ? path : await CoSimulationStudioApi.normalize(basePath + "/" + path);
+                        if (await Parser.fileExists(pathToFmu)) {
+                            fmuExists = true;
+                            return new Fmu(key, pathToFmu);
                         }
-                        if (fmu != null)
-                            fmus.push(fmu);
-                    });
-                }
-            } catch (e) {
-                reject(e);
-            }
+                    }
+                    if (!fmuExists) {
+                        return new Fmu(key);
+                    }
 
-            Promise.all(populates.map(p => p.catch(e => e)))
-                .then(() => resolve(fmus))
-                .catch(e => reject(e));
-        });
+                    // If the FMU has been removed from the directory, then return the FMU without a path
+                    return;
+                })();
+                if (fmuExists) {
+                    if (fmu != null)
+                        populates.push(fmu.populate());
+                }
+                if (fmu != null)
+                    fmus.push(fmu);
+            });
+        }
+        
+
+        Promise.all(populates.map(p => p.catch(e => e)))
+            .then(() => resolve(fmus))
+            .catch(e => reject(e));
+    
     }
 
 

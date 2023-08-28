@@ -29,12 +29,7 @@
  * See the CONTRIBUTORS file for author and contributor information. 
  */
 
-
 import IntoCpsApp from './into-cps-app';
-import * as fs from 'fs';
-import * as Path from 'path';
-
-
 
 const dialog = require('electron').remote.dialog;
 

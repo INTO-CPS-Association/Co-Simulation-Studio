@@ -29,8 +29,8 @@
  * See the CONTRIBUTORS file for author and contributor information. 
  */
 
-import * as fs from 'fs';
-import { CoeServerStatusUiController } from './coe-server-status-ui-controller';
+import { CoSimulationStudioApi } from 'src/app/api';
+import { CoeServerStatusUiController } from '../../../webviews/src/app/modules/shared/classes/coe-server-status-ui-controller';
 
 interface ReadDataObject {
 	readSize?: number
@@ -40,7 +40,7 @@ export class CoeLogPrinter {
 
 	maxFileReadSize!: number;
 	remainingMaxFileReadSize!: number;
-	callback: any /*(data: string, skip: boolean) => void*/;
+	callback: (data: string, skip: boolean) => void;
 	path!: string;
 	pathIsSet: boolean = false;
 	interval: number = 1000;
@@ -63,8 +63,8 @@ export class CoeLogPrinter {
 		this.remainingMaxFileReadSize = 5 * maxFileReadSize;
 	}
 
-	private getFileSize(path: string) {
-		return fs.statSync(path).size;
+	private async getFileSize(path: string): Promise<number> {
+		return await CoSimulationStudioApi.fileSize(path);
 	}
 
 	public stopPrintingRemaining() {
@@ -81,9 +81,9 @@ export class CoeLogPrinter {
 		this.printingRemainingIsActive = true;
 		// console.log(`Printing the remaining data from the COE log file with interval ${this.interval} ms.`)
 		// Check if there is still remaining data to be printed, and print it.
-		this.intervalHandle = setInterval(() => {
+		this.intervalHandle = setInterval(async () => {
 			let alteredFilePosition = false;
-			let currentFileSize = this.getFileSize(this.path);
+			let currentFileSize = await this.getFileSize(this.path);
 			if (currentFileSize != this.filePosition) {
 				if (currentFileSize - truncateSizeInBytes > this.filePosition) {
 					// Advance the file position
@@ -104,9 +104,9 @@ export class CoeLogPrinter {
 		}/* not part of newer node , this.interval*/);
 	}
 
-	public stopWatching() {
+	public async stopWatching(): Promise<void> {
 		if (this.pathIsSet) {
-			fs.unwatchFile(this.path);
+			await CoSimulationStudioApi.unwatchFile(this.path);
 		}
 	}
 
@@ -115,13 +115,13 @@ export class CoeLogPrinter {
 		this.callback = null;
 	}
 
-	private readFunction(path: string, currentSize: number, maxReadSize: number, alteredFilePosition: boolean, callback: (data: string, skip: boolean) => void): number | undefined {
+	private async readFunction(path: string, currentSize: number, maxReadSize: number, alteredFilePosition: boolean, callback: (data: string, skip: boolean) => void): number | undefined {
+		
 		let calcReadSize = (currentSize: number) => {
 			let readSize = currentSize - this.filePosition;
 			if (readSize > maxReadSize) {
 				return maxReadSize;
-			}
-			else {
+			} else {
 				return readSize;
 			}
 		}
@@ -133,7 +133,7 @@ export class CoeLogPrinter {
 			// console.log(`Info: CoeLogPrinter watching ${path} encountered a non-positive read size. Current size: ${currentSize} - Read size: ${readSize} - File position: ${this.filePosition}. 
 			// This is probably due to a log file rollover. Reinitializing and trying again.`);
 
-			currentSize = this.getFileSize(path);
+			currentSize = await this.getFileSize(path);
 			this.filePosition = 0;
 			readSize = calcReadSize(currentSize);
 			//console.log(`Info: CoeLogPrinter watching ${path} reinitialized. Current size: ${currentSize} - Read size: ${readSize} - File position: ${this.filePosition}`);
@@ -144,7 +144,7 @@ export class CoeLogPrinter {
 		}
 		else {
 			let buffer = new Buffer(readSize);
-			let fd = fs.openSync(path, 'r');
+			let fd = await .openSync(path, 'r');
 			fs.readSync(fd, buffer, 0, readSize, this.filePosition);
 			fs.closeSync(fd);
 
@@ -159,14 +159,16 @@ export class CoeLogPrinter {
 		}
 	}
 
-	public startWatching(path: string) {
+	public async startWatching(path: string): Promise<void> {
+		
 		if (this.pathIsSet) {
 			console.error(`Instance of coeLogPrinter is already watching ${this.path} and can therefore not watch ${path}`);
 			return;
 		}
+
 		this.path = path;
 		this.pathIsSet = true;
-		this.filePosition = this.getFileSize(path);
+		this.filePosition = await this.getFileSize(path);
 
 		fs.watchFile(this.path, { interval: this.interval }, (current: fs.Stats, previous: fs.Stats) => {
 			if (!this.printingRemainingIsActive)

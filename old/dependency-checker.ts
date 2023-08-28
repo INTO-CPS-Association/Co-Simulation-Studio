@@ -34,8 +34,8 @@ const dialog: any = {};
 const child_process: any = {};
 
 // check if java is running and which version no working
-export function dependencyCheckJava() {
-	var spawn = child_process.spawn("java", ["-version"], { shell: true });
+export async function dependencyCheckJava(): Promise<void> {
+	const spawn = child_process.spawn("java", ["-version"], { shell: true });
 	spawn.on("error", (err: any) => {
 		console.error(err);
 		return false;
@@ -58,7 +58,7 @@ export function dependencyCheckJava() {
 // check if python is running and which version no working
 
 export function dependencyCheckPythonVersion() {
-	var spawn = child_process.spawn("python", ["--version"]);
+	const spawn = child_process.spawn("python", ["--version"]);
 	spawn.on("error", (err: any) => {
 		console.error(err);
 		return false;
@@ -67,10 +67,10 @@ export function dependencyCheckPythonVersion() {
 	spawn.stderr.on("data", function (data: any) {
 		data = data.toString("utf8").split("\n")[0];
 		// the pythonVersion is false if the output from the spawn do not follow the stardard of: "Python *.*.*"
-		var pythonVersion = data.split(" ")[1] ? data.split(" ")[1] : false;
+		const pythonVersion = data.split(" ")[1] ? data.split(" ")[1] : false;
 		if (pythonVersion != false) {
 			// this converts a string of "*.*.*"" into a number *.*
-			var pythonversion = parseFloat(pythonVersion);
+			const pythonversion = parseFloat(pythonVersion);
 
 		} else if (pythonVersion === false) {
 			console.log(data);
@@ -92,8 +92,8 @@ export function dependencyCheckPythonVersion() {
 
 	spawn.stdout.on('data', function (data: any) {
 		data = data.toString("utf8").split("\n")[0];
-		var pythonVersion = data.split(" ")[1] ? data.split(" ")[1] : false;
-		var pythonversion = parseFloat(pythonVersion);
+		const pythonVersion = data.split(" ")[1] ? data.split(" ")[1] : false;
+		const pythonversion = parseFloat(pythonVersion);
 		if (pythonversion < 2.6 /* || pythonversion >= 3.0 */) {
 
 			console.log(pythonversion);
@@ -118,7 +118,7 @@ export function dependencyCheckPythonVersion() {
 				}
 			);
 		}
-	})
+	});
 
 	spawn.on("close", (code: any, signal: any) => {
 		// the shell returns != 0 if it fails to run python.

@@ -258,7 +258,7 @@
 	},
 	"scripts": {
 		"vscode:prepublish": "npm run compile",
-		"compile": "cd extension && tsc -b && && cd ../components && npm run build && cd ../webviews && npm run build && cd .. && webpack",
+		"compile": "cd extension && tsc -b && cd ../webviews && npm run build && cd .. && webpack",
 		"watch": "webpack --watch",
 		"package": "webpack --mode production --devtool hidden-source-map",
 		"lint": "eslint ./extension/src --ext .ts,.tsx",

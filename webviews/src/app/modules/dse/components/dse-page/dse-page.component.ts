@@ -9,7 +9,6 @@ export class DsePageComponent {
 
   @Input()
   path!: string;
-
   coeconfig: string = '';
 
   constructor() {
@@ -18,5 +17,5 @@ export class DsePageComponent {
   coeChangeEvent(config: string) {
     this.coeconfig = config;
   }
-  
+
 }

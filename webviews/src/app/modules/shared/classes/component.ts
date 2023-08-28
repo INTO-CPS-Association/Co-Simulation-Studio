@@ -30,31 +30,31 @@
  */
 
 export class Component {
+
 	private static hidden: string = "hidden";
-	static hide(element: HTMLElement) {
+
+	static hide(element: HTMLElement): void {
 		if (!element.classList.contains(this.hidden)) {
 			element.classList.add(this.hidden);
 		}
 	}
 
-	static show(element: HTMLElement) {
+	static show(element: HTMLElement): void {
 		if (element.classList.contains(this.hidden)) {
 			element.classList.remove(this.hidden);
 		}
 	}
 
-	static clearContainer(element: HTMLElement) {
+	static clearContainer(element: HTMLElement): void {
 		while (element.hasChildNodes()) {
 			if (element.lastChild != null)
 				element.removeChild(element.lastChild);
 		}
 	}
 
-	static changeId(element: HTMLElement, newId: string) {
+	static changeId(element: HTMLElement, newId: string): string {
 		element.id = newId;
 		return newId;
 	}
-
-
 
 }

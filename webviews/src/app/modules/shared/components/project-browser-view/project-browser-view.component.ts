@@ -1,6 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import * as fs from 'fs'
-import * as Path from "path";
 import { IntoCpsAppMenuHandler } from '../../classes/into-cps-app-menu-handler';
 import IntoCpsApp from '../../classes/into-cps-app';
 import { isResultValid } from '../../classes/result-config';
@@ -26,6 +24,7 @@ export class ProjectBrowserViewComponent implements OnInit {
     }
 
 }
+
 //FIXME Resolved the PL-todo however not sure if the callback now has the functionallity that was intented
 export class MenuEntry {
     id: string;

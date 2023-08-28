@@ -1,9 +1,8 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
-import * as Path from "path";
-import * as Fs from "fs"; //FIXME Non-angular interface
 import { SigverConfigurationService } from '../../services/sigver-configuration.service'; //FIXME Contains Non-angular interface
 import { maestroVersions } from 'src/app/modules/shared/services/maestro-api.service';
+import { CoSimulationStudioApi } from 'src/app/api';
 
 @Component({
 	selector: 'app-sigver-page',
@@ -26,11 +25,11 @@ export class SigverPageComponent {
 	set path(path: string) {
 		this._path = path;
 		this.sigverConfigurationService.configurationPath = this._path;
-		this.sigverConfigurationService
-			.loadConfigurationFromPath() //FIXME this function relies on Non-angular interface (fs) from '../../services/sigver-configuration.service'
-			.then(() => this.ensureResultPaths(Path.join(this.sigverConfigurationService.configurationPath, "..", "results", Path.sep)))
+		this.sigverConfigurationService.loadConfigurationFromPath()
+			.then(async () => this.ensureResultPaths(await CoSimulationStudioApi.join(this.sigverConfigurationService.configurationPath, "..", "results", await CoSimulationStudioApi.sep())))
 			.catch((err) => console.error(err));
 	}
+
 	get path(): string {
 		return this._path;
 	}
@@ -47,36 +46,26 @@ export class SigverPageComponent {
 		this._configurationChangedSub.unsubscribe();
 	}
 
-	ensureResultPaths(rootResultsPath: string): Promise<void> {
-		return new Promise<void>((resolve, reject) => {
-			this.verificationResultsPath = Path.join(rootResultsPath, "verification");
-			this.executionResultsPath = Path.join(rootResultsPath, "execution");
-			this.generationResultsPath = Path.join(rootResultsPath, "generation");
+	async ensureResultPaths(rootResultsPath: string): Promise<void> {
 
-			Promise.all([
-				this.ensureDirectoryExistence(this.verificationResultsPath).catch((err) => reject(err)),
-				this.ensureDirectoryExistence(this.executionResultsPath).catch((err) => reject(err)),
-				this.ensureDirectoryExistence(this.generationResultsPath).catch((err) => console.log(err)),
-			])
-				.then(() => resolve())
-				.catch((err) => reject(err));
-		});
+		this.verificationResultsPath = await CoSimulationStudioApi.join(rootResultsPath, "verification");
+		this.executionResultsPath = await CoSimulationStudioApi.join(rootResultsPath, "execution");
+		this.generationResultsPath = await CoSimulationStudioApi.join(rootResultsPath, "generation");
+
+		await this.ensureDirectoryExistence(this.verificationResultsPath);
+		await this.ensureDirectoryExistence(this.executionResultsPath);
+		await this.ensureDirectoryExistence(this.generationResultsPath);
+
 	}
 
-	ensureDirectoryExistence(filePath: string): Promise<void> {
-		return new Promise<void>((resolve, reject) => {
-			if (Fs.existsSync(filePath)) { //FIXME Non-angular interface
-				resolve();
-			}
-			Fs.promises.mkdir(filePath, { recursive: true }).then( //FIXME Non-angular interface
-				() => {
-					resolve();
-				},
-				(err) => {
-					reject(err);
-				}
-			);
-		});
+	async ensureDirectoryExistence(filePath: string): Promise<void> {
+
+		if (await CoSimulationStudioApi.exists(filePath)) {
+			return;
+		}
+
+		await CoSimulationStudioApi.mkdir(filePath, { recursive: true });
+
 	}
 
 }

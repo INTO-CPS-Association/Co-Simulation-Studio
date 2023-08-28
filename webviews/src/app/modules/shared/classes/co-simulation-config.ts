@@ -31,23 +31,16 @@
 
 import { MultiModelConfig } from "./multi-model-config"
 import { Parser, Serializer } from "./parser"
-
 import { Instance, ScalarVariable, InstanceScalarPair } from "./fmu";
 import { WarningMessage, ErrorMessage } from "./messages";
 import { FormArray, FormGroup, FormControl, Validators } from "@angular/forms";
-import {
-    numberValidator, integerValidator, lengthValidator,
-    uniqueGroupPropertyValidator, uniqueValidator
-} from "./validators";
-
-import * as Path from 'path';
-
+import { numberValidator, integerValidator, uniqueGroupPropertyValidator, lengthValidator, uniqueValidator } from "./validators";
 import { checksum } from "./project";
-import IntoCpsApp from "./into-cps-app";
 import { ISerializable } from './serializable';
 import { CoSimulationStudioApi } from 'src/app/api';
 
 export class CoSimulationConfig implements ISerializable {
+
     //project root required to resolve multimodel path
     projectRoot!: string;
 
@@ -117,8 +110,8 @@ export class CoSimulationConfig implements ISerializable {
 
     async saveOverride(): Promise<void> {
         //we consider this an explicit user action. Allowing CRC override
-        this.multiModelCrc = checksum(CoSimulationStudioApi.readFile(this.multiModel.sourcePath).toString(), "md5", "hex");
-        return this.save();
+        this.multiModelCrc = checksum(await CoSimulationStudioApi.readFile(this.multiModel.sourcePath), "md5", "hex");
+        await this.save();
     }
 
 
@@ -143,7 +136,7 @@ export class CoSimulationConfig implements ISerializable {
             messages.push(new ErrorMessage("Start time '" + this.startTime + "'must be smaller than end time '" + this.endTime + "'"));
         }
 
-        let multiModelCrcMatch = this.multiModelCrc == undefined || this.multiModelCrc === checksum((await CoSimulationStudioApi.readFile(this.multiModel.sourcePath)).toString(), "md5", "hex");
+        let multiModelCrcMatch = this.multiModelCrc == undefined || this.multiModelCrc === checksum(await CoSimulationStudioApi.readFile(this.multiModel.sourcePath), "md5", "hex");
         if (!multiModelCrcMatch) {
             return [new ErrorMessage("It looks like the multi-model was changed. Press Edit and Save in this screen to accept this change.")];
         }
@@ -162,26 +155,25 @@ export class CoSimulationConfig implements ISerializable {
     static async create(path: string, projectRoot: string, fmuRootPath: string, data: any): Promise<CoSimulationConfig> {
 
         const parser: Parser = new Parser();
-        let mmPath: string = Path.join(path, "..", "..", "mm.json");
+        let mmPath: string = await CoSimulationStudioApi.join(path, "..", "..", "mm.json");
         let locatedMM: boolean = true;
         if (!await CoSimulationStudioApi.exists(mmPath)) {
             console.warn("Could not find mm.json at: " + mmPath + " Searching for old style...")
             locatedMM = false;
             //no we have the old style
-            (await CoSimulationStudioApi.readdir(Path.join(path, "..", ".."))).forEach(async (file: string) => {
+            (await CoSimulationStudioApi.readdir(await CoSimulationStudioApi.join(path, "..", ".."))).forEach(async (file: string) => {
                 if (file.endsWith("mm.json")) {
                     locatedMM = true;
-                    mmPath = Path.join(path, "..", "..", file);
+                    mmPath = await CoSimulationStudioApi.join(path, "..", "..", file);
                     console.warn("Found deprecated style mm at: " + mmPath);
                     console.warn("Consider renaming:" + file + " to: mm.json");
-                    return;
                 }
             });
         }
         // Could not locate mm from path so try the relative saved mm path.
         if (!locatedMM) {
             console.warn("Unable to locate the multi-model configuration two levels above the co-simulation configuration path. Trying the saved relative multi-model path..");
-            const savedPath = Path.join(IntoCpsApp.getInstance()?.getActiveProject()?.getRootFilePath() ?? "", parser.parseSimpleTagDefault(data, "multimodel_path", ""));
+            const savedPath = await CoSimulationStudioApi.join((await CoSimulationStudioApi.getRootFilePath()) ?? "", parser.parseSimpleTagDefault(data, "multimodel_path", ""));
             if (!savedPath || !await CoSimulationStudioApi.exists(savedPath)) {
                 console.warn("Unable to load multi model for co-simulation configuration!");
             } else {
@@ -233,7 +225,6 @@ export interface ICoSimAlgorithm {
     getStepSize(): number;
     type: string;
     name: string;
-
 }
 
 export class LiveGraph {
@@ -259,6 +250,7 @@ export class LiveGraph {
     public setLivestream(livestream: Map<Instance, ScalarVariable[]>) {
         this.livestream = livestream;
     }
+
     fromObject(livestream: any, title: any) {
         this.title = title;
         console.log("fromObject");
@@ -268,6 +260,7 @@ export class LiveGraph {
         });
         console.log("fromObject");
     }
+
     toObject(): any {
 
         let livestream: any = {};
@@ -289,10 +282,10 @@ export class LiveGraph {
         });
     }
 
-
 }
 
 export class FixedStepAlgorithm implements ICoSimAlgorithm {
+
     type = "fixed-step";
     name = "Fixed Step";
 
@@ -315,6 +308,7 @@ export class FixedStepAlgorithm implements ICoSimAlgorithm {
             size: Number(this.size)
         };
     }
+
 }
 
 export class VariableStepAlgorithm implements ICoSimAlgorithm {
@@ -363,9 +357,11 @@ export interface VariableStepConstraint {
 }
 
 export class ZeroCrossingConstraint implements VariableStepConstraint {
+
     type = "zerocrossing";
     private static index: number = 0;
     public readonly name: string;
+
     constructor(
         public id: string = "zc",
         public ports: Array<InstanceScalarPair> = [],
@@ -374,7 +370,6 @@ export class ZeroCrossingConstraint implements VariableStepConstraint {
         public safety: number = 0.0
     ) {
         this.name = "order" + ZeroCrossingConstraint.index++;
-
     }
 
     toFormGroup() {
@@ -402,11 +397,10 @@ export class ZeroCrossingConstraint implements VariableStepConstraint {
 }
 
 export class FmuMaxStepSizeConstraint implements VariableStepConstraint {
+
     type = "fmumaxstepsize";
 
-    constructor(
-        public id: string = "maxstepsize"
-    ) {
+    constructor(public id: string = "maxstepsize") {
     }
 
     toFormGroup() {
@@ -427,6 +421,7 @@ export class FmuMaxStepSizeConstraint implements VariableStepConstraint {
 
 
 export class BoundedDifferenceConstraint implements VariableStepConstraint {
+
     type = "boundeddifference";
 
     constructor(
@@ -439,11 +434,10 @@ export class BoundedDifferenceConstraint implements VariableStepConstraint {
     ) {
     }
 
-
     toFormGroup() {
         return new FormGroup({
             id: new FormControl(this.id),
-            //ports: new FormControl(this.ports, [Validators.required, lengthValidator(1), uniqueValidator]),
+            ports: new FormControl(this.ports, [Validators.required, lengthValidator(1), uniqueValidator]),
             abstol: new FormControl(this.abstol, [Validators.required, numberValidator]),
             reltol: new FormControl(this.reltol, [Validators.required, numberValidator]),
             safety: new FormControl(this.safety, [Validators.required, numberValidator]),

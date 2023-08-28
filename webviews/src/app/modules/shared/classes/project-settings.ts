@@ -44,10 +44,8 @@
         this.owner[key] = value;
     }
 
-
     getValue(key: string): any {
         return this.owner[key];
     }
-
 
 }

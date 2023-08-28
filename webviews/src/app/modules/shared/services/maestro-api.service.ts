@@ -2,13 +2,9 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import JSZip from 'jszip';
 import { map, Subject, Subscription, timeout, timer } from 'rxjs';
-import { CoeProcess } from '../classes/coe-process';
-import * as fs from 'fs'
 import { SettingsService } from './settings.service';
-
-import IntoCpsApp from '../classes/into-cps-app';
-import { SettingKeys } from './settings.service';
 import { CoSimulationStudioApi } from 'src/app/api';
+import { SettingKeys } from '../classes/setting-keys';
 
 // Verificaiton DTO utilised by Maestro
 interface IVerificationDTO {
@@ -32,7 +28,6 @@ export enum maestroVersions {
   maestroV1 = 1,
   maestroV2 = 2
 }
-
 
 @Injectable({
   providedIn: 'root'
@@ -108,6 +103,7 @@ export class MaestroApiService {
 
   getResults(resultsPath: string, simulationSessionId: string): Promise<void> {
     return new Promise<void>((resolve, reject) => {
+      /* PL-TODO
       var resultsStream = fs.createWriteStream(resultsPath);
       CoSimulationStudioApi.httpGet(`http://${this.coeUrl}/result/${simulationSessionId}/zip`).subscribe((response: any) => {
         if (response.statusCode != 200) {
@@ -118,6 +114,7 @@ export class MaestroApiService {
           resolve();
         });
       });
+      */
     });
   }
 

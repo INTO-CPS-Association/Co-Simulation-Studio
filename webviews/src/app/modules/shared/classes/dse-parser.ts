@@ -32,7 +32,6 @@
 import { ParetoDimension, DseConfiguration, DseParameterConstraint, DseScenario, DseObjectiveConstraint, IDseObjective, ObjectiveParam, ExternalScript, IDseAlgorithm, DseParameter, IDseRanking, ParetoRanking, GeneticSearch, ExhaustiveSearch } from "./dse-configuration"
 import { Fmu, InstanceScalarPair, Instance, ScalarVariable, CausalityType } from "./fmu";
 
-
 export class DseParser {
     protected SEARCH_ALGORITHM_TAG: string = "algorithm"
     protected SEARCH_ALGORITHM_TYPE: string = "type"

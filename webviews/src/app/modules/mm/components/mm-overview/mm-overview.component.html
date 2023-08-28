@@ -6,11 +6,9 @@
         <label>Inputs</label>
     </div>
 </div>
-
 <div *ngIf="config">
     <div *ngFor="let output of getOutputs()" class="row">
         <hr>
-
         <div class="col-md-6">
             <h5>{{output.name}}</h5>
         </div>
@@ -20,9 +18,7 @@
             </div>
         </div>
     </div>
-
     <hr>
-
     <div *ngIf="warnings.length > 0">
         <strong>Please fix the following issues before saving:</strong>
         <div *ngIf="getErrors().length>0">

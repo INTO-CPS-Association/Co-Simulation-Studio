@@ -9,14 +9,12 @@ import { InstanceScalarPair } from 'src/app/modules/shared/classes/fmu';
     styleUrls: ['./bounded-difference.component.scss']
 })
 export class BoundedDifferenceComponent {
-    // FIXME non-agular interface 
+    
     @Input()
     constraint!: BoundedDifferenceConstraint;
 
-    // FIXME non-agular interface 
     @Input()
     ports: Array<InstanceScalarPair> = [];
- 
 
     @Input()
     formGroup!: FormGroup;

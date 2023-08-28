@@ -1,14 +1,14 @@
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
-import { Reactivity, SigverConfiguration } from '../../shared/classes/configuration/sigver-configuration';
-import * as fs from "fs";
+import { CoSimulationStudioApi } from 'src/app/api';
+import { Reactivity, SigverConfiguration } from '../../shared/classes/sigver-configuration';
 
 @Injectable({
-  providedIn: 'root'
+	providedIn: 'root'
 })
 export class SigverConfigurationService {
 
-  private _configuration: SigverConfiguration = new SigverConfiguration();
+	private _configuration: SigverConfiguration = new SigverConfiguration();
 	private _configurationChanged = new Subject<boolean>();
 	private _configurationLoaded = new Subject<boolean>();
 
@@ -19,6 +19,7 @@ export class SigverConfigurationService {
 	public isDefaultConfiguration: boolean = true;
 
 	public set configuration(sigverConfiguration: SigverConfiguration) {
+
 		// Search for changes that invalidates the masterModel
 		let resetMasterModel: boolean = false;
 		if (sigverConfiguration.masterModel != "") {
@@ -29,6 +30,7 @@ export class SigverConfigurationService {
 				}
 			}
 		}
+
 		this._configuration = sigverConfiguration;
 		this.isDefaultConfiguration = this._configuration.experimentPath == "";
 		if (resetMasterModel) {
@@ -36,40 +38,36 @@ export class SigverConfigurationService {
 		}
 
 		this.configurationChanged();
+
 	}
 
 	public get configuration(): SigverConfiguration {
 		return this._configuration;
 	}
 
-	loadConfigurationFromPath(path: string = ""): Promise<void> {
-		return new Promise<void>((resolve, reject) => {
-			let filePath = path == "" ? this.configurationPath : path;
-			fs.readFile(filePath, (fileErr, fileData) => {
-				if (fileErr) {
-					reject(`Unable to read configuration file from: ${filePath} due to: ${fileErr}`);
-				}
-				SigverConfiguration.parse(JSON.parse(fileData.toString()))
-					.then((res) => {
-						this.configuration = res;
-						this.configurationLoaded();
-						resolve();
-					})
-					.catch((err) => {
-						reject(`Unable to set configuration from file: ${filePath} due to: ${err}`);
-					});
-			});
-		});
+	async loadConfigurationFromPath(path: string = ""): Promise<void> {
+		const filePath = path == "" ? this.configurationPath : path;
+		try {
+			const fileData = await CoSimulationStudioApi.readFile(filePath);
+			try {
+				this.configuration = await SigverConfiguration.parse(JSON.parse(fileData));
+				this.configurationLoaded();
+			} catch (e) {
+				throw new Error(`Unable to set configuration from file: ${filePath} due to: ${e}`);
+			}
+		} catch (e) {
+			throw new Error(`Unable to read configuration file from: ${filePath} due to: ${e}`);
+		}
 	}
 
 	configurationChanged() {
 		this._configurationChanged.next(true);
 	}
 
-	saveConfiguration(path: string = ""): boolean {
+	async saveConfiguration(path: string = ""): Promise<boolean> {
 		try {
-			fs.writeFileSync(path == "" ? this.configurationPath : path, JSON.stringify(this._configuration.toObject()));
-			fs.writeFileSync(this.configuration.coePath, JSON.stringify(this._configuration.coeConfig.toObject()));
+			await CoSimulationStudioApi.writeFile(path == "" ? this.configurationPath : path, JSON.stringify(this._configuration.toObject()));
+			await CoSimulationStudioApi.writeFile(this.configuration.coePath, JSON.stringify(this._configuration.coeConfig.toObject()));
 		} catch (err) {
 			console.error(`Unable to write configuration to file: ${err}`);
 			return false;
@@ -107,5 +105,5 @@ export class SigverConfigurationService {
 	private configurationLoaded() {
 		this._configurationLoaded.next(true);
 	}
-  
+
 }

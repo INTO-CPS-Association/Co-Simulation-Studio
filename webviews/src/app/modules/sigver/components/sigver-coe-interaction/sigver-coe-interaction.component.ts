@@ -1,20 +1,19 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Subscription } from 'rxjs';
+import { CoSimulationStudioApi } from 'src/app/api';
 import { MaestroApiService, maestroVersions } from 'src/app/modules/shared/services/maestro-api.service';
 import { SigverConfigurationService } from '../../services/sigver-configuration.service';
-import * as Fs from "fs"; //FIXME Non-angular library
-import * as Path from "path"; //not used as ive commented the section where it is used
 
 @Component({
 	selector: 'app-sigver-coe-interaction',
 	templateUrl: './sigver-coe-interaction.component.html',
 	styleUrls: ['./sigver-coe-interaction.component.scss']
 })
-export class SigverCoeInteractionComponent  {
+export class SigverCoeInteractionComponent {
 
-	 _configurationChangedSub: Subscription;
-	 _coeIsOnlineSub: Subscription;
+	_configurationChangedSub: Subscription;
+	_coeIsOnlineSub: Subscription;
 
 	videoUrl: any;
 
@@ -37,9 +36,8 @@ export class SigverCoeInteractionComponent  {
 
 	constructor(public maestroApiService: MaestroApiService, private sanitizer: DomSanitizer, public sigverConfigurationService: SigverConfigurationService) {
 		this._coeIsOnlineSub = this.maestroApiService.startMonitoringOnlineStatus(
-			(isOnline) => (this.isCoeOnline = isOnline && maestroApiService.getMaestroVersion() == maestroVersions.maestroV2)
+			async (isOnline) => (this.isCoeOnline = isOnline && (await maestroApiService.getMaestroVersion()) == maestroVersions.maestroV2)
 		);
-
 		this._configurationChangedSub = this.sigverConfigurationService.configurationChangedObservable.subscribe(() => {
 			this.handleConfigurationChanges();
 		});
@@ -127,17 +125,13 @@ export class SigverCoeInteractionComponent  {
 		}
 	}
 
-	writeFileToDir(file: File, dirPath: string): Promise<void> {
-		return new Promise<void>((resolve, reject) => {
-			file
-				.arrayBuffer()
-				.then((arrBuff) => {
-					/*const writeStream = Fs.createWriteStream(Path.join(dirPath, file.name)); //FIXME Non-angular library Not sure how to stub it as the "writestream" object is also Fs
-					writeStream.write(Buffer.from(arrBuff));
-					writeStream.close(); */
-					resolve();
-				})
-				.catch((err) => reject(`Error occurred when writing file to path ${dirPath}: ${err}`));
-		});
+	async writeFileToDir(file: File, dirPath: string): Promise<void> {
+		try {
+		const filePath = await CoSimulationStudioApi.join(dirPath, file.name);
+		await CoSimulationStudioApi.writeFile(filePath, new TextDecoder("utf-8").decode(await file.arrayBuffer()));
+		} catch (e) {
+			throw new Error(`Error occurred when writing file to path ${dirPath}: ${e}`);
+		}
 	}
+
 }

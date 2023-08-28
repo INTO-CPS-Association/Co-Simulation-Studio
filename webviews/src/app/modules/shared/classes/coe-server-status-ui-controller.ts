@@ -29,13 +29,11 @@
  * See the CONTRIBUTORS file for author and contributor information. 
  */
 
+import { CoSimulationStudioApi } from 'src/app/api';
+
 // typescript:
 /* import {remote} from "electron"; */
 // javascript:
-
-import IntoCpsApp from './into-cps-app';
-
-const remote: any = {};
 
 export enum UICrtlType { Console, Log };
 
@@ -61,8 +59,9 @@ export class CoeServerStatusUiController {
 	public clearOutput() {
 		let div = this.outputDiv;
 		while (div != null && div.hasChildNodes()) {
-			if (div.firstChild != null)
+			if (div.firstChild != null) {
 				div.removeChild(div.firstChild);
+			}
 		}
 	}
 
@@ -108,8 +107,8 @@ export class CoeServerStatusUiController {
 		this.buffer = new DocumentFragment();
 	}
 
-	private setStatusIcons() {
-		var coe = IntoCpsApp.getInstance()?.getCoeProcess();
+	private async setStatusIcons() {
+		var coe = await CoSimulationStudioApi.getCoeProcess();
 		var ss = <HTMLSpanElement>document.getElementById("stream-status");
 
 		if (coe?.isLogRedirectActive() && coe?.isRunning()) {

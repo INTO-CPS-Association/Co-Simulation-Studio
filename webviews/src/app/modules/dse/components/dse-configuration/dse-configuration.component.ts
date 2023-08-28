@@ -3,17 +3,13 @@ import { FormGroup, FormArray, FormControl } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { DseConfiguration, DseObjectiveConstraint, DseParameter, DseParameterConstraint, DseScenario, ExhaustiveSearch, ExternalScript, GeneticSearch, IDseAlgorithm, InternalFunction, ParetoDimension, ParetoRanking } from 'src/app/modules/shared/classes/dse-configuration';
 import { Instance, ScalarVariable, isCausalityCompatible, CausalityType, ScalarValuePair, ScalarVariableType } from 'src/app/modules/shared/classes/fmu';
-import IntoCpsApp from 'src/app/modules/shared/classes/into-cps-app';
 import { WarningMessage } from 'src/app/modules/shared/classes/messages';
-import { Project } from 'src/app/modules/shared/classes/project';
 import { SettingKeys } from 'src/app/modules/shared/classes/setting-keys';
 import { MaestroApiService } from 'src/app/modules/shared/services/maestro-api.service';
 import { NavigationService } from 'src/app/modules/shared/services/navigation.service';
-
-import * as Path from 'path';
-import * as fs from 'fs';
-
 import { Serializer } from 'src/app/modules/shared/classes/parser';
+import { CoSimulationStudioApi } from 'src/app/api';
+import { Project } from 'src/app/modules/shared/classes/project';
 
 @Component({
     selector: 'app-dse-configuration',
@@ -22,19 +18,19 @@ import { Serializer } from 'src/app/modules/shared/classes/parser';
 })
 export class DseConfigurationComponent {
 
-     _path!: string;
-     _coeIsOnlineSub: Subscription;
+    _path!: string;
+    _coeIsOnlineSub: Subscription;
+
     @Input()
     set path(path: string) {
         this._path = path;
-
         if (path) {
-            //let app: IntoCpsApp = IntoCpsApp.getInstance();
-            //let p: string = app.getActiveProject().getRootFilePath();
-            //this.cosimConfig = this.loadCosimConfigs(Path.join(p, Project.PATH_MULTI_MODELS));
-
+            CoSimulationStudioApi.getRootFilePath().then(async (path: string) => {
+                this.cosimConfig = await this.loadCosimConfigs(await CoSimulationStudioApi.join(path, Project.PATH_MULTI_MODELS));
+            });
         }
     }
+
     get path(): string {
         return this._path;
     }
@@ -67,24 +63,24 @@ export class DseConfigurationComponent {
     dseWarnings: WarningMessage[] = [];
     coeWarnings: WarningMessage[] = [];
 
-     onlineInterval!: number;
+    onlineInterval!: number;
 
-     selectedParameterInstance!: Instance;
+    selectedParameterInstance!: Instance;
 
-     newParameter!: ScalarVariable | null;
+    newParameter!: ScalarVariable | null;
 
-     algorithmConstructors = [
+    algorithmConstructors = [
         ExhaustiveSearch,
         GeneticSearch
     ];
 
     //Collection of arrays to use for drop-boxes. Some may be expanded as the backend is developed
-     geneticPopulationDistribution = ["random"];//To add in when backend works["random", "uniform"];
-     geneticParentSelectionStrategy = ["random"];//["random", "algorithmObjectiveSpace","algorithmDesignSpace"];
-     internalFunctionTypes = ["max", "min", "mean"];
-     externalScriptParamTp = ["model output", "constant", "simulation value"];
-     simulationValue = ["step-size", "time"];
-     paretoDirections = ["-", "+"];
+    geneticPopulationDistribution = ["random"];//To add in when backend works["random", "uniform"];
+    geneticParentSelectionStrategy = ["random"];//["random", "algorithmObjectiveSpace","algorithmDesignSpace"];
+    internalFunctionTypes = ["max", "min", "mean"];
+    externalScriptParamTp = ["model output", "constant", "simulation value"];
+    simulationValue = ["step-size", "time"];
+    paretoDirections = ["-", "+"];
 
 
     constructor(private maestroApiService: MaestroApiService, private zone: NgZone, private navigationService: NavigationService) {
@@ -98,9 +94,8 @@ export class DseConfigurationComponent {
     }
 
     async parseConfig(mmPath: string) {
-        let project = IntoCpsApp.getInstance()?.getActiveProject();
         DseConfiguration
-            .parse(this.path, project?.getRootFilePath() ?? "", await project?.getFmusPath() ?? "", mmPath)
+            .parse(this.path, await CoSimulationStudioApi.getRootFilePath(), await CoSimulationStudioApi.getFmusPath(), mmPath)
             .then(config => {
                 this.zone.run(() => {
                     this.config = config;
@@ -122,9 +117,8 @@ export class DseConfigurationComponent {
 
                     // Create a form group for validation
                     this.form = new FormGroup({
-                        //searchAlgorithm: this.algorithmFormGroups.get(this.config.searchAlgorithm),
+                        searchAlgorithm: <any>this.algorithmFormGroups.get(this.config.searchAlgorithm),
                         paramConstraints: new FormArray(this.config.paramConst.map(c => new FormControl(c))),
-
                         objConstraints: new FormArray(this.config.objConst.map(c => new FormControl(c))),
                         extscr: new FormArray(this.config.extScrObjectives.map(s => new FormControl(s))),
                         scenarios: new FormArray(this.config.scenarios.map(s => new FormControl(s)))
@@ -205,71 +199,68 @@ export class DseConfigurationComponent {
 
 
 
-    getFiles(path: string): string[] {
+    async getFiles(path: string): Promise<string[]> {
         var fileList: string[] = [];
-        var files = fs.readdirSync(path);
+        var files = await CoSimulationStudioApi.readdir(path);
         for (var i in files) {
-            var name = Path.join(path, files[i]);
-            if (fs.statSync(name).isDirectory()) {
-                fileList = fileList.concat(this.getFiles(name));
+            var name = await CoSimulationStudioApi.join(path, files[i]);
+            if (await CoSimulationStudioApi.isDirectory(name)) {
+                fileList = fileList.concat(await this.getFiles(name));
             } else {
                 fileList.push(name);
             }
         }
-
         return fileList;
     }
 
-    loadCosimConfigs(path: string): string[] {
-        var files: string[] = this.getFiles(path);
+    async loadCosimConfigs(path: string): Promise<string[]> {
+        var files: string[] = await this.getFiles(path);
         return files.filter(f => f.endsWith("coe.json"));
     }
 
-    experimentName(path: string): string {
-        let elems = path.split(Path.sep);
+    async experimentName(path: string): Promise<string> {
+        let elems = path.split(await CoSimulationStudioApi.sep());
         let mm: string = elems[elems.length - 2];
         let ex: string = elems[elems.length - 3];
         return mm + " | " + ex;
     }
 
-    getMultiModelName(): string {
+    async getMultiModelName(): Promise<string> {
         return this.experimentName(this.mmPath);
     }
 
-    onConfigChange(config: string) {
+    async onConfigChange(config: string): Promise<void> {
         this.parseError = null;
         this.coeconfig = config;
-        let mmPath = Path.join(this.coeconfig, "..", "..", "mm.json");
+        let mmPath = await CoSimulationStudioApi.join(this.coeconfig, "..", "..", "mm.json");
         /* let coePath = Path.join(this.coeconfig, "..", "..", "coe.json"); */
         try {
-            if (Path.isAbsolute(mmPath)) {
+            if (await CoSimulationStudioApi.isAbsolute(mmPath)) {
                 // console.warn("Could not find mm at: " + mmPath + " initiating search or possible alternatives...")
                 //no we have the old style
-                fs.readdirSync(Path.join(this.coeconfig, "..", "..")).forEach(file => {
+                const files = await CoSimulationStudioApi.readdir(await CoSimulationStudioApi.join(this.coeconfig, "..", ".."));
+                for (const file of files) {
                     if (file.endsWith("mm.json")) {
-                        mmPath = Path.join(this.coeconfig, "..", "..", file);
+                        mmPath = await CoSimulationStudioApi.join(this.coeconfig, "..", "..", file);
                         console.log("Found mm at: " + mmPath);
                         //  console.debug("Found old style mm at: " + mmPath);
                         return;
                     }
-                });
+                }
             }
             this.mmPath = mmPath;
-            this.parseConfig(mmPath);
+            await this.parseConfig(mmPath);
         } catch (error) {
             console.error("Path was not a correct path.. " + mmPath + " error: " + error);
         }
-
-
     }
 
     /*
      * Method for updating the DSE algorithm
      */
-    onAlgorithmChange(algorithm: IDseAlgorithm) {
+    onAlgorithmChange(algorithm: IDseAlgorithm): void {
         this.parseError = null;
         this.config.searchAlgorithm = algorithm;
-
         this.form.removeControl('algorithm');
         this.form.addControl('algorithm', this.algorithmFormGroups.get(algorithm));
     }
@@ -297,10 +288,9 @@ export class DseConfigurationComponent {
     /*
      * Get the parameters for a selected FMU instance (selected instance set as a state variable)
      */
-    getParameters(): (ScalarVariable|null)[] {
+    getParameters(): (ScalarVariable | null)[] {
         if (!this.selectedParameterInstance)
             return [null];
-
         return this.selectedParameterInstance.fmu.scalarVariables
             .filter(variable => isCausalityCompatible(variable.causality, CausalityType.Parameter) && !this.selectedParameterInstance.initialValues.has(variable));
     }
@@ -310,11 +300,9 @@ export class DseConfigurationComponent {
      */
     getInitialValues(): Array<ScalarValuePair> {
         let initialValues: Array<ScalarValuePair> = [];
-
         this.selectedParameterInstance.initialValues.forEach((value, variable) => {
             initialValues.push(new ScalarValuePair(variable, value));
         });
-
         return initialValues;
     }
 
@@ -326,8 +314,8 @@ export class DseConfigurationComponent {
      * Add a new DSE parameter
      */
     addParameter() {
-        if (!this.newParameter) return;
-
+        if (!this.newParameter)
+            return;
         this.selectedParameterInstance.initialValues.set(this.newParameter, []);
         this.newParameter = this.getParameters()[0];
     }
@@ -432,9 +420,8 @@ export class DseConfigurationComponent {
     }
 
     //Utility method to obtain an instance from the multimodel by its string id encoding
-     getParameter(dse: DseConfiguration, id: string): Instance | null {
+    getParameter(dse: DseConfiguration, id: string): Instance | null {
         let ids = this.parseId(id);
-
         let fmuName = ids[0];
         let instanceName = ids[1];
         let scalarVariableName = ids[2];
@@ -506,7 +493,6 @@ export class DseConfigurationComponent {
         return paramFound;
     }
 
-
     getDseParamValue(instance: Instance, variableName: string): any {
         let result = "ERROR";
         for (let dseParam of this.config.dseSearchParameters) {
@@ -520,7 +506,6 @@ export class DseConfigurationComponent {
         }
         return result;
     }
-
 
     addParameterInitialValue(p: DseParameter, value: any) {
         p.addInitialValue(value);
@@ -538,12 +523,9 @@ export class DseConfigurationComponent {
         p.removeInitialValue(value);
     }
 
-
-
     addParameterConstraint() {
         let pc = this.config.addParameterConstraint();
         let pcArray = <FormArray>this.form.get('paramConstraints');
-
         pcArray.push(new FormControl(this.getParameterConstraint(pc)));
     }
 
@@ -559,11 +541,8 @@ export class DseConfigurationComponent {
         this.config.removeParameterConstraint(pc);
         let pcArray = <FormArray>this.form.get('paramConstraints');
         let index = this.config.paramConst.indexOf(pc);
-
         pcArray.removeAt(index);
     }
-
-
 
     addExternalScript() {
         let es = this.config.addExternalScript();
@@ -616,8 +595,6 @@ export class DseConfigurationComponent {
         this.objNames = this.getObjectiveNames();
     }
 
-
-
     addInternalFunction() {
         let intf = this.config.addInternalFunction();
         this.objNames = this.getObjectiveNames();
@@ -653,12 +630,9 @@ export class DseConfigurationComponent {
         i.funcType = `${name}`;
     }
 
-
-
     addObjectiveConstraint() {
         let oc = this.config.addObjectiveConstraint();
         let ocArray = <FormArray>this.form.get('objConstraints');
-
         ocArray.push(new FormControl(this.getObjectiveConstraint(oc)));
     }
 
@@ -674,11 +648,8 @@ export class DseConfigurationComponent {
         this.config.removeObjectiveConstraint(oc);
         let ocArray = <FormArray>this.form.get('objConstraints');
         let index = this.config.objConst.indexOf(oc);
-
         ocArray.removeAt(index);
     }
-
-
 
     getRankingMethod() {
         return this.config.ranking.getType();
@@ -695,7 +666,6 @@ export class DseConfigurationComponent {
         this.config.intFunctObjectives.forEach((o: InternalFunction) => {
             objNames.push(o.name)
         });
-
         return objNames;
     }
 
@@ -733,7 +703,6 @@ export class DseConfigurationComponent {
         }
     }
 
-
     addScenario() {
         let s = this.config.addScenario();
         let sArray = <FormArray>this.form.get('scenarios');
@@ -757,7 +726,6 @@ export class DseConfigurationComponent {
         sArray.removeAt(index);
     }
 
-
     /*
      * Method to check if can run a DSE. Will check if the COE is online, if there are any warnings
      * and also some DSE-specific elements
@@ -774,37 +742,4 @@ export class DseConfigurationComponent {
         //&& (<ParetoRanking> this.config.ranking).dimensions.length == 2;
     }
 
-    /*
-     * Method to run a DSE with the current DSE configuration. Assumes that the DSE can be run. 
-     * The method does not need to send the DSEConfiguration object, simply the correct paths. It relies upon the
-     * config being saved to json format correctly.
-     */
-    runDse() {
-        console.log('running from config');
-        var spawn = require('child_process').spawn;
-        let installDir = IntoCpsApp.getInstance()?.getSettings().getValue(SettingKeys.INSTALL_DIR) ?? "";
-
-        let absoluteProjectPath = IntoCpsApp.getInstance()?.getActiveProject()?.getRootFilePath() ?? "";
-        let experimentConfigName = this._path.slice(absoluteProjectPath.length + 1, this._path.length);
-        let multiModelConfigName = this.coeconfig.slice(absoluteProjectPath.length + 1, this.coeconfig.length);
-        // check if python is installed.
-        /* dependencyCheckPythonVersion(); */
-
-
-        //Using algorithm selector script allows any algortithm to be used in a DSE config.
-        let scriptFile = Path.join(installDir, "dse", "Algorithm_selector.py");
-        var child = spawn("python", [scriptFile, absoluteProjectPath, experimentConfigName, multiModelConfigName], {
-            detached: true,
-            shell: false,
-            // cwd: childCwd
-        });
-        child.unref();
-
-        child.stdout.on('data', function (data: any) {
-            console.log('dse/stdout: ' + data);
-        });
-        child.stderr.on('data', function (data: any) {
-            console.log('dse/stderr: ' + data);
-        });
-    }
 }

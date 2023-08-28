@@ -29,42 +29,42 @@
  * See the CONTRIBUTORS file for author and contributor information. 
  */
 
+import { spawn } from 'child_process';
 
-export function openPath(path: string)
-{
-    var command: string = null;
+export function openPath(path: string) {
 
-    //http://stackoverflow.com/questions/8683895/how-do-i-determine-the-current-operating-system-with-node-js
-    if (process.platform === 'darwin') {
-        command = "open";
-    } else if (process.platform === 'win32') {
-        command = "explorer.exe"
-    } else if (process.platform === 'linux') {
-        command = "nautilus"
-    }
+	let command: string = null;
 
-    if (command != null) {
-        var spawn = require('child_process').spawn;
+	//http://stackoverflow.com/questions/8683895/how-do-i-determine-the-current-operating-system-with-node-js
+	if (process.platform === 'darwin') {
+		command = "open";
+	} else if (process.platform === 'win32') {
+		command = "explorer.exe";
+	} else if (process.platform === 'linux') {
+		command = "nautilus";
+	}
 
-        var child = spawn(command, [path], {
-            detached: true,
-            shell: false,
-            // cwd: childCwd
-        });
-        child.unref();
+	if (command != null) {
 
-        child.stdout.on('data', function (data: any) {
-            console.log('stdout: ' + data);
+		const child = spawn(command, [path], {
+			detached: true,
+			shell: false,
+			// cwd: childCwd
+		});
 
-        });
-        child.stderr.on('data', function (data: any) {
-            console.log('stderr: ' + data);
+		child.unref();
 
-        });
-        child.on('close', function (code: any) {
-            console.log('closing code: ' + code);
+		child.stdout.on('data', function (data: any) {
+			console.log('stdout: ' + data);
+		});
 
-        });
+		child.stderr.on('data', function (data: any) {
+			console.log('stderr: ' + data);
+		});
 
-    }
+		child.on('close', function (code: any) {
+			console.log('closing code: ' + code);
+		});
+
+	}
 }

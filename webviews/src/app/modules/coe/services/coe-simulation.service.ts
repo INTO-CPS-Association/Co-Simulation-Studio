@@ -1,6 +1,4 @@
 import { Injectable, NgZone } from '@angular/core';
-import * as fs from 'fs' //FIXME needs removal as fs is not angular
-import * as Path from 'path';
 import { CoSimulationConfig, LiveGraph } from '../../shared/classes/co-simulation-config';
 import { BehaviorSubject, Observable, Subject, Subscription } from 'rxjs';
 import { Graph } from '../../shared/classes/graph';
@@ -9,20 +7,11 @@ import { FileSystemService } from '../../shared/services/file-system.service';
 import { MaestroApiService, simulationEndpoints } from '../../shared/services/maestro-api.service';
 import { storeResultCrc } from '../../shared/classes/result-config';
 import { CoeConfig } from '../../shared/classes/coe-config';
-import { Deferred } from '../../shared/classes/deferred';
 import { SettingsService } from '../../shared/services/settings.service';
 import { Fmu } from '../../shared/classes/fmu';
-import { SettingKeys } from '../../shared/services/settings.service';
 import { CoSimulationStudioApi } from 'src/app/api';
-
-const child_process: any = {};
-
-
-//------------------------------------------------------
-// FUNCITON STUBS THAT NEED TO BE EXTRACTED INTO API
-//------------------------------------------------------
-export function accessSync(path?: string): void { }
-
+import { SettingKeys } from '../../shared/classes/setting-keys';
+import { Deferred } from '../../shared/classes/deferred';
 
 @Injectable({
     providedIn: 'root'
@@ -51,7 +40,6 @@ export class CoeSimulationService {
 
     set resultDir(resultsDir: string) {
         this._resultDir = resultsDir;
-
         CoSimulationStudioApi.normalize(`${this.resultDir}/outputs.csv`).then(value => this._resultPath = value);
         CoSimulationStudioApi.normalize(`${this.resultDir}/coe.json`).then(value => this._coeConfigPath = value);
         CoSimulationStudioApi.normalize(`${this.resultDir}/mm.json`).then(value => this._mmConfigPath = value);
@@ -70,6 +58,7 @@ export class CoeSimulationService {
         settings.get(SettingKeys.GRAPH_MAX_DATA_POINTS).then(value => {
             this.graphMaxDataPoints = value;
         });
+        
         this.graph.setProgressCallback((progress: number) => { this.progress = progress });
         this.graph.setGraphMaxDataPoints(this.graphMaxDataPoints);
         this._coeIsOnlineSub = this.maestroApiService.startMonitoringOnlineStatus(isOnline => this._coeIsOnline.next(isOnline));
@@ -255,13 +244,13 @@ export class CoeSimulationService {
 
     async prepareAndInitializeCoe(): Promise<void> {
 
-        const configJson = new CoeConfig(this.config, await this.maestroApiService.isRemoteCoe()).toJSON();
+        const configJson = await new CoeConfig(this.config, await this.maestroApiService.isRemoteCoe()).toJSON();
 
         try {
             await this.fileSystem.mkdir(this.resultDir);
             await this.maestroApiService.initializeCoe(configJson, this._simulationSessionId);
         } finally {
-            await this.fileSystem.writeFile(Path.join(this.resultDir, "config.json"), configJson);
+            await this.fileSystem.writeFile(await CoSimulationStudioApi.join(this.resultDir, "config.json"), configJson);
         }
     }
 
@@ -281,14 +270,14 @@ export class CoeSimulationService {
                 this.externalGraphs.push(dh);
                 dh.win.webContents.on("did-finish-load", () => {
                     dh.win.setTitle("Plot: " + key.title);
-                    deferred.resolve?.();
+                    deferred.resolve("");
                 });
             }
         });
         return new Promise<void>((resolve, reject) => {
-            Promise.all(deferreds).then(() => {
+            Promise.all(deferreds).then(async() => {
                 // Do not start the simulation before the websocket is open.
-                this.graph.webSocketOnOpenCallback = () => this.fileSystem.writeFile(Path.join(this.resultDir, "config-simulation.json"), JSON.stringify(simulationData))
+                this.graph.webSocketOnOpenCallback = async () => this.fileSystem.writeFile(await CoSimulationStudioApi.join(this.resultDir, "config-simulation.json"), JSON.stringify(simulationData))
                     .then(() => {
                         // Call the correct simulate endpoint
                         const simulationPromise = this.maestroApiService.simulate(simulationData, simulationEndpoint, this._simulationSessionId);
@@ -333,11 +322,11 @@ export class CoeSimulationService {
             return;
 
 
-        let scriptNormalized = await CoSimulationStudioApi.normalize(Path.join(this.config.projectRoot, script));
+        let scriptNormalized = await CoSimulationStudioApi.normalize(await CoSimulationStudioApi.join(this.config.projectRoot, script));
         var scriptExists = false;
         try {
             //fs.accessSync(scriptNormalized, fs.constants.R_OK); //FIXME cant use fs. in angular?
-            accessSync(scriptNormalized);
+            //accessSync(scriptNormalized);
             scriptExists = true;
 
         } catch (e) {

@@ -3,7 +3,7 @@ import { ErrorMessage, WarningMessage } from 'src/app/modules/shared/classes/mes
 import { MultiModelConfig } from 'src/app/modules/shared/classes/multi-model-config';
 import { Serializer } from 'src/app/modules/shared/classes/parser';
 import { OutputConnectionsPair } from 'src/app/modules/shared/classes/fmu';
-import IntoCpsApp from 'src/app/modules/shared/classes/into-cps-app';
+import { CoSimulationStudioApi } from 'src/app/api';
 
 @Component({
     selector: 'app-mm-overview',
@@ -17,51 +17,42 @@ export class MmOverviewComponent {
     @Input()
     set path(path: string) {
         this._path = path;
-
         if (path)
             this.parseConfig();
     }
+
     get path(): string {
         return this._path;
     }
-    //FIXME MultiModelConfig is a non angular Class
+
     config!: MultiModelConfig;
-    //FIXME WarningMessage is a non angular 
     warnings: WarningMessage[] = [];
 
     constructor(private zone: NgZone) {
-
     }
 
     async parseConfig() {
-        //FIXME IntoCpsApp is a non angular Class
-        let project = IntoCpsApp.getInstance()?.getActiveProject();
-
-        MultiModelConfig
-            .parse(this.path, await project?.getFmusPath() ?? "")
-            .then(config => this.zone.run(() => { this.config = config; this.warnings = this.config.validate(); })).catch(err => console.log(err));
+        const config = await MultiModelConfig.parse(this.path, await CoSimulationStudioApi.getFmusPath());
+        this.zone.run(() => {
+            this.config = config;
+            this.warnings = this.config.validate();
+        });
     }
 
     getOutputs() {
-        //FIXME OutputConnectionsPair is a non angular Class
         let outputs: OutputConnectionsPair[] = [];
-
         this.config.fmuInstances.forEach(instance => {
             instance.outputsTo.forEach((connections, scalarVariable) => {
-                //FIXME OutputConnectionsPair and Serializer is a non angular Class
                 outputs.push(new OutputConnectionsPair(Serializer.getIdSv(instance, scalarVariable), connections));
             });
         });
-
         return outputs;
     }
 
-    //FIXME ErrorMessages is a non angular 
     getWarnings() {
         return this.warnings.filter(w => !(w instanceof ErrorMessage));
     }
 
-    //FIXME ErrorMessages is a non angular 
     getErrors() {
         return this.warnings.filter(w => w instanceof ErrorMessage);
     }
