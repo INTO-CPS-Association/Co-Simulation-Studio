@@ -377,18 +377,6 @@ export class BrowserController {
                 parent.refresh();
                 return null;
             }
-            else if (path.endsWith(".dse.json") && parent != null) {
-                // merge DSE and folder
-                parent.img = "into-cps-icon-projbrowser-dse";
-                (<any>parent).dseConfig = path;
-                parent.opensInMainWindow = true;
-                parent.dblClickHandler = function (item: ProjectBrowserItem) {
-                    self.menuHandler?.openDseView?.((<any>item).dseConfig);
-                };
-                parent.menuEntries = [menuEntryDelete];
-                parent.refresh();
-                return null;
-            }
             else if (path.endsWith("results.html")) {
                 result.img = "into-cps-icon-projbrowser-dse-result";
                 result.removeFileExtensionFromText();
@@ -453,50 +441,6 @@ export class BrowserController {
                 result.removeFileExtensionFromText();
                 result.dblClickHandler = function (item: ProjectBrowserItem) {
                     self.menuHandler?.openFmu?.(item.path);
-                };
-                result.menuEntries.push(menuReveal);
-            }
-            else if (path.endsWith(".sysml.json")) {
-                result.img = "into-cps-icon-projbrowser-modelio";
-                result.removeFileExtensionFromText();
-                result.opensInMainWindow = true;
-                result.dblClickHandler = function (item: ProjectBrowserItem) {
-                    self.menuHandler?.openSysMlExport?.(item.path);
-                };
-                let menuEntryCreateMM = menuEntry("Create Multi-Model", "glyphicon glyphicon-briefcase",
-                    function (item: ProjectBrowserItem) {
-                        console.info("Create new multimodel for: " + item.path);
-                        self.menuHandler?.createMultiModel?.(item.path);
-                    });
-                result.menuEntries = [menuEntryCreateMM, menuEntryDelete];
-            }
-            else if (path.endsWith(".sysml-dse.json")) {
-                result.img = "into-cps-icon-projbrowser-modelio";
-                result.removeFileExtensionFromText();
-                result.opensInMainWindow = true;
-                result.dblClickHandler = function (item: ProjectBrowserItem) {
-                    self.menuHandler?.openSysMlDSEExport?.(item.path);
-                };
-                let menuEntryCreateSysMLDSE = menuEntry("Create DSE Configuration", "glyphicon glyphicon-briefcase",
-                    function (item: ProjectBrowserItem) {
-                        console.info("Create new dse config for: " + item.path);
-                        self.menuHandler?.createSysMLDSEConfig?.(item.path);
-                    });
-                result.menuEntries = [menuEntryCreateSysMLDSE, menuEntryDelete];
-            }
-            else if (path.endsWith(".emx")) {
-                result.img = "into-cps-icon-projbrowser-20sim";
-                result.removeFileExtensionFromText();
-                result.dblClickHandler = function (item: ProjectBrowserItem) {
-                    self.menuHandler?.openWithSystemEditor?.(item.path);
-                };
-                result.menuEntries.push(menuReveal);
-            }
-            else if (path.endsWith(".mo")) {
-                result.img = "into-cps-icon-projbrowser-openmodelica";
-                result.removeFileExtensionFromText();
-                result.dblClickHandler = function (item: ProjectBrowserItem) {
-                    self.menuHandler?.openWithSystemEditor?.(item.path);
                 };
                 result.menuEntries.push(menuReveal);
             }
