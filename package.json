@@ -258,7 +258,7 @@
 	},
 	"scripts": {
 		"vscode:prepublish": "npm run compile",
-		"compile": "cd extension && tsc -b && cd ../components && npm run build && cd ../webviews && npm run build && cd .. && webpack",
+		"compile": "cd extension && tsc -b && cd ../webviews && npm run build && cd .. && webpack",
 		"watch": "webpack --watch",
 		"package": "webpack --mode production --devtool hidden-source-map",
 		"lint": "eslint ./extension/src --ext .ts,.tsx",
@@ -279,6 +279,13 @@
 		"webpack-cli": "^4.7.2"
 	},
 	"dependencies": {
-		"process": "^0.11.10"
+		"assert": "^2.0.0",
+		"browserify-zlib": "^0.2.0",
+		"https-browserify": "^1.0.0",
+		"process": "^0.11.10",
+		"stream-browserify": "^3.0.0",
+		"stream-http": "^3.2.0",
+		"url": "^0.11.1",
+		"util": "^0.12.5"
 	}
 }
