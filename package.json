@@ -199,19 +199,9 @@
 		"views": {
 			"cosim-workspace": [
 				{
-					"id": "cosim-dses",
-					"name": "DSEs",
-					"visibility": "visible"
-				},
-				{
 					"id": "cosim-fmus",
 					"name": "FMUs",
 					"visibility": "visible"
-				},
-				{
-					"id": "cosim-model-checking",
-					"name": "Model Checking",
-					"visibility": "collapsed"
 				},
 				{
 					"id": "cosim-models",
@@ -226,32 +216,22 @@
 				{
 					"id": "cosim-resources",
 					"name": "Resources",
-					"visibility": "collapsed"
+					"visibility": "hidden"
 				},
 				{
 					"id": "cosim-sigver",
 					"name": "SigVer",
-					"visibility": "collapsed"
-				},
-				{
-					"id": "cosim-sysml",
-					"name": "SysML",
-					"visibility": "visible"
-				},
-				{
-					"id": "cosim-test-data-generation",
-					"name": "Test Data Generation",
-					"visibility": "collapsed"
+					"visibility": "hidden"
 				},
 				{
 					"id": "cosim-traceability",
 					"name": "Traceability",
-					"visibility": "collapsed"
+					"visibility": "hidden"
 				},
 				{
 					"id": "cosim-usermetricscripts",
 					"name": "User Metric Scripts",
-					"visibility": "collapsed"
+					"visibility": "hidden"
 				}
 			]
 		}
