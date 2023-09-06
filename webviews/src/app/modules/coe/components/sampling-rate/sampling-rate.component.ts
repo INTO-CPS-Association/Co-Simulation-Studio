@@ -26,19 +26,16 @@ export class SamplingRateComponent {
   formGroup!: FormGroup;
 
   setConstraintId(Input: string){
-    
     this.constraint.id = Input
   }
 
   setConstraintBase(Input: string){
     let input_number = parseInt(Input, 10);
-    console.log(input_number)
     this.constraint.base = input_number
   }
 
   setConstraintRate(input: string){
     let input_number = parseInt(input, 10);
-    console.log(input)
     this.constraint.rate = input_number
   }
 }
