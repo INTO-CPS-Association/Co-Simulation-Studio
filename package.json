@@ -222,6 +222,16 @@
 					"id": "cosim-sigver",
 					"name": "SigVer",
 					"visibility": "hidden"
+				},
+				{
+					"id": "cosim-traceability",
+					"name": "Traceability",
+					"visibility": "hidden"
+				},
+				{
+					"id": "cosim-usermetricscripts",
+					"name": "User Metric Scripts",
+					"visibility": "hidden"
 				}
 			]
 		}
