@@ -70,21 +70,23 @@ export class ProjectBrowserItem {
 
     private static idCounter: number = 0;
     constructor(controller: BrowserController, path: string, parent?: ProjectBrowserItem) {
-        this.controller = controller;
-        this.id = "ProjectBrowserItem_" + (ProjectBrowserItem.idCounter++).toString();
-        this.path = path;
-        //FIXME FS is non-angular
-        this.isDirectory = fs.existsSync(path) && fs.statSync(path).isDirectory();
-        this.text = Path.basename(path);
-        if (parent == null) {
-            this.level = 0;
-        } else {
-            this.level = parent.level + 1;
-        }
-        if (this.level <= 1) {
-            this.group = true;
-            this.expanded = true;
-        }
+            (async () => {
+            this.controller = controller;
+            this.id = "ProjectBrowserItem_" + (ProjectBrowserItem.idCounter++).toString();
+            this.path = path;
+            //FIXME FS is non-angular
+            this.isDirectory = await CoSimulationStudioApi.exists(path) && await CoSimulationStudioApi.isDirectory(path)            
+            this.text = await CoSimulationStudioApi.basename(path);
+            if (parent == null) {
+                this.level = 0;
+            } else {
+                this.level = parent.level + 1;
+            }
+            if (this.level <= 1) {
+                this.group = true;
+                this.expanded = true;
+            } 
+        } )(); 
     }
     //FIXME substr is depricated -> can propperly be replacted by this.text.slice(0, this.text.indexOf("."))
     removeFileExtensionFromText(): void {

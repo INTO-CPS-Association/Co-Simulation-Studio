@@ -84,22 +84,15 @@ export async function fetchProjectThroughGit(url: string, targetFolder: string, 
     }
 
     let repoPath = await CoSimulationStudioApi.join(childCwd, name);
-    let repoProjectFile = Path.join(repoPath, ".project.json");
+    let repoProjectFile = await CoSimulationStudioApi.join(repoPath, ".project.json");
 
-    var repoExists = false;
-    try {
-        fs.accessSync(repoProjectFile, fs.constants.R_OK); //FIXME not an angular library
-        repoExists = true;
+    var repoExists = await CoSimulationStudioApi.exists(repoProjectFile);
 
-    } catch (e) {
-
-    }
-
-    var mkdirp = require('mkdirp');
-    mkdirp.sync(childCwd);
+    await CoSimulationStudioApi.mkdir(childCwd);
 
     var child: any = null;
 
+    /*
     if (!repoExists) {
         child = spawn('git', ['clone', "--depth", "1", "--progress", url], {
             detached: false,
@@ -112,6 +105,7 @@ export async function fetchProjectThroughGit(url: string, targetFolder: string, 
         });
     }
 
+    
     child.stdout.on('data', (data: any) => {
         if (updates) updates(data.toString());
     });
@@ -139,7 +133,7 @@ export async function fetchProjectThroughGit(url: string, targetFolder: string, 
         else
             reject(code);
     });
-
+    */
     //    var fork = require("child_process").fork,
     //   child = fork(__dirname + "/start-coe.js");
 
