@@ -22,10 +22,10 @@ export class DseTreeDataProvider implements vscode.TreeDataProvider<vscode.TreeI
 		if (element != null) {
 			await populateChildren(element.resourceUri, children);
 		} else {
-			if (vscode.workspace.workspaceFolders.length == 1) {
+			if (vscode.workspace.workspaceFolders?.length == 1) {
 				await populateChildren(vscode.Uri.joinPath(vscode.workspace.workspaceFolders[0].uri, "DSEs"), children);
 			} else {
-				for (const workspaceFolder of vscode.workspace.workspaceFolders) {
+				for (const workspaceFolder of vscode.workspace.workspaceFolders?? []) {
 					children.push({
 						label: workspaceFolder.name,
 						resourceUri: vscode.Uri.joinPath(workspaceFolder.uri, "DSEs"),
