@@ -92,7 +92,15 @@ export function processMessage(panel): (e: any) => any {
 				panel.webview.postMessage({ command, requestId, payload: null });
 				break;
 			}
-		}
 
+			case "showMessageBox": {
+				const title = payload.title; 
+				const message = payload.message; 
+				const buttons = payload.buttons;
+				const result = await vscode.window.showInformationMessage(message, {detail:title}, ...buttons); 
+				panel.webview.postMessage({ command, requestId, payload: result });
+				break;
+			}
+		}
 	};
 }

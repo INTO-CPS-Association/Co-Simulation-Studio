@@ -39,6 +39,7 @@ import {
 import { WarningMessage } from "./messages";
 import { MultiModelConfig } from "./multi-model-config"
 import { ISerializable } from './serializable';
+import { CoSimulationStudioApi } from 'src/app/api';
 
 export class DseConfiguration implements ISerializable {
 
@@ -275,14 +276,9 @@ export class DseConfiguration implements ISerializable {
      * Save the DSE config - using the toObject method of this class. 
      */
     save(): Promise<void> {
-        return new Promise<void>((resolve, reject) => {
+        return new Promise<void>(async(resolve, reject) => {
             try {
-                fs.writeFile(this.sourcePath, JSON.stringify(this.toObject()), error => {
-                    if (error)
-                        reject(error);
-                    else
-                        resolve();
-                });
+                await CoSimulationStudioApi.writeFile(this.sourcePath, JSON.stringify(this.toObject()));
             } catch (error) {
                 reject(error);
             }
