@@ -1,0 +1,3 @@
+kind: "co-simulation studio"
+legacy:
+    project_dir: "path"
