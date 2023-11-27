@@ -1,15 +1,61 @@
+
 {
-  // See https://go.microsoft.com/fwlink/?LinkId=733558
-  // for the documentation about the tasks.json format
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "Run maestro",
+        "label": "Start COE",
+        "type": "shell",
+        "command": "java -jar script/coe-1.0.10.jar -p 8082",
+        "windows": {
+          "command": "java -jar script\\coe-1.0.10.jar -p 8082"
+        },
+        "linux": {
+          "command": "java -jar script/coe-1.0.10.jar -p 8082"
+        },
+        "osx": {
+          "command": "java -jar script/coe-1.0.10.jar -p 8082"
+        },
+        "group": "build",
+        "presentation": {
+          "reveal": "always",
+          "panel": "new"
+        }
+    },
+
+    {
+      "label": "Run Co-Simulation",
       "type": "shell",
-      "command": "script/maestro.sh",
-      "windows": {
-        "command": ".\\scripts\\test.cmd"
-      },
+      "command": "java",
+      "args": [
+        "-jar",
+        "script/coe-1.0.10.jar",
+        "--configuration",
+        "${workspaceFolder}/scenario.json",
+        "--oneshot",
+        "--starttime",
+        "0.0",
+        "--endtime",
+        "10.0"
+      ],
+      "group": "test",
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      }
+    }
+    
+  ]
+}
+
+
+/*
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Start COE",
+      "type": "shell",
+      "command": "java -jar Script/coe-1.0.10.jar -p 8082",
       "group": "build",
       "presentation": {
         "reveal": "always",
@@ -18,3 +64,4 @@
     }
   ]
 }
+*/
