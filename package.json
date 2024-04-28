@@ -1,0 +1,74 @@
+{
+  "name": "cosimulation-studio",
+  "displayName": "Cosimulation Studio",
+  "publisher": "PUBLISHER",
+  "license": "SEE LICENSE IN LICENSE.md",
+  "description": "",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.82.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onLanguage:json"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "cosimulation-studio.runSimulation",
+        "title": "Maestro: Run Simulation",
+        "icon": "$(testing-run-icon)"
+      }
+    ],
+    "menus": {
+        "editor/title": [
+            {
+                "when": "resourceFilename =~ /cosim\\.json/",
+                "command": "cosimulation-studio.runSimulation",
+                "group": "navigation"
+            }
+        ]
+    },
+    "configuration":[
+        {
+            "title": "Cosimulation Studio",
+            "properties": {
+                "cosimstudio.cosimPath": {
+                    "type": "string",
+                    "default": "cosim.json",
+                    "description": "Path pointing to the cosimulation configuration file. The path is relative to the workspace root."
+                }
+            }
+        }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run esbuild-base -- --minify",
+    "esbuild-base": "esbuild ./src/extension.ts --bundle --outfile=dist/extension.js --external:vscode --format=cjs --main-fields=module,main --platform=node",
+    "esbuild": "npm run esbuild-base -- --sourcemap",
+    "esbuild-watch": "npm run esbuild-base -- --sourcemap --watch",
+    "test-compile": "tsc -p ./",
+    "test": "vscode-test"
+  },
+  "devDependencies": {
+    "@types/mocha": "^10.0.6",
+    "@types/node": "18.x",
+    "@types/vscode": "^1.82.0",
+    "@typescript-eslint/eslint-plugin": "^7.4.0",
+    "@typescript-eslint/parser": "^7.4.0",
+    "@vscode/test-cli": "^0.0.8",
+    "@vscode/test-electron": "^2.3.9",
+    "esbuild": "^0.20.2",
+    "eslint": "^8.57.0",
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "axios": "^1.6.8",
+    "fast-xml-parser": "^4.3.6",
+    "jsonc-parser": "^3.2.1",
+    "jszip": "^3.10.1"
+  }
+}

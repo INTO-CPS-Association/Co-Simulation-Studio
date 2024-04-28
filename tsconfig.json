@@ -1,0 +1,22 @@
+{
+	"compilerOptions": {
+		"module": "ES6",
+        "moduleResolution": "Bundler",
+		"target": "ES2022",
+		"outDir": "out",
+		"lib": [
+			"ES2022"
+		],
+		"sourceMap": true,
+		"rootDir": "src",
+		"strict": true,
+		"noImplicitReturns": true,
+        "noImplicitAny": true,
+        "noUnusedLocals": true,
+		"noFallthroughCasesInSwitch": true,
+		"noUnusedParameters": true,
+	},
+    "exclude": [
+        "node_modules"
+    ]
+}
