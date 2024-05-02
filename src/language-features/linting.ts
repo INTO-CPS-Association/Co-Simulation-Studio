@@ -7,7 +7,7 @@ import {
 } from "./linting-rules/valid-fmu-identifier";
 import { correctCausalityConnectionsRule } from "./linting-rules/correct-causality-connections";
 import { ValidFMUPathRule } from "./linting-rules/valid-fmu-path";
-import { getCosimPath } from "../utils";
+import { getCosimPath, isDocumentCosimConfig } from "../utils";
 
 export interface RuleContext {
     report: (
@@ -79,8 +79,7 @@ export class SimulationConfigLinter implements vscode.Disposable {
     }
 
     private queue(document: vscode.TextDocument) {
-        const path = document.uri.path;
-        if (document.languageId === "json" && path.endsWith(`/${getCosimPath(document)}`)) {
+        if (isDocumentCosimConfig(document)) {
             this.jsonQueue.add(document);
             this.startTimer();
         }

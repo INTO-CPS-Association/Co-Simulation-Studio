@@ -8,7 +8,7 @@ import {
 import { SimulationConfigCompletionItemProvider } from "./language-features/completion-items";
 import path from "node:path";
 import { SimulationConfigLinter } from "./language-features/linting";
-import { getCosimPath } from "./utils";
+import { getCosimPath, isDocumentCosimConfig } from "./utils";
 
 interface SimulationConfiguration {
     fmus: Record<string, string>;
@@ -20,20 +20,45 @@ function isSimulationConfiguration(
     return "fmus" in config && typeof config["fmus"] === "object";
 }
 
-let extensionContext: vscode.ExtensionContext;
 
 export async function activate(context: vscode.ExtensionContext) {
-    extensionContext = context;
-    let disposable = vscode.commands.registerCommand(
-        "maestrofmu.runSimulation",
+    const runSimulationDisp = vscode.commands.registerCommand(
+        "cosimstudio.runSimulation",
         handleRunSimulation
     );
 
-    context.subscriptions.push(disposable);
+    context.subscriptions.push(runSimulationDisp);
     
     for (const wsFolder of vscode.workspace.workspaceFolders || []) {
         registerProviders(context, wsFolder);
     }
+
+    registerCosimConfigTracking(context);
+}
+
+function registerCosimConfigTracking(context: vscode.ExtensionContext) {
+    const activeEditor = vscode.window.activeTextEditor;
+    
+    if (activeEditor && isDocumentCosimConfig(activeEditor.document)) {
+        vscode.commands.executeCommand('setContext', 'cosimstudio.cosimConfigOpen', true);
+    }
+    
+    
+    const disposable = vscode.window.onDidChangeActiveTextEditor((e) => {
+        if (!e) {
+            vscode.commands.executeCommand('setContext', 'cosimstudio.cosimConfigOpen', false);
+            return;
+        }
+
+        if (!isDocumentCosimConfig(e.document)) {
+            vscode.commands.executeCommand('setContext', 'cosimstudio.cosimConfigOpen', false);
+            return;
+        }
+
+        vscode.commands.executeCommand('setContext', 'cosimstudio.cosimConfigOpen', true);
+    });
+
+    context.subscriptions.push(disposable);
 }
 
 function registerProviders(context: vscode.ExtensionContext, wsFolder: vscode.WorkspaceFolder) {

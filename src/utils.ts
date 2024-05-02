@@ -14,3 +14,7 @@ export function getCosimPath(scope: vscode.TextDocument | vscode.WorkspaceFolder
 
     return "cosim.json";
 }
+
+export function isDocumentCosimConfig(document: vscode.TextDocument) {
+    return (document.languageId === "json" && document.uri.path.endsWith(`/${getCosimPath(document)}`))
+}
