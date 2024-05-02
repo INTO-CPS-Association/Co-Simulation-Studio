@@ -3,20 +3,29 @@
 		"module": "ES6",
         "moduleResolution": "Bundler",
 		"target": "ES2022",
-		"outDir": "out",
+		"noEmit": true,
 		"lib": [
 			"ES2022"
 		],
-		"sourceMap": true,
-		"rootDir": "src",
 		"strict": true,
+        "forceConsistentCasingInFileNames": false,
 		"noImplicitReturns": true,
         "noImplicitAny": true,
         "noUnusedLocals": true,
 		"noFallthroughCasesInSwitch": true,
 		"noUnusedParameters": true,
+        "skipLibCheck": true,
+        "experimentalDecorators": true,
+        "esModuleInterop": true,
+        "allowSyntheticDefaultImports": true,
+        "types": [
+            "node", "jest"
+        ]
 	},
+    "include": [
+        "src/**/*.ts", "test/**/*.ts"
+    ],
     "exclude": [
-        "node_modules"
+        "node_modules", "./dist"
     ]
 }

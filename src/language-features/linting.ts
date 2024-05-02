@@ -7,7 +7,7 @@ import {
 } from "./linting-rules/valid-fmu-identifier";
 import { correctCausalityConnectionsRule } from "./linting-rules/correct-causality-connections";
 import { ValidFMUPathRule } from "./linting-rules/valid-fmu-path";
-import { getCosimPath, isDocumentCosimConfig } from "../utils";
+import { isDocumentCosimConfig } from "../utils";
 
 export interface RuleContext {
     report: (

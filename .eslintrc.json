@@ -1,30 +1,51 @@
 {
+    "env": {
+        "jest": true,
+        "node": true
+    },
+    "extends": [
+        "eslint:recommended",
+        "airbnb-base",
+        "plugin:@typescript-eslint/recommended",
+        "prettier"
+    ],
     "root": true,
     "parser": "@typescript-eslint/parser",
     "parserOptions": {
-        "ecmaVersion": 6,
-        "sourceType": "module"
+        "ecmaVersion": 2022,
+        "sourceType": "module",
+        "requireConfigFile": false
     },
-    "plugins": [
-        "@typescript-eslint"
-    ],
-    "rules": {
-        "@typescript-eslint/naming-convention": [
-            "warn",
-            {
-                "selector": "import",
-                "format": [ "camelCase", "PascalCase" ]
+    "settings": {
+        "import/resolver": {
+            "node": {
+                "extensions": [".js"]
             }
-        ],
-        "@typescript-eslint/semi": "warn",
-        "curly": "warn",
-        "eqeqeq": "warn",
-        "no-throw-literal": "warn",
-        "semi": "off"
+        }
     },
-    "ignorePatterns": [
-        "out",
-        "dist",
-        "**/*.d.ts"
+    "plugins": ["@typescript-eslint", "jest", "import"],
+    "rules": {
+        "import/no-extraneous-dependencies": [
+            "error",
+            { "devDependencies": true }
+        ],
+        "no-console": "error",
+        "import/first": "error",
+        "linebreak-style": 0,
+        "import/no-unresolved": "off",
+        "import/extensions": "off",
+        "no-use-before-define": "off"
+    },
+    "ignorePatterns": ["out", "dist", "**/*.d.ts"],
+    "overrides": [
+        {
+            "files": ["*.ts"],
+            "parser": "@typescript-eslint/parser",
+            "parserOptions": {
+                "requireConfigFile": false,
+                "project": ["./tsconfig.json"]
+            },
+            "plugins": ["@typescript-eslint"]
+        }
     ]
 }

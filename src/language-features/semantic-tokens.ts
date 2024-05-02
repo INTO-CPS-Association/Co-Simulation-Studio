@@ -7,7 +7,7 @@ export const legend = new vscode.SemanticTokensLegend(tokenTypes, tokenModifiers
 
 
 export class SimulationConfigSemanticTokensProvider implements vscode.DocumentSemanticTokensProvider {
-    provideDocumentSemanticTokens(document: vscode.TextDocument, token: vscode.CancellationToken): vscode.ProviderResult<vscode.SemanticTokens> {
+    provideDocumentSemanticTokens(document: vscode.TextDocument): vscode.ProviderResult<vscode.SemanticTokens> {
         const fileContent = document.getText();
         const tree = parseTree(fileContent);
 

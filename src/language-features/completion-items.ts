@@ -21,7 +21,7 @@ export class SimulationConfigCompletionItemProvider
     async provideCompletionItems(
         document: vscode.TextDocument,
         position: vscode.Position,
-        token: vscode.CancellationToken,
+        _token: vscode.CancellationToken,
         context: vscode.CompletionContext
     ) {
         const fileContent = document.getText();
@@ -116,7 +116,7 @@ export class SimulationConfigCompletionItemProvider
         tree: Node,
         document: vscode.TextDocument,
         position: vscode.Position,
-        context: vscode.CompletionContext
+        _context: vscode.CompletionContext
     ): Promise<vscode.CompletionItem[]> {
         // Look for valid variables/instances
         const completionNode = findNodeAtOffset(
