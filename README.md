@@ -4,7 +4,7 @@ The Cosimulation Studio VS Code Extension seamlessly integrates with the INTO-CP
 ## Features
 - **Autocompletion**: Autocompletion support for FMU inputs and parameters.
 - **Linting**: Linting of correct causality of connection configurations.
-- **Integration with Maestro**: Launch simulations directly from VS Code.
+- **Integration with Maestro**: Launching simulations directly from VS Code.
 
 ## Installation
 

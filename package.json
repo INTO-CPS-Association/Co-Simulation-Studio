@@ -14,7 +14,7 @@
   "activationEvents": [
     "onLanguage:json"
   ],
-  "main": "./dist/extension.js",
+  "main": "./dist/ext/extension.js",
   "contributes": {
     "commands": [
       {
@@ -47,31 +47,46 @@
   },
   "scripts": {
     "vscode:prepublish": "npm run esbuild-base -- --minify",
-    "esbuild-base": "esbuild ./src/extension.ts --bundle --outfile=dist/extension.js --external:vscode --format=cjs --main-fields=module,main --platform=node",
+    "esbuild-test": "esbuild ./test/*.test.ts --bundle --outdir=dist/test --external:vscode --sourcemap --platform=node",
+    "esbuild-base": "esbuild ./src/extension.ts --bundle --outfile=dist/ext/extension.js --external:vscode --format=cjs --main-fields=module,main --platform=node",
     "esbuild": "npm run esbuild-base -- --sourcemap",
     "esbuild-watch": "npm run esbuild-base -- --sourcemap --watch",
-    "test": "vscode-test"
+    "pretest:integration": "npm run esbuild-test && npm run esbuild",
+    "pretest:integration:cover": "npm run pretest:integration",
+    "pretest:unit": "npm run pretest:integration",
+    "test:integration:cover": "vscode-test --coverage",
+    "test:integration": "vscode-test --help",
+    "test:unit": "mocha --config .mocha.unit.json",
+    "test:unit:cover": "nyc npm run test:unit",
+    "test:cover:report": "nyc report --reporter=text --reporter=html --report=text-summary"
   },
   "devDependencies": {
-    "@types/jest": "^29.5.12",
+    "@types/chai": "^4.3.16",
+    "@types/mocha": "^10.0.6",
     "@types/node": "18.x",
+    "@types/sinon": "^17.0.3",
     "@types/vscode": "^1.82.0",
     "@typescript-eslint/eslint-plugin": "^7.4.0",
     "@typescript-eslint/parser": "^7.4.0",
     "@vscode/test-cli": "^0.0.8",
     "@vscode/test-electron": "^2.3.9",
+    "axios-mock-adapter": "^1.22.0",
+    "chai": "^5.1.1",
     "esbuild": "^0.20.2",
     "eslint": "^8.57.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-plugin-import": "^2.29.1",
-    "jest": "^29.7.0",
-    "ts-jest": "^29.1.2",
+    "mocha": "^10.4.0",
+    "nyc": "^15.1.0",
+    "sinon": "^18.0.0",
     "typescript": "^5.3.3"
   },
   "dependencies": {
     "axios": "^1.6.8",
     "fast-xml-parser": "^4.3.6",
     "jsonc-parser": "^3.2.1",
-    "jszip": "^3.10.1"
+    "jszip": "^3.10.1",
+    "winston": "^3.13.0",
+    "winston-transport": "^4.7.0"
   }
 }

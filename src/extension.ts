@@ -9,6 +9,7 @@ import { SimulationConfigCompletionItemProvider } from "./language-features/comp
 import path from "node:path";
 import { SimulationConfigLinter } from "./language-features/linting";
 import { getCosimPath, isDocumentCosimConfig } from "./utils";
+import { extLogger } from "./logging";
 
 interface SimulationConfiguration {
     fmus: Record<string, string>;
@@ -34,6 +35,8 @@ export async function activate(context: vscode.ExtensionContext) {
     }
 
     registerCosimConfigTracking(context);
+
+    extLogger.log("info", "Extension activated");
 }
 
 function registerCosimConfigTracking(context: vscode.ExtensionContext) {
@@ -56,6 +59,7 @@ function registerCosimConfigTracking(context: vscode.ExtensionContext) {
         }
 
         vscode.commands.executeCommand('setContext', 'cosimstudio.cosimConfigOpen', true);
+        extLogger.info(`Opened cosim config file: ${e.document.uri.path}`)
     });
 
     context.subscriptions.push(disposable);
@@ -149,6 +153,7 @@ export function resolveFMUPath(
 }
 
 async function runSimulationAndShowResults(config: unknown) {
+    extLogger.info(`Running simulation with configuration:\n${JSON.stringify(config, null, 2)}`)
     try {
         const results = await runSimulationWithConfig(config, {
             startTime: 0,
@@ -162,6 +167,7 @@ async function runSimulationAndShowResults(config: unknown) {
             await vscode.window.showTextDocument(td);
         }
     } catch (error) {
+        extLogger.error(`Simulation failed: ${error}`)
         vscode.window.showErrorMessage(`Simulation failed. ${error}`);
     }
 }

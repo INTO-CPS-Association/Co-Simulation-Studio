@@ -1,0 +1,10 @@
+{
+    "all": true,
+    "include": [
+        "src/**/*.ts", "dist/ext/**/*.js"
+    ],
+    "exclude": [
+        "test/**/*.ts", "dist/test/**/*.js"
+    ],
+    "exclude-node-modules": true
+}

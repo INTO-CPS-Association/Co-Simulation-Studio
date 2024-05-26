@@ -1,8 +1,14 @@
 .vscode/**
 .vscode-test/**
+coverage/
 src/**
+.nyc_output/
+node_modules/
+.nycrc.json
+.mocha.unit.json
 .gitignore
 .yarnrc
+dist/test
 vsc-extension-quickstart.md
 **/tsconfig.json
 **/.eslintrc.json
