@@ -1,7 +1,7 @@
 /* Custom Winston Transport */
 import Transport, { TransportStreamOptions } from "winston-transport";
 import vscode, { LogLevel } from "vscode";
-import { createLogger } from "winston";
+import { Logger, createLogger } from "winston";
 
 interface TransportOptions extends TransportStreamOptions {
     name: string;
@@ -54,20 +54,52 @@ class VSCTransport extends Transport {
     }
 }
 
-const transport = new VSCTransport({
-    window: vscode.window,
-    name: "Cosimulation Studio",
-});
+function vsCodeLogLevelToString(logLevel: LogLevel): string {
+    switch (logLevel) {
+        case 0:
+            return "off";
+        case 1:
+            return "trace";
+        case 2:
+            return "debug";
+        case 3:
+            return "info";
+        case 4:
+            return "warning";
+        case 5:
+            return "error";
+        default:
+            return "unknown";
+    }
+}
 
+let logger: Logger;
 
-// TODO: VS Code Log Levels
-export const extLogger = createLogger({
-    level: "debug",
-    transports: [transport],
-});
+export function getLogger(): Logger {
+    if (logger) {
+        return logger;
+    }
 
-extLogger.log("info", `Log level: ${LogLevel[vscode.env.logLevel]}.`);
+    const transport = new VSCTransport({
+        window: vscode.window,
+        name: "Cosimulation Studio",
+    });
 
-vscode.env.onDidChangeLogLevel((newLevel) => {
-    extLogger.log("info", `Log level: ${LogLevel[newLevel]}.`);
-});
+    logger = createLogger({
+        level: vsCodeLogLevelToString(vscode.env.logLevel),
+        transports: [transport],
+    });
+    
+    logger.log("info", `Log level: ${LogLevel[vscode.env.logLevel]}.`);
+    
+    vscode.env.onDidChangeLogLevel((newLevel) => {
+        logger.configure({
+            level: vsCodeLogLevelToString(newLevel),
+            transports: [transport],
+        });
+        logger.log("info", `Log level: ${LogLevel[newLevel]}.`);
+    });
+
+    return logger;
+}
+

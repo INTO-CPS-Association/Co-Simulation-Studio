@@ -2,7 +2,7 @@ import { Node, getNodePath } from "jsonc-parser";
 import { LintRule, RuleContext } from "../linting";
 import * as fs from "fs";
 import * as vscode from "vscode";
-import { resolveFMUPath } from "../../extension";
+import { resolveAbsolutePath } from "../../utils";
 
 export const validIdentifierPattern = /^\{\w+\}$/;
 
@@ -34,7 +34,7 @@ export class ValidFMUPathRule implements LintRule {
 
         if (
             await this.isFileValidFMU(
-                resolveFMUPath(wsFolder, possibleFMUPath.value)
+                resolveAbsolutePath(wsFolder, possibleFMUPath.value)
             )
         ) {
             return;

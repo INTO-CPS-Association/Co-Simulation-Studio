@@ -2,7 +2,7 @@ import { XMLParser } from "fast-xml-parser";
 import * as fs from "fs/promises";
 import JSZip from "jszip";
 import * as vscode from "vscode";
-import { resolveFMUPath } from "./extension";
+import { resolveAbsolutePath } from "./utils";
 
 interface ModelInput {
     name: string;
@@ -26,81 +26,95 @@ type ModelCache = Map<string, CacheEntry>;
 
 const modelCache: ModelCache = new Map();
 
-export async function getFMUModelFromPath(wsFolder: vscode.WorkspaceFolder, path: string): Promise<FMUModel | undefined> {
-    const resolvedPath = resolveFMUPath(wsFolder, path);
+export async function getFMUModelFromPath(
+    wsFolder: vscode.WorkspaceFolder,
+    path: string
+): Promise<FMUModel | undefined> {
+    const resolvedPath = resolveAbsolutePath(wsFolder, path);
     const cachedModel = modelCache.get(resolvedPath);
+    const currentCtime = (await fs.stat(resolvedPath)).ctimeMs;
 
     if (cachedModel === undefined) {
         // Cache miss
-        const modelDescriptionCacheEntry = await extractFMUModelFromPath(resolvedPath);
+        const modelDescriptionModel = await extractFMUModelFromPath(
+            resolvedPath
+        );
 
-        if (!modelDescriptionCacheEntry) {
+        if (!modelDescriptionModel) {
             return;
         }
-        
-        modelCache.set(resolvedPath, modelDescriptionCacheEntry);
-        return modelDescriptionCacheEntry.model;
+
+        modelCache.set(resolvedPath, {
+            model: modelDescriptionModel,
+            ctime: currentCtime,
+        });
+        return modelDescriptionModel;
     }
 
-    const currentCtime = (await fs.stat(resolvedPath)).ctimeMs;
     if (cachedModel.ctime === currentCtime) {
         return cachedModel.model;
     }
 
-    const modelDescriptionCacheEntry = await extractFMUModelFromPath(resolvedPath);
+    const modelDescriptionModel = await extractFMUModelFromPath(resolvedPath);
 
-    if (!modelDescriptionCacheEntry) {
+    if (!modelDescriptionModel) {
         return;
     }
-    
-    modelCache.set(resolvedPath, modelDescriptionCacheEntry);
-    return modelDescriptionCacheEntry.model;
+
+    modelCache.set(resolvedPath, {
+        model: modelDescriptionModel,
+        ctime: currentCtime,
+    });
+    return modelDescriptionModel;
 }
 
-async function extractFMUModelFromPath(path: string): Promise<CacheEntry | undefined> {
-    const ctime = (await fs.stat(path)).ctimeMs;
+export async function extractFMUModelFromPath(
+    path: string
+): Promise<FMUModel | undefined> {
     const zipBuffer = await fs.readFile(path);
     const zipFile = await JSZip.loadAsync(zipBuffer);
 
     const modelDescriptionObject = zipFile.file("modelDescription.xml");
-    const modelDescriptionContents = await modelDescriptionObject?.async("nodebuffer");
+    const modelDescriptionContents = await modelDescriptionObject?.async(
+        "nodebuffer"
+    );
 
     if (modelDescriptionContents) {
-        return {
-            ctime,
-            model: parseXMLModelDescription(modelDescriptionContents)
-        };
+        return parseXMLModelDescription(modelDescriptionContents);
     }
 
     return undefined;
 }
 
-function parseXMLModelDescription(source: string | Buffer): FMUModel {
+export function parseXMLModelDescription(source: string | Buffer): FMUModel {
     const parser = new XMLParser({
-        "ignoreAttributes": false
+        ignoreAttributes: false,
     });
     const modelDescription = parser.parse(source);
 
     const inputs: ModelInput[] = [];
     const outputs: ModelOutput[] = [];
 
-    const modelVariables = modelDescription["fmiModelDescription"]["ModelVariables"]["ScalarVariable"];
+    const modelVariables =
+        modelDescription["fmiModelDescription"]["ModelVariables"][
+            "ScalarVariable"
+        ];
 
     for (const mVar of modelVariables) {
         const varCausality = mVar["@_causality"];
         if (varCausality === "input") {
             inputs.push({
-                "name": mVar["@_name"]
+                name: mVar["@_name"],
             });
         } else if (varCausality === "output") {
             outputs.push({
-                "name": mVar["@_name"]
+                name: mVar["@_name"],
             });
         }
     }
 
     return {
         inputs,
-        outputs
+        outputs,
     };
 }
