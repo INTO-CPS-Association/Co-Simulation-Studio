@@ -3,7 +3,7 @@ import { logError } from "./utils";
 
 const MAESTRO_BASE_URL = "http://localhost:8082";
 
-const maestroClient = axios.create({
+export const maestroClient = axios.create({
     baseURL: MAESTRO_BASE_URL
 });
 
