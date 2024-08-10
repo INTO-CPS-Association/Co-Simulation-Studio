@@ -1,7 +1,7 @@
 import { getNodePath } from "jsonc-parser";
-import { LintRule } from "../linting";
 import * as vscode from "vscode";
-import { getFMUModelFromPath } from "../../fmu";
+import { LintRule } from "../language-features.types";
+import { getStringContentRange } from "../utils";
 
 export const correctCausalityConnectionsRule: LintRule = {
     onProperty: async (node, context) => {
@@ -15,7 +15,7 @@ export const correctCausalityConnectionsRule: LintRule = {
 
         // Verify connection outputs
         const possibleOutput = node.children[0];
-        if (!possibleOutput) {
+        if (!possibleOutput || typeof possibleOutput.value !== "string") {
             return;
         }
 
@@ -29,33 +29,14 @@ export const correctCausalityConnectionsRule: LintRule = {
         const fmuIdentifier = fmuMatch[1];
         const variableIdentifier = fmuMatch[3];
 
-        const fmuSource = context.fmuSources.find(
-            (source) => source.identifier === fmuIdentifier
-        );
+        const fmuModel = await context.cosimConfig.getFMUModel(fmuIdentifier);
 
-        if (!fmuSource || !fmuSource.path) {
-            return;
-        }
-
-        const wsFolder = vscode.workspace.getWorkspaceFolder(
-            context.document.uri
-        );
-        if (!wsFolder) {
-            return;
-        }
-
-        const fmuModel = await getFMUModelFromPath(wsFolder, fmuSource.path);
         if (!fmuModel) {
             return;
         }
 
-        if (!(fmuModel.outputs.map(o => o.name).includes(variableIdentifier))) {
-            const range = new vscode.Range(
-                context.document.positionAt(possibleOutput.offset + 1),
-                context.document.positionAt(
-                    possibleOutput.offset + possibleOutput.length - 1
-                )
-            );
+        if (!fmuModel.outputs.map((o) => o.name).includes(variableIdentifier)) {
+            const range = getStringContentRange(context.cosimConfig.getDocument(), possibleOutput);
             context.report(
                 range,
                 `Expected output, but the identifier '${variableIdentifier}' does not refer to an output.`,

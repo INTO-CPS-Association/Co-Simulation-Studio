@@ -17,14 +17,28 @@ export interface FMUModel {
     outputs: ModelOutput[];
 }
 
+export interface FMUSource {
+    identifier: string;
+    path: string | undefined;
+}
+
+export type FMUSourceMap = Map<string, FMUSource>;
+export type FMUModelMap = Map<string, FMUModel>;
+
 interface CacheEntry {
     ctime: number;
     model: FMUModel;
 }
 
+export const validFMUIdentifierPattern = /^\{[a-zA-Z0-9]+\}$/;
+
 type ModelCache = Map<string, CacheEntry>;
 
 const modelCache: ModelCache = new Map();
+
+export function isValidFMUIdentifier(identifier: string) {
+    return validFMUIdentifierPattern.test(identifier);
+}
 
 export async function getFMUModelFromPath(
     wsFolder: vscode.WorkspaceFolder,
@@ -115,6 +129,6 @@ export function parseXMLModelDescription(source: string | Buffer): FMUModel {
 
     return {
         inputs,
-        outputs,
+        outputs
     };
 }
