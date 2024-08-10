@@ -19,7 +19,7 @@
     "commands": [
       {
         "command": "cosimstudio.runSimulation",
-        "title": "Maestro: Run Simulation",
+        "title": "Cosimulation Studio: Run Simulation",
         "icon": "$(testing-run-icon)"
       }
     ],

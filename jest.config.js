@@ -10,5 +10,6 @@ module.exports = {
   collectCoverage: true,
   collectCoverageFrom: ["src/**/*.ts"],
   coverageDirectory: "coverage",
-  coverageProvider: "v8"
+  coverageProvider: "v8",
+  setupFilesAfterEnv: ["./setup-jest.ts"]
 };
