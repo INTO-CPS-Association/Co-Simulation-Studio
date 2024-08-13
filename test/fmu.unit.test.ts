@@ -1,4 +1,3 @@
-// import { Uri } from "vscode";
 import JSZip from "jszip";
 import {
     parseXMLModelDescription,

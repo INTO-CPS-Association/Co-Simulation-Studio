@@ -1,5 +1,7 @@
 import axios from "axios"
-import { logError } from "./utils";
+import { getLogger } from "./logging";
+
+const logger = getLogger();
 
 const MAESTRO_BASE_URL = "http://localhost:8082";
 
@@ -17,7 +19,7 @@ export async function createSession(): Promise<string | undefined> {
         return response.data.sessionId;
     } catch (error) {
         const errMsg = `Failed to create session with error '${error}'`;
-        logError(errMsg);
+        logger.error(errMsg);
         throw new Error(errMsg);
     }
 }
@@ -34,7 +36,7 @@ export async function initializeSession(sessionId: string, config: unknown): Pro
         return response.data.status === "initialized";
     } catch (error) {
         const errMsg = `Failed to initialize session '${sessionId}' with error '${error}'`;
-        logError(errMsg);
+        logger.error(errMsg);
         throw new Error(errMsg);
     }
 }
@@ -53,7 +55,7 @@ export async function simulateSession(sessionId: string, config: unknown): Promi
         const response = await maestroClient.post(`/simulate/${sessionId}`, config);
         return response.data.status === "Finished";
     } catch (error) {
-        logError(`Failed to run simulation for session '${sessionId}' with error '${error}'`);
+        logger.error(`Failed to run simulation for session '${sessionId}' with error '${error}'`);
         return false;
     }
 }
@@ -70,7 +72,7 @@ export async function getSimulationResults(sessionId: string): Promise<string | 
         const response = await maestroClient.get(`/result/${sessionId}/plain`);
         return response.data;
     } catch (error) {
-        logError(`Failed to retrieve simulation for session '${sessionId}' with error '${error}'`);
+        logger.error(`Failed to retrieve simulation for session '${sessionId}' with error '${error}'`);
         return undefined;
     }
 }
@@ -89,14 +91,14 @@ export async function runSimulationWithConfig(simulationConfig: unknown, config:
         // Create a new session
         const sessionId = await createSession();
         if (!sessionId) {
-            logError("Failed to create session for simulation.");
+            logger.error("Failed to create session for simulation.");
             return undefined;
         }
 
         // Initialize the session with the provided configuration
         const initializationResult = await initializeSession(sessionId, simulationConfig);
         if (!initializationResult) {
-            logError(`Failed to initialize session '${sessionId}' for simulation.`);
+            logger.error(`Failed to initialize session '${sessionId}' for simulation.`);
             return undefined;
         }
 
@@ -107,7 +109,7 @@ export async function runSimulationWithConfig(simulationConfig: unknown, config:
         return await getSimulationResults(sessionId);
     } catch (error) {
         const errMsg = `Failed to run simulation with error '${error}'`;
-        logError(errMsg);
+        logger.error(errMsg);
         throw new Error(errMsg);
     }
 }

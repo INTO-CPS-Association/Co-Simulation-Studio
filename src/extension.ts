@@ -26,15 +26,14 @@ function registerCosimConfigTracking(context: vscode.ExtensionContext) {
         vscode.commands.executeCommand('setContext', 'cosimstudio.cosimConfigOpen', true);
     }
     
-    
-    const disposable = vscode.window.onDidChangeActiveTextEditor((e) => {
-        if (!e || !isDocumentCosimConfig(e.document)) {
+    const disposable = vscode.window.onDidChangeActiveTextEditor((newActiveEditor) => {
+        if (!newActiveEditor || !isDocumentCosimConfig(newActiveEditor.document)) {
             vscode.commands.executeCommand('setContext', 'cosimstudio.cosimConfigOpen', false);
             return;
         }
 
         vscode.commands.executeCommand('setContext', 'cosimstudio.cosimConfigOpen', true);
-        extensionLogger.info(`Opened cosim config file: ${e.document.uri.path}`)
+        extensionLogger.info(`Opened cosim config file: ${newActiveEditor.document.uri.path}`)
     });
 
     context.subscriptions.push(disposable);

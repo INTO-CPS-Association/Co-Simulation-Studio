@@ -1,19 +1,11 @@
 import * as vscode from "vscode";
+import { getNodePath } from "jsonc-parser";
 import {
-    parseTree,
-    findNodeAtOffset,
-    findNodeAtLocation,
-    Node,
-    getNodePath,
-} from "jsonc-parser";
-import { getFMUModelFromPath } from "../fmu";
-
-const identifierPattern = /^\{\w+\}$/;
-
-export interface FMUSource {
-    identifier: string;
-    path: string | undefined;
-}
+    CosimulationConfiguration,
+    getFMUIdentifierFromConnectionString,
+    getStringContentRange,
+    isNodeString,
+} from "./utils";
 
 export class SimulationConfigCompletionItemProvider
     implements vscode.CompletionItemProvider
@@ -21,20 +13,16 @@ export class SimulationConfigCompletionItemProvider
     async provideCompletionItems(
         document: vscode.TextDocument,
         position: vscode.Position,
-        _token: vscode.CancellationToken,
-        context: vscode.CompletionContext
+        _token: vscode.CancellationToken
     ) {
-        const fileContent = document.getText();
-        const tree = parseTree(fileContent);
-
-        if (!tree) {
+        let cosimConfig: CosimulationConfiguration;
+        try {
+            cosimConfig = new CosimulationConfiguration(document);
+        } catch {
             return;
         }
 
-        const completionNode = findNodeAtOffset(
-            tree,
-            document.offsetAt(position)
-        );
+        const completionNode = cosimConfig.getNodeAtPosition(position);
 
         if (!completionNode) {
             return;
@@ -43,59 +31,38 @@ export class SimulationConfigCompletionItemProvider
         let completionItems: vscode.CompletionItem[] = [];
 
         completionItems = completionItems.concat(
-            this.getFMUIdentifierCompletionItems(
-                tree,
-                document,
-                position,
-                context
-            )
+            this.getFMUIdentifierCompletionItems(cosimConfig, position)
         );
 
         completionItems = completionItems.concat(
-            await this.getFMUVariableCompletionItems(
-                tree,
-                document,
-                position,
-                context
-            )
+            await this.getFMUVariableCompletionItems(cosimConfig, position)
         );
 
         return completionItems;
     }
 
-    private getFMUIdentifierCompletionItems(
-        tree: Node,
-        document: vscode.TextDocument,
-        position: vscode.Position,
-        context: vscode.CompletionContext
+    getFMUIdentifierCompletionItems(
+        cosimConfig: CosimulationConfiguration,
+        position: vscode.Position
     ): vscode.CompletionItem[] {
-        const completionNode = findNodeAtOffset(
-            tree,
-            document.offsetAt(position)
-        );
+        const completionNode = cosimConfig.getNodeAtPosition(position);
 
         if (
             !completionNode ||
-            (!this.isNodeString(completionNode) &&
-                context.triggerCharacter === "{") ||
+            !isNodeString(completionNode) ||
             getNodePath(completionNode)[0] === "fmus"
         ) {
             return [];
         }
 
-        let range = this.getReplaceRange(document, completionNode, position);
+        let range = getStringContentRange(
+            cosimConfig.getDocument(),
+            completionNode
+        );
 
-        // Inside string, we skip the first double quote to not match on it
-        if (this.isNodeString(completionNode)) {
-            range = new vscode.Range(range.start.translate(0, 1), range.end);
-        }
-
-        const validFMUSources = this.getAllFMUIdentifiers(tree);
+        const validFMUSources = cosimConfig.getAllFMUSourcesAsArray();
         const fmuCompletionItems = validFMUSources.map((fmuSource) => {
-            let completionText = `"${fmuSource.identifier}$0"`;
-            if (this.isNodeString(completionNode)) {
-                completionText = completionText.substring(1);
-            }
+            let completionText = `${fmuSource.identifier}$0`;
 
             const fmuItem = new vscode.CompletionItem(
                 fmuSource.identifier,
@@ -112,31 +79,38 @@ export class SimulationConfigCompletionItemProvider
         return fmuCompletionItems;
     }
 
-    private async getFMUVariableCompletionItems(
-        tree: Node,
-        document: vscode.TextDocument,
-        position: vscode.Position,
-        _context: vscode.CompletionContext
+    async getFMUVariableCompletionItems(
+        cosimConfig: CosimulationConfiguration,
+        position: vscode.Position
     ): Promise<vscode.CompletionItem[]> {
-        // Look for valid variables/instances
-        const completionNode = findNodeAtOffset(
-            tree,
-            document.offsetAt(position)
-        );
+        const completionNode = cosimConfig.getNodeAtPosition(position);
 
-        if (!completionNode || !this.isNodeString(completionNode)) {
+        if (
+            !completionNode ||
+            !isNodeString(completionNode) ||
+            typeof completionNode.value !== "string"
+        ) {
             return [];
         }
 
-        const validVariables = await this.getAllVariables(
-            document,
-            tree,
-            completionNode.value ?? ""
+        const fmuIdentifier = getFMUIdentifierFromConnectionString(
+            completionNode.value
         );
 
-        const range = document.getWordRangeAtPosition(position, /(?<=\.)\w+/);
+        if (!fmuIdentifier) {
+            return [];
+        }
 
-        const suggestions =  validVariables.map((variable) => {
+        const validVariables = await cosimConfig.getAllVariablesFromIdentifier(
+            fmuIdentifier
+        );
+
+        // Get range of the nearest word following a period
+        const range = cosimConfig
+            .getDocument()
+            .getWordRangeAtPosition(position, /(?<=\.)\w+/);
+
+        const suggestions = validVariables.map((variable) => {
             const completionItem = new vscode.CompletionItem(
                 variable,
                 vscode.CompletionItemKind.Property
@@ -147,108 +121,5 @@ export class SimulationConfigCompletionItemProvider
         });
 
         return suggestions;
-    }
-    private getReplaceRange(
-        document: vscode.TextDocument,
-        completionNode: Node,
-        position: vscode.Position
-    ) {
-        if (this.isNodeString(completionNode)) {
-            const range = new vscode.Range(
-                document.positionAt(completionNode.offset),
-                document.positionAt(
-                    completionNode.offset + completionNode.length
-                )
-            );
-            if (
-                range.start.isBeforeOrEqual(position) &&
-                range.end.isAfterOrEqual(position)
-            ) {
-                return range;
-            }
-        }
-
-        return (
-            document.getWordRangeAtPosition(position) ??
-            new vscode.Range(position, position)
-        );
-    }
-
-    private getAllFMUIdentifiers(configTree: Node): FMUSource[] {
-        const fmusNode = findNodeAtLocation(configTree, ["fmus"]);
-
-        if (!fmusNode || !fmusNode.children || fmusNode.type !== "object") {
-            return [];
-        }
-
-        const fmuSources: FMUSource[] = [];
-
-        for (const property of fmusNode.children) {
-            if (!property.children) {
-                continue;
-            }
-
-            const possibleIdentifier = property.children[0].value;
-            const possiblePath = property.children[1].value;
-            if (
-                typeof possibleIdentifier === "string" &&
-                identifierPattern.test(possibleIdentifier)
-            ) {
-                fmuSources.push({
-                    identifier: possibleIdentifier,
-                    path:
-                        typeof possiblePath === "string"
-                            ? possiblePath
-                            : undefined,
-                });
-            }
-        }
-
-        return fmuSources;
-    }
-
-    private async getAllVariables(
-        document: vscode.TextDocument,
-        configTree: Node,
-        text: string
-    ) {
-        const fmuWithInstancePattern = /^(\{\w+\})\.\w+\.\w*$/;
-        const fmuMatch = text.match(fmuWithInstancePattern);
-
-        if (!fmuMatch) {
-            return [];
-        }
-
-        const fmuIdentifier = fmuMatch[1];
-        const fmuSources = this.getAllFMUIdentifiers(configTree);
-
-        const matchingSource = fmuSources.find(
-            (source) => source.identifier === fmuIdentifier
-        );
-
-        if (!matchingSource || !matchingSource.path) {
-            return [];
-        }
-
-        const wsFolder = vscode.workspace.getWorkspaceFolder(document.uri);
-
-        if (!wsFolder) {
-            return [];
-        }
-
-        const model = await getFMUModelFromPath(wsFolder, matchingSource.path);
-
-        if (!model) {
-            return [];
-        }
-
-        return [
-            ...model.inputs.map((variable) => variable.name),
-            ...model.outputs.map((variable) => variable.name),
-        ];
-    }
-
-    private isNodeString(node: Node) {
-        return node.type === "string";
     }
 }

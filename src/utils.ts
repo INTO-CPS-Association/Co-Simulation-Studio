@@ -1,6 +1,8 @@
 import * as vscode from "vscode";
 import path from "node:path";
 
+const DEFAULT_COSIM_CONFIG_FILE = "cosim.json";
+
 export interface SimulationConfiguration {
     fmus: Record<string, string>;
 }
@@ -11,11 +13,6 @@ export function isSimulationConfiguration(
     return "fmus" in config && typeof config["fmus"] === "object";
 }
 
-export function logError(msg: string) {
-    const logTime = new Date().toUTCString();
-    console.error(`[Maestro Extension] ${logTime}: ${msg}`)
-}
-
 export function getCosimPath(scope: vscode.TextDocument | vscode.WorkspaceFolder) {
     const cosimPath = vscode.workspace.getConfiguration("cosimstudio", scope).get("cosimPath");
 
@@ -23,11 +20,25 @@ export function getCosimPath(scope: vscode.TextDocument | vscode.WorkspaceFolder
         return cosimPath;
     }
 
-    return "cosim.json";
+    return DEFAULT_COSIM_CONFIG_FILE;
+}
+
+export function isDocumentInWorkspace(document: vscode.TextDocument): boolean {
+    const workspaceFolders = vscode.workspace.workspaceFolders;
+
+    // No workspace is open
+    if (!workspaceFolders) {
+        return false; 
+    }
+
+    const documentUri = document.uri.toString();
+
+    // Check if the document's URI starts with any of the workspace folder URIs
+    return workspaceFolders.some(folder => documentUri.startsWith(folder.uri.toString()));
 }
 
 export function isDocumentCosimConfig(document: vscode.TextDocument) {
-    return (document.languageId === "json" && document.uri.path.endsWith(`/${getCosimPath(document)}`))
+    return (document.languageId === "json" && document.uri.path.endsWith(`/${getCosimPath(document)}`) && isDocumentInWorkspace(document))
 }
 
 export function resolveAbsolutePath(

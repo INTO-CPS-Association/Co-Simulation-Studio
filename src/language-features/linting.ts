@@ -1,38 +1,26 @@
-import { NodeType, Node, parseTree, findNodeAtLocation } from "jsonc-parser";
+import { NodeType, Node } from "jsonc-parser";
 import * as vscode from "vscode";
-import { FMUSource } from "./completion-items";
+import { correctCausalityConnectionsRule } from "./linting-rules/correct-causality-connections";
+import { isDocumentCosimConfig } from "../utils";
+import {
+    HandlerMethodName,
+    LintRule,
+    RuleContext,
+    RuleHandler,
+} from "./language-features.types";
 import {
     ValidFMUIdentifierRule,
-    validIdentifierPattern,
-} from "./linting-rules/valid-fmu-identifier";
-import { correctCausalityConnectionsRule } from "./linting-rules/correct-causality-connections";
-import { ValidFMUPathRule } from "./linting-rules/valid-fmu-path";
-import { isDocumentCosimConfig } from "../utils";
-
-export interface RuleContext {
-    report: (
-        range: vscode.Range,
-        message: string,
-        severity: vscode.DiagnosticSeverity
-    ) => void;
-    document: vscode.TextDocument;
-    fmuSources: FMUSource[];
-}
-
-type RuleHandler = (node: Node, context: RuleContext) => Promise<void>;
-type HandlerMethodName = `on${Capitalize<NodeType>}`;
-export type LintRule = Partial<{
-    [K in HandlerMethodName]: RuleHandler;
-}>;
+    ValidFMUPathRule,
+} from "./linting-rules/fmu-rules";
+import { CosimulationConfiguration } from "./utils";
 
 /**
- * Map from JSON node type, e.g 'property', 'number', 'string', etc. to a linting rule handler that expects a node of the given node type.
+ * Map from JSON node type, e.g 'property', 'number', 'string', etc. to an array of linting rule handlers that expects a node of the given node type.
  */
-type RuleRegistry = Map<NodeType, RuleHandler[]>;
-
+export type RuleRegistry = Map<NodeType, RuleHandler[]>;
 const ruleRegistry: RuleRegistry = new Map();
 
-export function registerRule(rule: LintRule) {
+export function registerRule(rule: LintRule, registry: RuleRegistry) {
     const nodeTypeToHandlerName: Map<NodeType, HandlerMethodName> = new Map([
         ["array", "onArray"],
         ["boolean", "onBoolean"],
@@ -50,9 +38,9 @@ export function registerRule(rule: LintRule) {
             continue;
         }
 
-        const existingRuleHandlers = ruleRegistry.get(ruleType) ?? [];
+        const existingRuleHandlers = registry.get(ruleType) ?? [];
         existingRuleHandlers.push(ruleHandler);
-        ruleRegistry.set(ruleType, existingRuleHandlers);
+        registry.set(ruleType, existingRuleHandlers);
     }
 }
 
@@ -86,40 +74,47 @@ export class SimulationConfigLinter implements vscode.Disposable {
     }
 
     private startTimer() {
+        const LINT_DEBOUNCE_MS = 300;
+
         if (this.timer) {
             clearTimeout(this.timer);
         }
-        this.timer = setTimeout(() => this.lint(), 300);
+
+        this.timer = setTimeout(() => this.lint(), LINT_DEBOUNCE_MS);
     }
 
     private async lint() {
+        const ruleVisitor = new RuleVisitor(ruleRegistry);
         for (const document of Array.from(this.jsonQueue)) {
-            this.jsonQueue.delete(document);
-            if (document.isClosed) {
-                continue;
-            }
-
-            const fileContent = document.getText();
-            const tree = parseTree(fileContent);
-
-            if (tree) {
-                const diagnostics: vscode.Diagnostic[] = [];
-                const ruleContext = this.getRuleContext(
-                    document,
-                    tree,
-                    diagnostics
-                );
-
-                const ruleVisitor = new RuleVisitor(ruleRegistry);
-                await ruleVisitor.visit(tree, ruleContext);
-                this.diagnosticsCollection.set(document.uri, diagnostics);
-            }
+            this.lintDocument(document, ruleVisitor);
         }
     }
 
-    private getRuleContext(
+    private async lintDocument(
         document: vscode.TextDocument,
-        tree: Node,
+        ruleVisitor: RuleVisitor
+    ) {
+        this.jsonQueue.delete(document);
+        if (document.isClosed) {
+            return;
+        }
+
+        let cosimConfig: CosimulationConfiguration;
+        try {
+            cosimConfig = new CosimulationConfiguration(document);
+        } catch {
+            return;
+        }
+
+        const diagnostics: vscode.Diagnostic[] = [];
+        const ruleContext = this.getRuleContext(cosimConfig, diagnostics);
+
+        await ruleVisitor.visit(cosimConfig.getTree(), ruleContext);
+        this.diagnosticsCollection.set(document.uri, diagnostics);
+    }
+
+    private getRuleContext(
+        cosimConfig: CosimulationConfiguration,
         diagnostics: vscode.Diagnostic[]
     ): RuleContext {
         return {
@@ -127,42 +122,8 @@ export class SimulationConfigLinter implements vscode.Disposable {
                 diagnostics.push(
                     new vscode.Diagnostic(range, message, severity)
                 ),
-            document,
-            fmuSources: this.getAllFMUIdentifiers(tree),
+            cosimConfig,
         };
-    }
-
-    private getAllFMUIdentifiers(configTree: Node): FMUSource[] {
-        const fmusNode = findNodeAtLocation(configTree, ["fmus"]);
-
-        if (!fmusNode || !fmusNode.children || fmusNode.type !== "object") {
-            return [];
-        }
-
-        const fmuSources: FMUSource[] = [];
-
-        for (const property of fmusNode.children) {
-            if (!property.children || property.children.length !== 2) {
-                continue;
-            }
-
-            const possibleIdentifier = property.children[0].value;
-            const possiblePath = property.children[1].value;
-            if (
-                typeof possibleIdentifier === "string" &&
-                validIdentifierPattern.test(possibleIdentifier)
-            ) {
-                fmuSources.push({
-                    identifier: possibleIdentifier,
-                    path:
-                        typeof possiblePath === "string"
-                            ? possiblePath
-                            : undefined,
-                });
-            }
-        }
-
-        return fmuSources;
     }
 
     private clear(document: vscode.TextDocument) {
@@ -205,7 +166,7 @@ class RuleVisitor {
         }
     }
 
-    async visitRules(ruleType: NodeType, node: Node, context: RuleContext) {
+    private async visitRules(ruleType: NodeType, node: Node, context: RuleContext) {
         const rules = this.ruleRegistry.get(ruleType);
         for (const ruleHandler of rules ?? []) {
             try {
@@ -220,29 +181,29 @@ class RuleVisitor {
         }
     }
 
-    async visitArray(node: Node, context: RuleContext): Promise<void> {
+    private async visitArray(node: Node, context: RuleContext): Promise<void> {
         await this.visitRules("array", node, context);
     }
-    async visitBoolean(node: Node, context: RuleContext): Promise<void> {
+    private async visitBoolean(node: Node, context: RuleContext): Promise<void> {
         await this.visitRules("boolean", node, context);
     }
-    async visitNull(node: Node, context: RuleContext): Promise<void> {
+    private async visitNull(node: Node, context: RuleContext): Promise<void> {
         await this.visitRules("null", node, context);
     }
-    async visitNumber(node: Node, context: RuleContext): Promise<void> {
+    private async visitNumber(node: Node, context: RuleContext): Promise<void> {
         await this.visitRules("number", node, context);
     }
-    async visitObject(node: Node, context: RuleContext): Promise<void> {
+    private async visitObject(node: Node, context: RuleContext): Promise<void> {
         await this.visitRules("object", node, context);
     }
-    async visitProperty(node: Node, context: RuleContext): Promise<void> {
+    private async visitProperty(node: Node, context: RuleContext): Promise<void> {
         await this.visitRules("property", node, context);
     }
-    async visitString(node: Node, context: RuleContext): Promise<void> {
+    private async visitString(node: Node, context: RuleContext): Promise<void> {
         await this.visitRules("string", node, context);
     }
 }
 
-registerRule(new ValidFMUIdentifierRule());
-registerRule(correctCausalityConnectionsRule);
-registerRule(new ValidFMUPathRule());
+registerRule(new ValidFMUIdentifierRule(), ruleRegistry);
+registerRule(correctCausalityConnectionsRule, ruleRegistry);
+registerRule(new ValidFMUPathRule(), ruleRegistry);
