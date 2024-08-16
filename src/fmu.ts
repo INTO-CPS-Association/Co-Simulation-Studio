@@ -34,7 +34,7 @@ export const validFMUIdentifierPattern = /^\{[a-zA-Z0-9]+\}$/;
 
 type ModelCache = Map<string, CacheEntry>;
 
-const modelCache: ModelCache = new Map();
+export const modelCache: ModelCache = new Map();
 
 export function isValidFMUIdentifier(identifier: string) {
     return validFMUIdentifierPattern.test(identifier);
@@ -46,7 +46,13 @@ export async function getFMUModelFromPath(
 ): Promise<FMUModel | undefined> {
     const resolvedPath = resolveAbsolutePath(wsFolder, path);
     const cachedModel = modelCache.get(resolvedPath);
-    const currentCtime = (await fs.stat(resolvedPath)).ctimeMs;
+    let currentCtime: number;
+
+    try {
+        currentCtime = (await fs.stat(resolvedPath)).ctimeMs;
+    } catch {
+        return;
+    }
 
     if (cachedModel === undefined) {
         // Cache miss
@@ -85,9 +91,14 @@ export async function getFMUModelFromPath(
 export async function extractFMUModelFromPath(
     path: string
 ): Promise<FMUModel | undefined> {
-    const zipBuffer = await fs.readFile(path);
-    const zipFile = await JSZip.loadAsync(zipBuffer);
-
+    let zipFile: JSZip;
+    try {
+        const zipBuffer = await fs.readFile(path);
+        zipFile = await JSZip.loadAsync(zipBuffer);
+    } catch {
+        return;
+    }
+    
     const modelDescriptionObject = zipFile.file("modelDescription.xml");
     const modelDescriptionContents = await modelDescriptionObject?.async(
         "nodebuffer"

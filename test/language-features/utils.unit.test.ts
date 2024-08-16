@@ -4,13 +4,15 @@ import {
     getFMUIdentifierFromConnectionString,
     getStringContentRange,
     isNodeString,
+    visitTreeUsingRules,
 } from "../../src/language-features/utils";
 import { createTextDocument } from "jest-mock-vscode";
-import { Range, Uri, WorkspaceFolder, workspace } from "vscode";
+import * as vscode from "vscode";
 import { FMUModel, FMUModelMap, FMUSource, FMUSourceMap } from "../../src/fmu";
+import { RuleContext, RuleRegistry } from "../../src/language-features/linting";
 
-const workspaceUri = Uri.file("/data");
-const workspaceFolder: WorkspaceFolder = {
+const workspaceUri = vscode.Uri.file("/data");
+const workspaceFolder: vscode.WorkspaceFolder = {
     uri: workspaceUri,
     name: "data",
     index: 0,
@@ -19,8 +21,8 @@ const workspaceFolder: WorkspaceFolder = {
 const dummyCosimConfig = `
 {
     "fmus": {
-        "{fmu1}": "${Uri.joinPath(workspaceUri, "fmu1.fmu").path}",
-        "{fmu2}": "${Uri.joinPath(workspaceUri, "fmu2.fmu").path}"
+        "{fmu1}": "${vscode.Uri.joinPath(workspaceUri, "fmu1.fmu").path}",
+        "{fmu2}": "${vscode.Uri.joinPath(workspaceUri, "fmu2.fmu").path}"
     },
     "connections": {
         "{msd1}.msd1i.x1": ["{msd2}.msd2i.x1"],
@@ -30,17 +32,17 @@ const dummyCosimConfig = `
 `;
 
 const singleStringDocument = createTextDocument(
-    Uri.joinPath(workspaceUri, "custom_cosim.json"),
+    vscode.Uri.joinPath(workspaceUri, "custom_cosim.json"),
     '"{fmu1}"',
     "json"
 );
 const withoutStringDocument = createTextDocument(
-    Uri.joinPath(workspaceUri, "custom_cosim.json"),
+    vscode.Uri.joinPath(workspaceUri, "custom_cosim.json"),
     "[1, 2, 3, 4]",
     "json"
 );
 const dummyConfigDocument = createTextDocument(
-    Uri.joinPath(workspaceUri, "custom_cosim.json"),
+    vscode.Uri.joinPath(workspaceUri, "custom_cosim.json"),
     dummyCosimConfig,
     "json"
 );
@@ -60,7 +62,7 @@ const fmuModel1: FMUModel = {
 
 const fmuSource1: FMUSource = {
     identifier: "{fmu1}",
-    path: Uri.joinPath(workspaceUri, "fmu1.fmu").path
+    path: vscode.Uri.joinPath(workspaceUri, "fmu1.fmu").path
 }
 
 const fmuModel2: FMUModel = {
@@ -78,7 +80,7 @@ const fmuModel2: FMUModel = {
 
 const fmuSource2: FMUSource = {
     identifier: "{fmu2}",
-    path: Uri.joinPath(workspaceUri, "fmu2.fmu").path
+    path: vscode.Uri.joinPath(workspaceUri, "fmu2.fmu").path
 }
 
 const fmuSources: FMUSourceMap = new Map([
@@ -91,21 +93,41 @@ const fmuModelMap: FMUModelMap = new Map([
     ["{fmu2}", fmuModel2]
 ]);
 
+const mockUri = vscode.Uri.parse("path/to/file");
+const mockDocument1 = createTextDocument(mockUri, "{}", "json", 1);
 const fmuSourcesArray: FMUSource[] = [fmuSource1, fmuSource2];
 
 jest.mock("../../src/fmu.ts", () => ({
     ...jest.requireActual("../../src/fmu.ts"),
     "getFMUModelFromPath": jest.fn((_wsFolder, path: string) => {
-        if (path === Uri.joinPath(workspaceUri, "fmu1.fmu").path) {
+        if (path === vscode.Uri.joinPath(workspaceUri, "fmu1.fmu").path) {
             return fmuModel1;
         }
-        else if (path === Uri.joinPath(workspaceUri, "fmu2.fmu").path) {
+        else if (path === vscode.Uri.joinPath(workspaceUri, "fmu2.fmu").path) {
             return fmuModel2;
         }
 
         return;
     })
 }))
+
+const mockRootNode: Node = {
+    type: "array",
+    offset: 0,
+    length: 0,
+    children: [
+        {
+            type: "string",
+            offset: 0,
+            length: 0,
+        },
+        {
+            type: "string",
+            offset: 0,
+            length: 0,
+        },
+    ],
+};
 
 
 describe("Language feature utilities", () => {
@@ -159,7 +181,7 @@ describe("Language feature utilities", () => {
 
     describe("getStringContentRange", () => {
         it("should return correct range for simple string", () => {
-            const expectedRange = new Range(0, 1, 0, 7);
+            const expectedRange = new vscode.Range(0, 1, 0, 7);
             const node = parseTree(singleStringDocument.getText());
 
             if (!node) {
@@ -175,7 +197,7 @@ describe("Language feature utilities", () => {
 
         it("should return range at end of node when node is not of type string", () => {
             const documentText = withoutStringDocument.getText();
-            const expectedRange = new Range(
+            const expectedRange = new vscode.Range(
                 0,
                 documentText.length,
                 0,
@@ -234,7 +256,7 @@ describe("Language feature utilities", () => {
         describe("getWorkspaceFolderFromDocument", () => {
             it("should return the correct workspace", () => {
                 const workspacesSpy = jest.spyOn(
-                    workspace,
+                    vscode.workspace,
                     "workspaceFolders",
                     "get"
                 );
@@ -252,7 +274,7 @@ describe("Language feature utilities", () => {
         describe("getWorkspaceFolder", () => {
             it("should return the correct workspace", () => {
                 const workspacesSpy = jest.spyOn(
-                    workspace,
+                    vscode.workspace,
                     "workspaceFolders",
                     "get"
                 );
@@ -333,6 +355,76 @@ describe("Language feature utilities", () => {
                 const resultFMUSourceMap2 = await cosimConfig.getAllFMUSources();
                 expect(resultFMUSourceMap).toBe(resultFMUSourceMap2);
             })
+        });
+    });
+
+    describe("visitTreeUsingRules", () => {
+        let mockCosimConfig: CosimulationConfiguration;
+        let mockRuleRegistry: RuleRegistry;
+
+        beforeEach(() => {
+            mockCosimConfig = new CosimulationConfiguration(mockDocument1);
+            mockRuleRegistry = new Map();
+        });
+
+        test("visiting a tree with no rules should not throw", () => {
+            const mockRootNode: Node = {
+                type: "object",
+                offset: 0,
+                length: 0,
+            };
+
+            expect(() => {
+                visitTreeUsingRules(
+                    mockRootNode,
+                    new RuleContext(mockCosimConfig),
+                    mockRuleRegistry
+                );
+            }).not.toThrow();
+        });
+
+        test("visiting a tree with rules should call the handlers", async () => {
+            const arrayHandler = jest.fn();
+            const stringHandler = jest.fn();
+            const propertyHandler = jest.fn();
+
+            mockRuleRegistry.set("array", [arrayHandler]);
+            mockRuleRegistry.set("string", [stringHandler]);
+            mockRuleRegistry.set("property", [propertyHandler]);
+
+            await visitTreeUsingRules(
+                mockRootNode,
+                new RuleContext(mockCosimConfig),
+                mockRuleRegistry
+            );
+
+            expect(propertyHandler).toHaveBeenCalledTimes(0);
+            expect(arrayHandler).toHaveBeenCalledTimes(1);
+            expect(stringHandler).toHaveBeenCalledTimes(2);
+        });
+
+        test("visiting a tree with a rule that throws should still call the other handlers", async () => {
+            const arrayHandler = jest.fn();
+            const stringHandler = jest.fn();
+            const propertyHandler = jest.fn();
+            const faultyStringHandler = jest.fn().mockRejectedValue(false);
+
+            mockRuleRegistry.set("array", [arrayHandler]);
+            mockRuleRegistry.set("string", [
+                stringHandler,
+                faultyStringHandler,
+            ]);
+            mockRuleRegistry.set("property", [propertyHandler]);
+
+            await visitTreeUsingRules(
+                mockRootNode,
+                new RuleContext(mockCosimConfig),
+                mockRuleRegistry
+            );
+
+            expect(propertyHandler).toHaveBeenCalledTimes(0);
+            expect(arrayHandler).toHaveBeenCalledTimes(1);
+            expect(stringHandler).toHaveBeenCalledTimes(2);
         });
     });
 });
