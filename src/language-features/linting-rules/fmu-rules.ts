@@ -3,8 +3,9 @@ import { Node, getNodePath } from "jsonc-parser";
 import vscode from "vscode";
 import { isValidFMUIdentifier } from "../../fmu";
 import { resolveAbsolutePath } from "../../utils";
-import { LintRule, RuleContext } from "../language-features.types";
+import { LintRule } from "../language-features.types";
 import { getStringContentRange } from "../utils";
+import { RuleContext } from "../linting";
 
 export class ValidFMUIdentifierRule implements LintRule {
     constructor() {}

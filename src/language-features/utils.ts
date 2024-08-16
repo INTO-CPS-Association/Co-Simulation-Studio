@@ -13,6 +13,7 @@ import {
     isValidFMUIdentifier,
 } from "../fmu";
 import vscode, { Position, TextDocument } from "vscode";
+import { RuleContext, RuleRegistry } from "./linting";
 
 export function getFMUIdentifierFromConnectionString(
     connectionString: string
@@ -53,6 +54,26 @@ export function getStringContentRange(
 
 export function isNodeString(node: Node) {
     return node.type === "string";
+}
+
+export async function visitTreeUsingRules(
+    root: Node,
+    ruleContext: RuleContext,
+    ruleRegistry: RuleRegistry
+) {
+    const ruleType = root.type;
+    const ruleHandlers = ruleRegistry.get(ruleType);
+    for (const handler of ruleHandlers ?? []) {
+        try {
+            await handler(root, ruleContext);
+        } catch (err) {
+            console.error(`Failed to lint with error: ${err}`);
+        }
+    }
+
+    for (const child of root.children ?? []) {
+        await visitTreeUsingRules(child, ruleContext, ruleRegistry);
+    }
 }
 
 export class CosimulationConfiguration {
