@@ -4,8 +4,9 @@ import { correctCausalityConnectionsRule } from "./linting-rules/correct-causali
 import { isDocumentCosimConfig } from "../utils";
 import {
     HandlerMethodName,
+    IRuleContext,
     LintRule,
-    RuleHandler,
+    RuleRegistry,
 } from "./language-features.types";
 import {
     ValidFMUIdentifierRule,
@@ -16,7 +17,6 @@ import { CosimulationConfiguration, visitTreeUsingRules } from "./utils";
 /**
  * Map from JSON node type, e.g 'property', 'number', 'string', etc. to an array of linting rule handlers that expects a node of the given node type.
  */
-export type RuleRegistry = Map<NodeType, RuleHandler[]>;
 const ruleRegistry: RuleRegistry = new Map();
 
 export function registerRule(rule: LintRule, registry: RuleRegistry) {
@@ -43,7 +43,7 @@ export function registerRule(rule: LintRule, registry: RuleRegistry) {
     }
 }
 
-export class RuleContext {
+export class RuleContext implements IRuleContext {
     public diagnostics: vscode.Diagnostic[] = [];
 
     constructor(public cosimConfig: CosimulationConfiguration) {}

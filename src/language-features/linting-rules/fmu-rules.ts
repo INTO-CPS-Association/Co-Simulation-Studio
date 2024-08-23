@@ -3,14 +3,13 @@ import { Node, getNodePath } from "jsonc-parser";
 import vscode from "vscode";
 import { isValidFMUIdentifier } from "../../fmu";
 import { resolveAbsolutePath } from "../../utils";
-import { LintRule } from "../language-features.types";
+import { IRuleContext, LintRule } from "../language-features.types";
 import { getStringContentRange } from "../utils";
-import { RuleContext } from "../linting";
 
 export class ValidFMUIdentifierRule implements LintRule {
     constructor() {}
 
-    async onProperty(node: Node, context: RuleContext): Promise<void> {
+    async onProperty(node: Node, context: IRuleContext): Promise<void> {
         const nodePath = getNodePath(node);
         if (
             !(nodePath.length === 1 && nodePath[0] === "fmus") ||
@@ -47,7 +46,7 @@ export class ValidFMUIdentifierRule implements LintRule {
 export class ValidFMUPathRule implements LintRule {
     constructor() {}
 
-    onProperty = async (node: Node, context: RuleContext): Promise<void> => {
+    onProperty = async (node: Node, context: IRuleContext): Promise<void> => {
         const nodePath = getNodePath(node);
         if (
             !(nodePath.length === 1 && nodePath[0] === "fmus") ||

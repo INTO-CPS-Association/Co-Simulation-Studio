@@ -1,7 +1,8 @@
 import { FMUModel, FMUModelMap, FMUSource, FMUSourceMap } from "fmu";
 import { createTextDocument } from "jest-mock-vscode";
 import { Node, parseTree } from "jsonc-parser";
-import { RuleContext, RuleRegistry } from "language-features/linting";
+import { RuleRegistry } from "language-features/language-features.types";
+import { RuleContext } from "language-features/linting";
 import {
     CosimulationConfiguration,
     getFMUIdentifierFromConnectionString,

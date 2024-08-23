@@ -13,7 +13,7 @@ import {
     isValidFMUIdentifier,
 } from "../fmu";
 import vscode, { Position, TextDocument } from "vscode";
-import { RuleContext, RuleRegistry } from "./linting";
+import { ICosimulationConfiguration, IRuleContext, RuleRegistry } from "./language-features.types";
 
 export function getFMUIdentifierFromConnectionString(
     connectionString: string
@@ -58,7 +58,7 @@ export function isNodeString(node: Node) {
 
 export async function visitTreeUsingRules(
     root: Node,
-    ruleContext: RuleContext,
+    ruleContext: IRuleContext,
     ruleRegistry: RuleRegistry
 ) {
     const ruleType = root.type;
@@ -76,7 +76,7 @@ export async function visitTreeUsingRules(
     }
 }
 
-export class CosimulationConfiguration {
+export class CosimulationConfiguration implements ICosimulationConfiguration {
     private rootNode: Node;
     private document: TextDocument;
     private fmuSources: FMUSourceMap | null = null;

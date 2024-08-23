@@ -1,4 +1,5 @@
 import { createTextDocument } from "jest-mock-vscode";
+import { RuleRegistry } from "language-features/language-features.types";
 import * as lintingModule from "language-features/linting";
 import * as languageUtils from "language-features/utils";
 import { CosimulationConfiguration } from "language-features/utils";
@@ -38,7 +39,7 @@ describe("Linting language feature", () => {
 
     describe("registerRule", () => {
         test("registering a rule without any handlers should leave registry unchanged", () => {
-            const mockRuleRegistry: lintingModule.RuleRegistry = new Map();
+            const mockRuleRegistry: RuleRegistry = new Map();
 
             lintingModule.registerRule({}, mockRuleRegistry);
 
@@ -46,7 +47,7 @@ describe("Linting language feature", () => {
         });
 
         test("registering a rule with a single handler should add the handler to the registry", () => {
-            const mockRuleRegistry: lintingModule.RuleRegistry = new Map();
+            const mockRuleRegistry: RuleRegistry = new Map();
 
             lintingModule.registerRule(
                 {
