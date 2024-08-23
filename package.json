@@ -54,10 +54,8 @@
     "esbuild": "npm run esbuild:base -- --sourcemap",
     "esbuild:watch": "npm run esbuild:base -- --sourcemap --watch",
     "maestro-up": "cross-env java -jar $MAESTRO_WEBAPI_PATH",
-    "pretest:integration": "npm run esbuild-test && npm run esbuild",
-    "pretest:integration:cover": "npm run pretest:integration",
-    "test:integration:cover": "vscode-test --coverage",
-    "test:integration": "vscode-test --help",
+    "pretest:integration": "npm run esbuild:test && npm run esbuild",
+    "test:integration": "vscode-test",
     "test:unit": "jest",
     "vscode:prepublish": "npm run esbuild:base -- --minify"
   },
