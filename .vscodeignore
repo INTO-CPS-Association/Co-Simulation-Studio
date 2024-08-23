@@ -15,3 +15,7 @@ vsc-extension-quickstart.md
 **/*.map
 **/*.ts
 **/.vscode-test.*
+.devcontainer/
+.github/
+test/
+jest.config.js
