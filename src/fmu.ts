@@ -2,7 +2,10 @@ import { XMLParser } from "fast-xml-parser";
 import * as fs from "fs/promises";
 import JSZip from "jszip";
 import * as vscode from "vscode";
-import { resolveAbsolutePath } from "./utils";
+import { assertIsError, resolveAbsolutePath } from "./utils";
+import { getLogger } from "logging";
+
+const logger = getLogger();
 
 interface ModelInput {
     name: string;
@@ -36,69 +39,60 @@ type ModelCache = Map<string, CacheEntry>;
 
 export const modelCache: ModelCache = new Map();
 
-export function isValidFMUIdentifier(identifier: string) {
+export function isValidFMUIdentifier(identifier: string): boolean {
     return validFMUIdentifierPattern.test(identifier);
 }
 
 export async function getFMUModelFromPath(
     wsFolder: vscode.WorkspaceFolder,
     path: string
-): Promise<FMUModel | undefined> {
+): Promise<FMUModel> {
     const resolvedPath = resolveAbsolutePath(wsFolder, path);
-    const cachedModel = modelCache.get(resolvedPath);
+    let fmuModel: FMUModel;
     let currentCtime: number;
 
     try {
         currentCtime = (await fs.stat(resolvedPath)).ctimeMs;
     } catch {
-        return;
+        throw new Error(`No file found at ${resolvedPath} to pull FMU model from.`)
     }
 
-    if (cachedModel === undefined) {
-        // Cache miss
-        const modelDescriptionModel = await extractFMUModelFromPath(
-            resolvedPath
-        );
-
-        if (!modelDescriptionModel) {
-            return;
-        }
-
-        modelCache.set(resolvedPath, {
-            model: modelDescriptionModel,
-            ctime: currentCtime,
-        });
-        return modelDescriptionModel;
+    const cacheEntry = modelCache.get(resolvedPath);
+    if (cacheEntry && cacheEntry.ctime === currentCtime) {
+        // Cache hit
+        return cacheEntry.model;
     }
 
-    if (cachedModel.ctime === currentCtime) {
-        return cachedModel.model;
+    // Cache miss or stale cache, try to extract model
+    try {
+        fmuModel = await extractFMUModelFromPath(resolvedPath);
+    } catch (err) {
+        assertIsError(err);
+        const errMsg = `No FMU model found at '${resolvedPath}'. Failed with error: ${err.message}`;
+        logger.debug(errMsg);
+        throw new Error(errMsg);
     }
 
-    const modelDescriptionModel = await extractFMUModelFromPath(resolvedPath);
-
-    if (!modelDescriptionModel) {
-        return;
-    }
-
+    // Update cache
     modelCache.set(resolvedPath, {
-        model: modelDescriptionModel,
+        model: fmuModel,
         ctime: currentCtime,
     });
-    return modelDescriptionModel;
+
+    return fmuModel;
 }
 
 export async function extractFMUModelFromPath(
     path: string
-): Promise<FMUModel | undefined> {
+): Promise<FMUModel> {
     let zipFile: JSZip;
     try {
         const zipBuffer = await fs.readFile(path);
         zipFile = await JSZip.loadAsync(zipBuffer);
-    } catch {
-        return;
+    } catch (err) {
+        throw new Error(`Failed to open file at '${path}' whgile trying to extract FMU model.`)
     }
-    
+
     const modelDescriptionObject = zipFile.file("modelDescription.xml");
     const modelDescriptionContents = await modelDescriptionObject?.async(
         "nodebuffer"
@@ -108,22 +102,29 @@ export async function extractFMUModelFromPath(
         return parseXMLModelDescription(modelDescriptionContents);
     }
 
-    return undefined;
+    throw new Error(`Failed to parse 'modelDescription.xml' in '${path}'.`)
 }
 
 export function parseXMLModelDescription(source: string | Buffer): FMUModel {
     const parser = new XMLParser({
         ignoreAttributes: false,
     });
-    const modelDescription = parser.parse(source);
+
+    let modelDescription;
+    try {
+        modelDescription = parser.parse(source);
+    } catch {
+        throw new Error("Failed to parse XML model description.")
+    }
 
     const inputs: ModelInput[] = [];
     const outputs: ModelOutput[] = [];
 
+    // TODO: update this code to use Zod schemas instead of optional chaining and nullish coalescing
     const modelVariables =
-        modelDescription["fmiModelDescription"]["ModelVariables"][
-            "ScalarVariable"
-        ];
+        modelDescription["fmiModelDescription"]?.["ModelVariables"]?.[
+        "ScalarVariable"
+        ] ?? [];
 
     for (const mVar of modelVariables) {
         const varCausality = mVar["@_causality"];

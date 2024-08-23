@@ -167,7 +167,7 @@ export class CosimulationConfiguration implements ICosimulationConfiguration {
         }
 
         const fmuSourceMap = this.getAllFMUSources();
-        const resolvedFMUModels = new Map();
+        const resolvedFMUModels: Map<string, FMUModel> = new Map();
 
         for (const [ident, source] of fmuSourceMap) {
             const wsFolder = this.getWorkspaceFolderFromDocument(this.document);
@@ -175,9 +175,10 @@ export class CosimulationConfiguration implements ICosimulationConfiguration {
                 continue;
             }
 
-            const fmuModel = await getFMUModelFromPath(wsFolder, source.path);
-
-            resolvedFMUModels.set(ident, fmuModel);
+            try {
+                const fmuModel = await getFMUModelFromPath(wsFolder, source.path);
+                resolvedFMUModels.set(ident, fmuModel);
+            } catch {}
         }
 
         this.fmuModels = resolvedFMUModels;

@@ -58,24 +58,24 @@ describe("FMU Parsing", () => {
         } satisfies FMUModel);
     });
 
+    it("throws when parsing invalid XML model description", async () => {
+        expect(() => parseXMLModelDescription("<invalid_xml")).toThrow();
+    });
+
     describe("extractFMUModelFromPath", () => {
-        it("returns undefined when modelDescription.xml does not exist", async () => {
+        it("throws when modelDescription.xml does not exist", async () => {
             (fs.readFile as jest.Mock).mockResolvedValue("file content");
             (JSZip.loadAsync as jest.Mock).mockResolvedValue({
                 file: jest.fn(() => null),
             });
 
-            const result = await extractFMUModelFromPath("file/path");
-
-            expect(result).toBeUndefined();
+            await expect(extractFMUModelFromPath("file/path")).rejects.toThrow();
         });
 
-        it("returns undefined when fmu file does not exist", async () => {
+        it("throws when fmu file does not exist", async () => {
             (fs.readFile as jest.Mock).mockRejectedValue(false);
 
-            const result = await extractFMUModelFromPath("file/path");
-
-            expect(result).toBeUndefined();
+            await expect(extractFMUModelFromPath("file/path")).rejects.toThrow();
         });
 
         it("extracts the model from the zip correctly", async () => {
@@ -114,23 +114,19 @@ describe("FMU Parsing", () => {
         });
     });
     describe("getFMUModelFromPath", () => {
-        it("returns undefined when modelDescription.xml does not exist", async () => {
+        it("throws when modelDescription.xml does not exist", async () => {
             (fs.readFile as jest.Mock).mockResolvedValue("file content");
             (JSZip.loadAsync as jest.Mock).mockResolvedValue({
                 file: jest.fn(() => null),
             });
 
-            const result = await getFMUModelFromPath(workspaceFolder,"file/path");
-
-            expect(result).toBeUndefined();
+            await expect(getFMUModelFromPath(workspaceFolder, "file/path")).rejects.toThrow();
         });
 
-        it("returns undefined when fmu file does not exist", async () => {
+        it("throws when fmu file does not exist", async () => {
             (fs.readFile as jest.Mock).mockRejectedValue(false);
 
-            const result = await getFMUModelFromPath(workspaceFolder,"file/path");
-
-            expect(result).toBeUndefined();
+            expect(getFMUModelFromPath(workspaceFolder, "file/path")).rejects.toThrow();
         });
 
         it("returns the model during cache miss", async () => {
@@ -152,7 +148,7 @@ describe("FMU Parsing", () => {
                 ctimeMs: 0,
             });
 
-            const result = await getFMUModelFromPath(workspaceFolder,"file/path");
+            const result = await getFMUModelFromPath(workspaceFolder, "file/path");
 
             expect(result).toEqual({
                 inputs: [
@@ -171,6 +167,20 @@ describe("FMU Parsing", () => {
             } satisfies FMUModel);
             expect(fs.stat).toHaveBeenCalledWith("/data/file/path");
             expect(fs.readFile).toHaveBeenCalledWith("/data/file/path");
+        });
+
+        it("throws during cache miss if model can't be extracted from file", async () => {
+            (fs.readFile as jest.Mock).mockResolvedValue("zip content");
+            (JSZip.loadAsync as jest.Mock).mockResolvedValue({
+                file: jest.fn().mockImplementation(() => {
+                    return null;
+                }),
+            });
+            (fs.stat as jest.Mock).mockResolvedValue({
+                ctimeMs: 0,
+            });
+
+            await expect(getFMUModelFromPath(workspaceFolder, "file/path")).rejects.toThrow();
         });
 
         it("returns the model during cache hit", async () => {

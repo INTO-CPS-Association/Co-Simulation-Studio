@@ -34,7 +34,8 @@
         "linebreak-style": 0,
         "import/no-unresolved": "off",
         "import/extensions": "off",
-        "no-use-before-define": "off"
+        "no-use-before-define": "off",
+        "no-throw-literal": "error"
     },
     "ignorePatterns": ["out", "dist", "**/*.d.ts"],
     "overrides": [

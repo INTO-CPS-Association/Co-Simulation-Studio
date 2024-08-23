@@ -16,11 +16,9 @@ function createMockDiagnosticCollection(): vscode.DiagnosticCollection {
     return {
         name: "mock-diagnstostics-collection",
         set: jest.fn().mockImplementation((uri: vscode.Uri, diagnostics: vscode.Diagnostic[]) => {
-            console.log("setting diagnostic for uri", uri);
             diagnosticMap.set(uri, diagnostics);
         }),
         get: jest.fn().mockImplementation((uri: vscode.Uri) => {
-            console.log("getting diagnostic for uri", uri);
             return diagnosticMap.get(uri);
         }),
         delete: jest.fn(),
@@ -181,7 +179,6 @@ describe("Linting language feature", () => {
         test("lintDocuments should add diagnostics to the collection", async () => {
             const visitTreeSpy = jest.spyOn(languageUtils, "visitTreeUsingRules");
             visitTreeSpy.mockImplementation(async (_node, ruleContext) => {
-                console.log("running mock visitTreeSpy");
                 ruleContext.report(new vscode.Range(0, 0, 0, 0), "test", DiagnosticSeverity.Error);
             });
 
