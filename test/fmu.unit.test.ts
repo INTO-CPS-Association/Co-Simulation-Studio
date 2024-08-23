@@ -1,13 +1,12 @@
-import JSZip from "jszip";
 import {
-    parseXMLModelDescription,
     FMUModel,
     extractFMUModelFromPath,
     getFMUModelFromPath,
     modelCache,
-    // getFMUModelFromPath,
-} from "../src/fmu";
+    parseXMLModelDescription
+} from "fmu";
 import fs from "fs/promises";
+import JSZip from "jszip";
 import * as vscode from "vscode";
 
 jest.mock("fs/promises");

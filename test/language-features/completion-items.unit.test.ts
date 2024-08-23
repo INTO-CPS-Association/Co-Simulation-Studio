@@ -1,7 +1,7 @@
-import { Position, Uri } from "vscode";
-import { CosimulationConfiguration } from "../../src/language-features/utils";
 import { createTextDocument } from "jest-mock-vscode";
-import { SimulationConfigCompletionItemProvider } from "../../src/language-features/completion-items";
+import { SimulationConfigCompletionItemProvider } from "language-features/completion-items";
+import { CosimulationConfiguration } from "language-features/utils";
+import { Position, Uri } from "vscode";
 
 const workspaceUri = Uri.file("/data");
 

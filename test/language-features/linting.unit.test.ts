@@ -1,9 +1,9 @@
-import * as lintingModule from "../../src/language-features/linting";
 import { createTextDocument } from "jest-mock-vscode";
-import * as utils from "../../src/utils";
-import * as languageUtils from "../../src/language-features/utils";
+import * as lintingModule from "language-features/linting";
+import * as languageUtils from "language-features/utils";
+import { CosimulationConfiguration } from "language-features/utils";
+import * as utils from "utils";
 import vscode, { DiagnosticSeverity } from "vscode";
-import { CosimulationConfiguration } from "../../src/language-features/utils";
 
 const mockUri = vscode.Uri.parse("path/to/file");
 const mockDocument1 = createTextDocument(mockUri, "{}", "json", 1);

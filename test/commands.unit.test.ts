@@ -1,4 +1,4 @@
-import { commandHandlers } from "../src/commands";
+import { commandHandlers } from "commands";
 import { mustBeDefined, readExtensionPackage } from "./helpers";
 
 describe("Commands", () => {
