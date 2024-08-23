@@ -3,13 +3,14 @@
   "displayName": "Cosimulation Studio",
   "publisher": "PUBLISHER",
   "license": "SEE LICENSE IN LICENSE.md",
-  "description": "",
+  "description": "Co-simulation in VS Code",
   "version": "0.1.0",
   "engines": {
     "vscode": "^1.82.0"
   },
   "categories": [
-    "Other"
+    "Other",
+    "Education"
   ],
   "activationEvents": [
     "onLanguage:json"
@@ -46,16 +47,18 @@
     ]
   },
   "scripts": {
-    "vscode:prepublish": "npm run esbuild-base -- --minify",
-    "esbuild-test": "esbuild ./test/*.test.ts --bundle --outdir=dist/test --external:vscode --sourcemap --platform=node",
-    "esbuild-base": "esbuild ./src/extension.ts --bundle --outfile=dist/ext/extension.js --external:vscode --format=cjs --main-fields=module,main --platform=node",
-    "esbuild": "npm run esbuild-base -- --sourcemap",
-    "esbuild-watch": "npm run esbuild-base -- --sourcemap --watch",
+    "clean": "npx rimraf -rf dist coverage node_modules",
+    "esbuild:test": "esbuild ./test/*.test.ts --bundle --outdir=dist/test --external:vscode --sourcemap --platform=node",
+    "esbuild:base": "esbuild ./src/extension.ts --bundle --outfile=dist/ext/extension.js --external:vscode --format=cjs --main-fields=module,main --platform=node",
+    "esbuild": "npm run esbuild:base -- --sourcemap",
+    "esbuild:watch": "npm run esbuild:base -- --sourcemap --watch",
+    "maestro-up": "cross-env java -jar $MAESTRO_WEBAPI_PATH",
     "pretest:integration": "npm run esbuild-test && npm run esbuild",
     "pretest:integration:cover": "npm run pretest:integration",
     "test:integration:cover": "vscode-test --coverage",
     "test:integration": "vscode-test --help",
-    "test": "jest"
+    "test:unit": "jest",
+    "vscode:prepublish": "npm run esbuild:base -- --minify"
   },
   "devDependencies": {
     "@types/jest": "^29.5.12",
@@ -67,6 +70,7 @@
     "@vscode/test-cli": "^0.0.8",
     "@vscode/test-electron": "^2.3.9",
     "axios-mock-adapter": "^1.22.0",
+    "cross-env": "^7.0.3",
     "esbuild": "^0.20.2",
     "eslint": "^8.57.0",
     "eslint-config-airbnb-base": "^15.0.0",
