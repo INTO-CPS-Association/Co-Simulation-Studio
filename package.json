@@ -1,7 +1,7 @@
 {
   "name": "cosimulation-studio",
   "displayName": "Cosimulation Studio",
-  "publisher": "PUBLISHER",
+  "publisher": "intocps",
   "license": "SEE LICENSE IN LICENSE.md",
   "description": "Co-simulation in VS Code",
   "repository": "https://github.com/INTO-CPS-Association/Co-Simulation-Studio",
@@ -12,6 +12,9 @@
   "categories": [
     "Other",
     "Education"
+  ],
+  "keywords": [
+    "maestro", "cosimulation"
   ],
   "activationEvents": [
     "onLanguage:json"
