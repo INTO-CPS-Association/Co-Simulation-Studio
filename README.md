@@ -66,27 +66,27 @@ The linter catches errors in cosimulation files as you're writing them, and impo
 
 The editor will generate an error if an FMU definition contains a reference to a file that doesn't exist.
 
-![An animation illustrating the autocompletion feature of the extension - dark mode](https://raw.githubusercontent.com/MarkusEllyton/cosim-studio-resources/main/animations/dark/fmu_file_linting.webp#gh-dark-mode-only)
-![An animation illustrating the autocompletion feature of the extension - light mode](https://raw.githubusercontent.com/MarkusEllyton/cosim-studio-resources/main/animations/light/fmu_file_linting.webp#gh-light-mode-only)
+![An animation illustrating the autocompletion feature of the extension - dark mode](https://odin.cps.digit.au.dk/into-cps/cosim-studio/v0.1/dark/fmu_file_linting.webp#gh-dark-mode-only)
+![An animation illustrating the autocompletion feature of the extension - light mode](https://odin.cps.digit.au.dk/into-cps/cosim-studio/v0.1/light/fmu_file_linting.webp#gh-light-mode-only)
 
 Defining connections with incorrect causality will be detected as an error.
 
-![An animation illustrating the linting feature of the extension and how it ensure correct causality - dark mode](https://raw.githubusercontent.com/MarkusEllyton/cosim-studio-resources/main/animations/dark/fmu_causality_linting.webp#gh-dark-mode-only)
-![An animation illustrating the linting feature of the extension and how it ensure correct causality - light mode](https://raw.githubusercontent.com/MarkusEllyton/cosim-studio-resources/main/animations/light/fmu_causality_linting.webp#gh-light-mode-only)
+![An animation illustrating the linting feature of the extension and how it ensure correct causality - dark mode](https://odin.cps.digit.au.dk/into-cps/cosim-studio/v0.1/dark/fmu_causality_linting.webp#gh-dark-mode-only)
+![An animation illustrating the linting feature of the extension and how it ensure correct causality - light mode](https://odin.cps.digit.au.dk/into-cps/cosim-studio/v0.1/light/fmu_causality_linting.webp#gh-light-mode-only)
 
 ### Autocompletion
 
 When the configuration contains references to FMUs that the extension can resolve, the editor provides smart completions of input and output variables.
 
-![An animation illustrating the autocompletion feature of the extension - dark mode](https://raw.githubusercontent.com/MarkusEllyton/cosim-studio-resources/main/animations/dark/fmu_auto_completion.webp#gh-dark-mode-only)
-![An animation illustrating the autocompletion feature of the extension - light mode](https://raw.githubusercontent.com/MarkusEllyton/cosim-studio-resources/main/animations/light/fmu_auto_completion.webp#gh-light-mode-only)
+![An animation illustrating the autocompletion feature of the extension - dark mode](https://odin.cps.digit.au.dk/into-cps/cosim-studio/v0.1/dark/fmu_auto_completion.webp#gh-dark-mode-only)
+![An animation illustrating the autocompletion feature of the extension - light mode](https://odin.cps.digit.au.dk/into-cps/cosim-studio/v0.1/light/fmu_auto_completion.webp#gh-light-mode-only)
 
 ### Integration with Maestro
 
 Assuming there's a Maestro instance running, launching simulations directly from within VS Code is very easy. Whenever a cosimulation configuration file is open in the editor, a button to run simulations will appear in the editor toolbar. Pressing the button will send the configuration currently being edited to Maestro, and upon completion, the results will be populated in a new CSV file.
 
-![An animation illustrating the autocompletion feature of the extension - dark mode](https://raw.githubusercontent.com/MarkusEllyton/cosim-studio-resources/main/animations/dark/maestro_integration.webp#gh-dark-mode-only)
-![An animation illustrating the autocompletion feature of the extension - light mode](https://raw.githubusercontent.com/MarkusEllyton/cosim-studio-resources/main/animations/light/maestro_integration.webp#gh-light-mode-only)
+![An animation illustrating the autocompletion feature of the extension - dark mode](https://odin.cps.digit.au.dk/into-cps/cosim-studio/v0.1/dark/maestro_integration.webp#gh-dark-mode-only)
+![An animation illustrating the autocompletion feature of the extension - light mode](https://odin.cps.digit.au.dk/into-cps/cosim-studio/v0.1/light/maestro_integration.webp#gh-light-mode-only)
 
 ## Developing the extension
 
