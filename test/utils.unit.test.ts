@@ -1,4 +1,9 @@
-import { ConfigurationScope, Uri, WorkspaceFolder, workspace } from "vscode";
+import {
+    createMockWorkspaceConfiguration,
+    createTextDocument,
+} from "jest-mock-vscode";
+import { MockWorkspaceConfigurationData } from "jest-mock-vscode/dist/vscode";
+import rfdc from "rfdc";
 import {
     SimulationConfiguration,
     getCosimPath,
@@ -6,13 +11,8 @@ import {
     isSimulationConfiguration,
     resolveAbsolutePath,
     resolveSimulationConfig,
-} from "../src/utils";
-import {
-    createTextDocument,
-    createMockWorkspaceConfiguration,
-} from "jest-mock-vscode";
-import { MockWorkspaceConfigurationData } from "jest-mock-vscode/dist/vscode";
-import rfdc from "rfdc";
+} from "utils";
+import { ConfigurationScope, Uri, WorkspaceFolder, workspace } from "vscode";
 
 const clone = rfdc();
 

@@ -6,7 +6,7 @@ import {
     maestroClient,
     runSimulationWithConfig,
     simulateSession,
-} from "../src/maestro";
+} from "maestro";
 
 const axiosMock = new MockAdapter(maestroClient);
 

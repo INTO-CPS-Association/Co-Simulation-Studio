@@ -13,6 +13,7 @@ import {
     isValidFMUIdentifier,
 } from "../fmu";
 import vscode, { Position, TextDocument } from "vscode";
+import { ICosimulationConfiguration, IRuleContext, RuleRegistry } from "./language-features.types";
 
 export function getFMUIdentifierFromConnectionString(
     connectionString: string
@@ -55,7 +56,27 @@ export function isNodeString(node: Node) {
     return node.type === "string";
 }
 
-export class CosimulationConfiguration {
+export async function visitTreeUsingRules(
+    root: Node,
+    ruleContext: IRuleContext,
+    ruleRegistry: RuleRegistry
+) {
+    const ruleType = root.type;
+    const ruleHandlers = ruleRegistry.get(ruleType);
+    for (const handler of ruleHandlers ?? []) {
+        try {
+            await handler(root, ruleContext);
+        } catch (err) {
+            console.error(`Failed to lint with error: ${err}`);
+        }
+    }
+
+    for (const child of root.children ?? []) {
+        await visitTreeUsingRules(child, ruleContext, ruleRegistry);
+    }
+}
+
+export class CosimulationConfiguration implements ICosimulationConfiguration {
     private rootNode: Node;
     private document: TextDocument;
     private fmuSources: FMUSourceMap | null = null;
@@ -146,7 +167,7 @@ export class CosimulationConfiguration {
         }
 
         const fmuSourceMap = this.getAllFMUSources();
-        const resolvedFMUModels = new Map();
+        const resolvedFMUModels: Map<string, FMUModel> = new Map();
 
         for (const [ident, source] of fmuSourceMap) {
             const wsFolder = this.getWorkspaceFolderFromDocument(this.document);
@@ -154,9 +175,10 @@ export class CosimulationConfiguration {
                 continue;
             }
 
-            const fmuModel = await getFMUModelFromPath(wsFolder, source.path);
-
-            resolvedFMUModels.set(ident, fmuModel);
+            try {
+                const fmuModel = await getFMUModelFromPath(wsFolder, source.path);
+                resolvedFMUModels.set(ident, fmuModel);
+            } catch {}
         }
 
         this.fmuModels = resolvedFMUModels;

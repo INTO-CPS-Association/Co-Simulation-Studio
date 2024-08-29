@@ -66,3 +66,13 @@ export function resolveSimulationConfig(
 
     return config;
 }
+/**
+ * Asserts that a value of unknown type is an instance of `Error`.
+ * Useful for bubbling errors that have an unexpected type and are thus unhandled.
+ * @param error error of `unknown` type
+ */
+export function assertIsError(error: unknown): asserts error is Error {
+    if (!(error instanceof Error)) {
+        throw error;
+    }
+}

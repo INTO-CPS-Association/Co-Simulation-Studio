@@ -20,7 +20,8 @@
         "allowSyntheticDefaultImports": true,
         "types": [
             "node", "jest"
-        ]
+        ],
+        "baseUrl": "./src"
 	},
     "include": [
         "src/**/*.ts", "test/**/*.ts"
