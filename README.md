@@ -66,27 +66,23 @@ The linter catches errors in cosimulation files as you're writing them, and impo
 
 The editor will generate an error if an FMU definition contains a reference to a file that doesn't exist.
 
-![An animation illustrating the autocompletion feature of the extension - dark mode](https://odin.cps.digit.au.dk/into-cps/cosim-studio/v0.1/dark/fmu_file_linting.gif#gh-dark-mode-only)
-![An animation illustrating the autocompletion feature of the extension - light mode](https://odin.cps.digit.au.dk/into-cps/cosim-studio/v0.1/light/fmu_file_linting.gif#gh-light-mode-only)
+![An animation illustrating the autocompletion feature of the extension](https://odin.cps.digit.au.dk/into-cps/cosim-studio/v0.1/dark/fmu_file_linting.gif)
 
 Defining connections with incorrect causality will be detected as an error.
 
-![An animation illustrating the linting feature of the extension and how it ensure correct causality - dark mode](https://odin.cps.digit.au.dk/into-cps/cosim-studio/v0.1/dark/fmu_causality_linting.gif#gh-dark-mode-only)
-![An animation illustrating the linting feature of the extension and how it ensure correct causality - light mode](https://odin.cps.digit.au.dk/into-cps/cosim-studio/v0.1/light/fmu_causality_linting.gif#gh-light-mode-only)
+![An animation illustrating the linting feature of the extension and how it ensure correct causality](https://odin.cps.digit.au.dk/into-cps/cosim-studio/v0.1/dark/fmu_causality_linting.gif)
 
 ### Autocompletion
 
 When the configuration contains references to FMUs that the extension can resolve, the editor provides smart completions of input and output variables.
 
-![An animation illustrating the autocompletion feature of the extension - dark mode](https://odin.cps.digit.au.dk/into-cps/cosim-studio/v0.1/dark/fmu_auto_completion.gif#gh-dark-mode-only)
-![An animation illustrating the autocompletion feature of the extension - light mode](https://odin.cps.digit.au.dk/into-cps/cosim-studio/v0.1/light/fmu_auto_completion.gif#gh-light-mode-only)
+![An animation illustrating the autocompletion feature of the extension](https://odin.cps.digit.au.dk/into-cps/cosim-studio/v0.1/dark/fmu_auto_completion.gif)
 
 ### Integration with Maestro
 
 Assuming there's a Maestro instance running, launching simulations directly from within VS Code is very easy. Whenever a cosimulation configuration file is open in the editor, a button to run simulations will appear in the editor toolbar. Pressing the button will send the configuration currently being edited to Maestro, and upon completion, the results will be populated in a new CSV file.
 
-![An animation illustrating the autocompletion feature of the extension - dark mode](https://odin.cps.digit.au.dk/into-cps/cosim-studio/v0.1/dark/maestro_integration.gif#gh-dark-mode-only)
-![An animation illustrating the autocompletion feature of the extension - light mode](https://odin.cps.digit.au.dk/into-cps/cosim-studio/v0.1/light/maestro_integration.gif#gh-light-mode-only)
+![An animation illustrating the autocompletion feature of the extension](https://odin.cps.digit.au.dk/into-cps/cosim-studio/v0.1/dark/maestro_integration.gif)
 
 ## Developing the extension
 
