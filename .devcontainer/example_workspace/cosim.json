@@ -1,8 +1,12 @@
 {
 	"fmus": {
-		"{msd1}": "fmus/MassSpringDamper1.fmu"
+		"{msd1}": "fmus/MassSpringDamper1.fmu",
+        "{msd2}": "fmus/MassSpringDamper2.fmu",
 	},
-	"connections": {},
+	"connections": {
+        "{msd1}.msd1i.x1": ["{msd2}.msd2i.x1"],
+        "{msd1}.msd1i.v1": ["{msd2}.msd2i.v1"]
+    },
 	"logVariables": {
 		"{msd2}.msd2i": [
 			"x2",
