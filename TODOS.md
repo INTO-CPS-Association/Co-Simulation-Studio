@@ -1,13 +1,13 @@
 # Prioritized todo-list
 
-1. Tutorial 01 - show first cosim.json file
-2. console.error in test looks like an error in test.
-3. Focus output channel on simulation run. Print status of simulation execution in output channel. Probably remove the notification on simulation failure.
-4. Weird inconsistent spacing/tabs
-5. Additional testing - increase coverage in unit tests
-6. Setup Actions to build extension package
-7. Demo video showing basic functionality of extension.
-8. Documentation - MkDocs, for reference: <https://github.com/INTO-CPS-Association/DTaaS/blob/feature/distributed-demo/docs/PUBLISH.md>
+- [ ] Tutorial 01 - show first cosim.json file
+- [x] console.error in test looks like an error in test.
+- [x] Focus output channel on simulation run. Print status of simulation execution in output channel. Probably remove the notification on simulation failure.
+- [x] Weird inconsistent spacing/tabs
+- [ ] Additional testing - increase coverage in unit tests
+- [ ] Setup Actions to build extension package
+- [ ] Demo video showing basic functionality of extension.
+- [ ] Documentation - MkDocs, for reference: <https://github.com/INTO-CPS-Association/DTaaS/blob/feature/distributed-demo/docs/PUBLISH.md>
 
 ## v0.2.0 development
 
