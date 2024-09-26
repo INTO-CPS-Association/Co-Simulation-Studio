@@ -1,6 +1,6 @@
 /* Custom Winston Transport */
 import Transport, { TransportStreamOptions } from 'winston-transport'
-import vscode, { LogLevel } from 'vscode'
+import vscode, { LogLevel, OutputChannel } from 'vscode'
 import { Logger, createLogger } from 'winston'
 
 interface TransportOptions extends TransportStreamOptions {
@@ -101,4 +101,14 @@ export function getLogger(): Logger {
     })
 
     return logger
+}
+
+export function getOutputChannelFromLogger(logger: Logger): OutputChannel | undefined {
+    const outputChannelLogger = logger.transports.find((l) => l instanceof VSCTransport)
+
+    if (!outputChannelLogger) {
+        return undefined;
+    }
+
+    return outputChannelLogger.outputChannel;
 }

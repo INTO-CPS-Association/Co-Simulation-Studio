@@ -85,6 +85,6 @@ describe('Maestro API Client', () => {
 
         const result = await runSimulationWithConfig(undefined, undefined)
 
-        expect(result).toBe(data)
+        expect(result?.data).toBe(data)
     })
 })

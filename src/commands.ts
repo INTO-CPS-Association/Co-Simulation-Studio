@@ -1,8 +1,8 @@
 import * as vscode from 'vscode'
 import { isSimulationConfiguration, resolveSimulationConfig } from './utils'
 import fs from 'node:fs/promises'
-import { getLogger } from './logging'
-import { runSimulationWithConfig } from './maestro'
+import { getLogger, getOutputChannelFromLogger } from './logging'
+import { getSessionStatus, runSimulationWithConfig } from './maestro'
 
 const extensionLogger = getLogger()
 
@@ -26,6 +26,12 @@ function registerCommand(
 }
 
 async function handleRunSimulation(uri: vscode.Uri) {
+    const outputChannel = getOutputChannelFromLogger(extensionLogger);
+
+    if (outputChannel) {
+        outputChannel.show();
+    }
+
     if (!uri) {
         return
     }
@@ -68,20 +74,28 @@ async function runSimulationAndShowResults(config: unknown) {
             2
         )}`
     )
+
+    let result;
     try {
-        const results = await runSimulationWithConfig(config, {
+        result = await runSimulationWithConfig(config, {
             startTime: 0,
             endTime: 10,
         })
 
-        if (results) {
+        if (result?.data) {
             const td = await vscode.workspace.openTextDocument({
-                content: results,
+                content: result.data,
             })
             await vscode.window.showTextDocument(td)
+        } else {
+            throw new Error("Simulation failed.");
         }
     } catch (error) {
-        extensionLogger.error(`Simulation failed: ${error}`)
-        vscode.window.showErrorMessage(`Simulation failed. ${error}`)
+        extensionLogger.error(`Simulation failed.`)
+
+        if (result?.sessionId) {
+            const status = await getSessionStatus(result.sessionId);
+            extensionLogger.info(`Session status:\n${JSON.stringify(status, null, 2)}`);
+        }
     }
 }
