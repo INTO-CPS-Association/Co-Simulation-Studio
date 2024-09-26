@@ -1,1 +1,1 @@
-jest.mock("./src/logging.ts");
+jest.mock('./src/logging.ts')

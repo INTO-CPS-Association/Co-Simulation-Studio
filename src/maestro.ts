@@ -1,26 +1,26 @@
-import axios from "axios"
-import { getLogger } from "./logging";
+import axios from 'axios'
+import { getLogger } from './logging'
 
-const logger = getLogger();
+const logger = getLogger()
 
-const MAESTRO_BASE_URL = "http://localhost:8082";
+const MAESTRO_BASE_URL = 'http://localhost:8082'
 
 export const maestroClient = axios.create({
-    baseURL: MAESTRO_BASE_URL
-});
+    baseURL: MAESTRO_BASE_URL,
+})
 
 /**
  * Generates a unique Maestro session id.
- * @returns Session-id upon success, `undefined` if request fails. 
+ * @returns Session-id upon success, `undefined` if request fails.
  */
 export async function createSession(): Promise<string | undefined> {
     try {
-        const response = await maestroClient.get("/createSession");
-        return response.data.sessionId;
+        const response = await maestroClient.get('/createSession')
+        return response.data.sessionId
     } catch (error) {
-        const errMsg = `Failed to create session with error '${error}'`;
-        logger.error(errMsg);
-        throw new Error(errMsg);
+        const errMsg = `Failed to create session with error '${error}'`
+        logger.error(errMsg)
+        throw new Error(errMsg)
     }
 }
 
@@ -30,50 +30,68 @@ export async function createSession(): Promise<string | undefined> {
  * @param config The configuration applied to the session.
  * @returns A Promise that resolves to `true` if the session is successfully initialized, otherwise resolves to`false`.
  */
-export async function initializeSession(sessionId: string, config: unknown): Promise<boolean> {
+export async function initializeSession(
+    sessionId: string,
+    config: unknown
+): Promise<boolean> {
     try {
-        const response = await maestroClient.post(`/initialize/${sessionId}`, config);
-        return response.data.status === "initialized";
+        const response = await maestroClient.post(
+            `/initialize/${sessionId}`,
+            config
+        )
+        return response.data.status === 'initialized'
     } catch (error) {
-        const errMsg = `Failed to initialize session '${sessionId}' with error '${error}'`;
-        logger.error(errMsg);
-        throw new Error(errMsg);
+        const errMsg = `Failed to initialize session '${sessionId}' with error '${error}'`
+        logger.error(errMsg)
+        throw new Error(errMsg)
     }
 }
 
 /**
  * Runs the simulation for a Maestro session with the specified session identifier.
  * This function triggers the execution of the simulation associated with the provided session ID.
- * 
+ *
  * @param sessionId The identifier of the Maestro session for which the simulation should be run.
  * @param config The simulation configuration.
- * @returns A Promise that resolves to `true` if the simulation is successfully initiated and completes, 
+ * @returns A Promise that resolves to `true` if the simulation is successfully initiated and completes,
  *          otherwise resolves to `false` if the simulation fails to start or encounters an error during execution.
  */
-export async function simulateSession(sessionId: string, config: unknown): Promise<boolean> {
+export async function simulateSession(
+    sessionId: string,
+    config: unknown
+): Promise<boolean> {
     try {
-        const response = await maestroClient.post(`/simulate/${sessionId}`, config);
-        return response.data.status === "Finished";
+        const response = await maestroClient.post(
+            `/simulate/${sessionId}`,
+            config
+        )
+        return response.data.status === 'Finished'
     } catch (error) {
-        logger.error(`Failed to run simulation for session '${sessionId}' with error '${error}'`);
-        return false;
+        logger.error(
+            `Failed to run simulation for session '${sessionId}' with error '${error}'`
+        )
+        return false
     }
 }
 
 /**
  * Retrieves the simulation results for a Maestro session with the specified session identifier.
- * 
+ *
  * @param sessionId The identifier of the Maestro session for which the simulation results are to be retrieved.
  * @returns A Promise that resolves to a CSV-formatted string representing the simulation results if retrieval is successful,
  *          otherwise resolves to `undefined` if the retrieval fails or encounters an error.
  */
-export async function getSimulationResults(sessionId: string): Promise<string | undefined> {
+export async function getSimulationResults(
+    sessionId: string
+): Promise<string | undefined> {
     try {
-        const response = await maestroClient.get(`/result/${sessionId}/plain`);
-        return response.data;
+        const response = await maestroClient.get(`/result/${sessionId}/plain`)
+        return response.data
     } catch (error) {
-        logger.error(`Failed to retrieve simulation for session '${sessionId}' with error '${error}'`);
-        return undefined;
+        logger.error(
+            `Failed to retrieve simulation for session '${sessionId}' with error '${error}'`
+        )
+        return undefined
     }
 }
 
@@ -86,30 +104,38 @@ export async function getSimulationResults(sessionId: string): Promise<string | 
  * @returns A Promise that resolves to a CSV-formatted string representing the simulation results if retrieval is successful,
  *          otherwise resolves to `undefined` if the retrieval fails or encounters an error.
  */
-export async function runSimulationWithConfig(simulationConfig: unknown, config: unknown): Promise<string | undefined> {
+export async function runSimulationWithConfig(
+    simulationConfig: unknown,
+    config: unknown
+): Promise<string | undefined> {
     try {
         // Create a new session
-        const sessionId = await createSession();
+        const sessionId = await createSession()
         if (!sessionId) {
-            logger.error("Failed to create session for simulation.");
-            return undefined;
+            logger.error('Failed to create session for simulation.')
+            return undefined
         }
 
         // Initialize the session with the provided configuration
-        const initializationResult = await initializeSession(sessionId, simulationConfig);
+        const initializationResult = await initializeSession(
+            sessionId,
+            simulationConfig
+        )
         if (!initializationResult) {
-            logger.error(`Failed to initialize session '${sessionId}' for simulation.`);
-            return undefined;
+            logger.error(
+                `Failed to initialize session '${sessionId}' for simulation.`
+            )
+            return undefined
         }
 
         // Run the simulation
-        await simulateSession(sessionId, config);
+        await simulateSession(sessionId, config)
 
         // Retrieve the results
-        return await getSimulationResults(sessionId);
+        return await getSimulationResults(sessionId)
     } catch (error) {
-        const errMsg = `Failed to run simulation with error '${error}'`;
-        logger.error(errMsg);
-        throw new Error(errMsg);
+        const errMsg = `Failed to run simulation with error '${error}'`
+        logger.error(errMsg)
+        throw new Error(errMsg)
     }
 }
