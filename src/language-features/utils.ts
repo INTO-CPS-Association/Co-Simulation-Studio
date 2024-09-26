@@ -18,6 +18,7 @@ import {
     IRuleContext,
     RuleRegistry,
 } from './language-features.types'
+import { getLogger } from 'logging'
 
 export function getFMUIdentifierFromConnectionString(
     connectionString: string
@@ -71,7 +72,7 @@ export async function visitTreeUsingRules(
         try {
             await handler(root, ruleContext)
         } catch (err) {
-            console.error(`Failed to lint with error: ${err}`)
+            getLogger().error(`Failed to lint: ${err}`)
         }
     }
 
@@ -185,7 +186,7 @@ export class CosimulationConfiguration implements ICosimulationConfiguration {
                     source.path
                 )
                 resolvedFMUModels.set(ident, fmuModel)
-            } catch {}
+            } catch { }
         }
 
         this.fmuModels = resolvedFMUModels
