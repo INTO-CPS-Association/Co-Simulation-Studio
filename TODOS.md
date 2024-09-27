@@ -4,6 +4,7 @@
 - [x] console.error in test looks like an error in test.
 - [x] Focus output channel on simulation run. Print status of simulation execution in output channel. Probably remove the notification on simulation failure.
 - [x] Weird inconsistent spacing/tabs
+- [ ] The cosim file is not linted when it is opened or when the extension starts. Meaning when the extension first loads it won't catch errors until the file has been edited. Also, if an FMU is ever deleted, it won't show up as an error in the configuration file. 
 - [ ] Additional testing - increase coverage in unit tests
 - [ ] Setup Actions to build extension package
 - [ ] Demo video showing basic functionality of extension.

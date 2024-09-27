@@ -6,7 +6,7 @@
   "description": "Co-simulation in VS Code",
   "repository": "https://github.com/INTO-CPS-Association/Co-Simulation-Studio",
   "version": "0.1.1",
-  "icon": "./into_cps_logo.png",
+  "icon": "into_cps_logo.png",
   "engines": {
     "vscode": "^1.82.0"
   },
@@ -15,7 +15,8 @@
     "Education"
   ],
   "keywords": [
-    "maestro", "cosimulation"
+    "maestro",
+    "cosimulation"
   ],
   "activationEvents": [
     "onLanguage:json"
