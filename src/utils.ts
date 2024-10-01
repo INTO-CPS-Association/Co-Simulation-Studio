@@ -71,7 +71,7 @@ export function resolveSimulationConfig(
         const fmuPath = config.fmus[fmuIdent]
 
         const absolutePath = resolveAbsolutePath(wsFolder, fmuPath)
-        config.fmus[fmuIdent] = absolutePath.fsPath
+        config.fmus[fmuIdent] = absolutePath.toString(true)
     }
 
     return config
