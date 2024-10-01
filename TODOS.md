@@ -1,12 +1,13 @@
 # Prioritized todo-list
 
 - [ ] Tutorial 01 - show first cosim.json file
+- [x] Fix paths - the VS Code paths given for a workspace are not valid URI, so both node filesystem and Maestro break when using VS Code paths. Try using node fs API to get current directory (how does this work in single-root workspace and multi-root workspace?)
 - [x] console.error in test looks like an error in test.
 - [x] Focus output channel on simulation run. Print status of simulation execution in output channel. Probably remove the notification on simulation failure.
 - [x] Weird inconsistent spacing/tabs
-- [ ] The cosim file is not linted when it is opened or when the extension starts. Meaning when the extension first loads it won't catch errors until the file has been edited. Also, if an FMU is ever deleted, it won't show up as an error in the configuration file. 
-- [ ] Additional testing - increase coverage in unit tests
+- [x] The cosim file is not linted when it is opened or when the extension starts. Meaning when the extension first loads it won't catch errors until the file has been edited. Also, if an FMU is ever deleted, it won't show up as an error in the configuration file.
 - [ ] Setup Actions to build extension package
+- [ ] Additional testing - increase coverage in unit tests
 - [ ] Demo video showing basic functionality of extension.
 - [ ] Documentation - MkDocs, for reference: <https://github.com/INTO-CPS-Association/DTaaS/blob/feature/distributed-demo/docs/PUBLISH.md>
 
