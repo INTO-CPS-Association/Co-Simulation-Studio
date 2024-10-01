@@ -11,16 +11,16 @@ export const maestroClient = axios.create({
 })
 
 interface MaestroSessionStatus {
-    status: string;
-    sessionId: string,
-    lastExecTime: number;
-    warnings: string[] | null;
+    status: string
+    sessionId: string
+    lastExecTime: number
+    warnings: string[] | null
     errors: string[] | null
 }
 
 interface MaestroSimulationResult {
-    sessionId?: string;
-    data?: string;
+    sessionId?: string
+    data?: string
 }
 
 /**
@@ -29,7 +29,9 @@ interface MaestroSimulationResult {
 function getErrorDetails(error: unknown): string {
     if (axios.isAxiosError(error)) {
         const responseDetails = error.response
-            ? `Status: ${error.response.status}, Data: ${inspect(error.response.data)}`
+            ? `Status: ${error.response.status}, Data: ${inspect(
+                  error.response.data
+              )}`
             : 'No response received from server.'
 
         return `Axios error: ${error.message}. ${responseDetails}`
@@ -48,8 +50,8 @@ export async function createSession(): Promise<string | undefined> {
         return response.data.sessionId
     } catch (error) {
         const errMsg = `Failed to create session: '${getErrorDetails(error)}'`
-        logger.error(errMsg);
-        throw new Error(errMsg);
+        logger.error(errMsg)
+        throw new Error(errMsg)
     }
 }
 
@@ -70,8 +72,10 @@ export async function initializeSession(
         )
         return response.data.status === 'initialized'
     } catch (error) {
-        const errMsg = `Failed to initialize session '${sessionId}': '${getErrorDetails(error)}'`
-        logger.error(errMsg);
+        const errMsg = `Failed to initialize session '${sessionId}': '${getErrorDetails(
+            error
+        )}'`
+        logger.error(errMsg)
         throw new Error(errMsg)
     }
 }
@@ -94,9 +98,11 @@ export async function simulateSession(
             `/simulate/${sessionId}`,
             config
         )
-        return response.data.status === 'Finished'
+        return response.data.status === 'Simulation completed'
     } catch (error) {
-        const errMsg = `Failed to run simulation for session '${sessionId}': '${getErrorDetails(error)}'`;
+        const errMsg = `Failed to run simulation for session '${sessionId}': '${getErrorDetails(
+            error
+        )}'`
         logger.error(errMsg)
 
         return false
@@ -117,7 +123,9 @@ export async function getSimulationResults(
         const response = await maestroClient.get(`/result/${sessionId}/plain`)
         return response.data
     } catch (error) {
-        const errMsg = `Failed to retrieve simulation for session '${sessionId}': '${getErrorDetails(error)}'`
+        const errMsg = `Failed to retrieve simulation for session '${sessionId}': '${getErrorDetails(
+            error
+        )}'`
         logger.error(errMsg)
 
         return undefined
@@ -138,7 +146,9 @@ export async function getSessionStatus(
         const response = await maestroClient.get(`/status/${sessionId}`)
         return response.data
     } catch (error) {
-        const errMsg = `Failed to retrieve session status for session '${sessionId}': '${getErrorDetails(error)}'`
+        const errMsg = `Failed to retrieve session status for session '${sessionId}': '${getErrorDetails(
+            error
+        )}'`
         logger.error(errMsg)
 
         return undefined
@@ -176,24 +186,24 @@ export async function runSimulationWithConfig(
                 `Failed to initialize session '${sessionId}' for simulation.`
             )
             return {
-                sessionId
-            };
+                sessionId,
+            }
         }
 
         // Run the simulation
         const success = await simulateSession(sessionId, config)
         if (!success) {
             return {
-                sessionId
-            };
+                sessionId,
+            }
         }
 
         // Retrieve the results
-        const rawResult = await getSimulationResults(sessionId);
+        const rawResult = await getSimulationResults(sessionId)
 
         return {
             sessionId,
-            data: rawResult
+            data: rawResult,
         }
     } catch (error) {
         const errMsg = `Failed to run simulation: '${error}'`
