@@ -1,4 +1,3 @@
-import fs from 'fs'
 import { Node, getNodePath } from 'jsonc-parser'
 import vscode from 'vscode'
 import { isValidFMUIdentifier } from '../../fmu'
@@ -86,9 +85,14 @@ export class ValidFMUPathRule implements LintRule {
         )
     }
 
-    isFileValidFMU = async (path: string): Promise<boolean> => {
+    isFileValidFMU = async (path: vscode.Uri): Promise<boolean> => {
         // Currently just checks that a file actually exists at the path
         // TODO: Check whether the file is a well-formed FMU.
-        return fs.existsSync(path)
+        try {
+            await vscode.workspace.fs.stat(path)
+            return true
+        } catch {
+            return false
+        }
     }
 }

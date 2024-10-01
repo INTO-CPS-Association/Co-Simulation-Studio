@@ -45,7 +45,7 @@ describe('Maestro API Client', () => {
         const sessionId = 'test-session-id'
         axiosMock
             .onPost(`/simulate/${sessionId}`)
-            .replyOnce(200, { status: 'Finished' })
+            .replyOnce(200, { status: 'Simulation completed' })
 
         const result = await simulateSession(sessionId, undefined)
         expect(result).toBe(true)
@@ -80,7 +80,7 @@ describe('Maestro API Client', () => {
             .replyOnce(200, { status: 'initialized' })
         axiosMock
             .onPost(`/simulate/${sessionId}`)
-            .replyOnce(200, { status: 'Finished' })
+            .replyOnce(200, { status: 'Simulation completed' })
         axiosMock.onGet(`/result/${sessionId}/plain`).reply(200, data)
 
         const result = await runSimulationWithConfig(undefined, undefined)

@@ -26,10 +26,10 @@ function registerCommand(
 }
 
 async function handleRunSimulation(uri: vscode.Uri) {
-    const outputChannel = getOutputChannelFromLogger(extensionLogger);
+    const outputChannel = getOutputChannelFromLogger(extensionLogger)
 
     if (outputChannel) {
-        outputChannel.show();
+        outputChannel.show()
     }
 
     if (!uri) {
@@ -75,7 +75,7 @@ async function runSimulationAndShowResults(config: unknown) {
         )}`
     )
 
-    let result;
+    let result
     try {
         result = await runSimulationWithConfig(config, {
             startTime: 0,
@@ -88,14 +88,16 @@ async function runSimulationAndShowResults(config: unknown) {
             })
             await vscode.window.showTextDocument(td)
         } else {
-            throw new Error("Simulation failed.");
+            throw new Error('Simulation failed.')
         }
     } catch (error) {
         extensionLogger.error(`Simulation failed.`)
-
+    } finally {
         if (result?.sessionId) {
-            const status = await getSessionStatus(result.sessionId);
-            extensionLogger.info(`Session status:\n${JSON.stringify(status, null, 2)}`);
+            const status = await getSessionStatus(result.sessionId)
+            extensionLogger.info(
+                `Session status:\n${JSON.stringify(status, null, 2)}`
+            )
         }
     }
 }

@@ -1,5 +1,4 @@
 import { XMLParser } from 'fast-xml-parser'
-import * as fs from 'fs/promises'
 import JSZip from 'jszip'
 import * as vscode from 'vscode'
 import { assertIsError, resolveAbsolutePath } from './utils'
@@ -35,7 +34,7 @@ interface CacheEntry {
 
 export const validFMUIdentifierPattern = /^\{[a-zA-Z0-9]+\}$/
 
-type ModelCache = Map<string, CacheEntry>
+type ModelCache = Map<vscode.Uri, CacheEntry>
 
 export const modelCache: ModelCache = new Map()
 
@@ -52,7 +51,7 @@ export async function getFMUModelFromPath(
     let currentCtime: number
 
     try {
-        currentCtime = (await fs.stat(resolvedPath)).ctimeMs
+        currentCtime = (await vscode.workspace.fs.stat(resolvedPath)).ctime
     } catch {
         throw new Error(
             `No file found at ${resolvedPath} to pull FMU model from.`
@@ -84,20 +83,23 @@ export async function getFMUModelFromPath(
     return fmuModel
 }
 
-export async function extractFMUModelFromPath(path: string): Promise<FMUModel> {
+export async function extractFMUModelFromPath(
+    path: vscode.Uri
+): Promise<FMUModel> {
     let zipFile: JSZip
     try {
-        const zipBuffer = await fs.readFile(path)
+        const zipBuffer = await vscode.workspace.fs.readFile(path)
         zipFile = await JSZip.loadAsync(zipBuffer)
     } catch (err) {
         throw new Error(
-            `Failed to open file at '${path}' whgile trying to extract FMU model.`
+            `Failed to open file at '${path}' while trying to extract FMU model.`
         )
     }
 
     const modelDescriptionObject = zipFile.file('modelDescription.xml')
-    const modelDescriptionContents =
-        await modelDescriptionObject?.async('nodebuffer')
+    const modelDescriptionContents = await modelDescriptionObject?.async(
+        'nodebuffer'
+    )
 
     if (modelDescriptionContents) {
         return parseXMLModelDescription(modelDescriptionContents)

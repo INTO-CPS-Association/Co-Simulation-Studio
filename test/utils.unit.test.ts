@@ -96,7 +96,7 @@ describe('Util Functions', () => {
 
         const resPath = resolveAbsolutePath(workspaceFolder, absPath)
 
-        expect(resPath).toBe(absPath)
+        expect(resPath).toEqual(Uri.file(absPath))
     })
 
     it('should return absolute path when input is relative to workspace', () => {
@@ -104,7 +104,7 @@ describe('Util Functions', () => {
 
         const resPath = resolveAbsolutePath(workspaceFolder, relPath)
 
-        expect(resPath).toBe('/data/src/custom_cosim.json')
+        expect(resPath).toEqual(Uri.file('/data/src/custom_cosim.json'))
     })
 
     it('should resolve FMU configs to absolute paths', () => {

@@ -54,12 +54,12 @@ export function isDocumentCosimConfig(document: vscode.TextDocument) {
 export function resolveAbsolutePath(
     wsFolder: vscode.WorkspaceFolder,
     relPath: string
-): string {
+): vscode.Uri {
     if (path.isAbsolute(relPath)) {
-        return relPath
+        return vscode.Uri.file(relPath)
     }
 
-    const absolutePath = vscode.Uri.joinPath(wsFolder.uri, relPath).path
+    const absolutePath = vscode.Uri.joinPath(wsFolder.uri, relPath)
     return absolutePath
 }
 
@@ -71,7 +71,7 @@ export function resolveSimulationConfig(
         const fmuPath = config.fmus[fmuIdent]
 
         const absolutePath = resolveAbsolutePath(wsFolder, fmuPath)
-        config.fmus[fmuIdent] = absolutePath
+        config.fmus[fmuIdent] = absolutePath.fsPath
     }
 
     return config

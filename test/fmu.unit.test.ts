@@ -5,11 +5,10 @@ import {
     modelCache,
     parseXMLModelDescription,
 } from 'fmu'
-import fs from 'fs/promises'
 import JSZip from 'jszip'
 import * as vscode from 'vscode'
+import { Uri } from 'vscode'
 
-jest.mock('fs/promises')
 jest.mock('jszip')
 
 const workspaceUri = vscode.Uri.file('/data')
@@ -64,22 +63,32 @@ describe('FMU Parsing', () => {
 
     describe('extractFMUModelFromPath', () => {
         it('throws when modelDescription.xml does not exist', async () => {
-            ;(fs.readFile as jest.Mock).mockResolvedValue('file content')
+            ;(vscode.workspace.fs.readFile as jest.Mock).mockResolvedValue(
+                'file content'
+            )
             ;(JSZip.loadAsync as jest.Mock).mockResolvedValue({
                 file: jest.fn(() => null),
             })
 
-            await expect(extractFMUModelFromPath('file/path')).rejects.toThrow()
+            await expect(
+                extractFMUModelFromPath(Uri.file('file/path'))
+            ).rejects.toThrow()
         })
 
         it('throws when fmu file does not exist', async () => {
-            ;(fs.readFile as jest.Mock).mockRejectedValue(false)
+            ;(vscode.workspace.fs.readFile as jest.Mock).mockRejectedValue(
+                false
+            )
 
-            await expect(extractFMUModelFromPath('file/path')).rejects.toThrow()
+            await expect(
+                extractFMUModelFromPath(Uri.file('file/path'))
+            ).rejects.toThrow()
         })
 
         it('extracts the model from the zip correctly', async () => {
-            ;(fs.readFile as jest.Mock).mockResolvedValue('zip content')
+            ;(vscode.workspace.fs.readFile as jest.Mock).mockResolvedValue(
+                'zip content'
+            )
             ;(JSZip.loadAsync as jest.Mock).mockResolvedValue({
                 file: jest.fn().mockImplementation((fileName) => {
                     if (fileName === 'modelDescription.xml') {
@@ -94,7 +103,7 @@ describe('FMU Parsing', () => {
                 }),
             })
 
-            const result = await extractFMUModelFromPath('file/path')
+            const result = await extractFMUModelFromPath(Uri.file('file/path'))
 
             expect(result).toEqual({
                 inputs: [
@@ -115,7 +124,9 @@ describe('FMU Parsing', () => {
     })
     describe('getFMUModelFromPath', () => {
         it('throws when modelDescription.xml does not exist', async () => {
-            ;(fs.readFile as jest.Mock).mockResolvedValue('file content')
+            ;(vscode.workspace.fs.readFile as jest.Mock).mockResolvedValue(
+                'file content'
+            )
             ;(JSZip.loadAsync as jest.Mock).mockResolvedValue({
                 file: jest.fn(() => null),
             })
@@ -126,7 +137,9 @@ describe('FMU Parsing', () => {
         })
 
         it('throws when fmu file does not exist', async () => {
-            ;(fs.readFile as jest.Mock).mockRejectedValue(false)
+            ;(vscode.workspace.fs.readFile as jest.Mock).mockRejectedValue(
+                false
+            )
 
             expect(
                 getFMUModelFromPath(workspaceFolder, 'file/path')
@@ -134,7 +147,9 @@ describe('FMU Parsing', () => {
         })
 
         it('returns the model during cache miss', async () => {
-            ;(fs.readFile as jest.Mock).mockResolvedValue('zip content')
+            ;(vscode.workspace.fs.readFile as jest.Mock).mockResolvedValue(
+                'zip content'
+            )
             ;(JSZip.loadAsync as jest.Mock).mockResolvedValue({
                 file: jest.fn().mockImplementation((fileName) => {
                     if (fileName === 'modelDescription.xml') {
@@ -148,8 +163,8 @@ describe('FMU Parsing', () => {
                     return null
                 }),
             })
-            ;(fs.stat as jest.Mock).mockResolvedValue({
-                ctimeMs: 0,
+            ;(vscode.workspace.fs.stat as jest.Mock).mockResolvedValue({
+                ctime: 0,
             })
 
             const result = await getFMUModelFromPath(
@@ -172,19 +187,25 @@ describe('FMU Parsing', () => {
                     },
                 ],
             } satisfies FMUModel)
-            expect(fs.stat).toHaveBeenCalledWith('/data/file/path')
-            expect(fs.readFile).toHaveBeenCalledWith('/data/file/path')
+            expect(vscode.workspace.fs.stat).toHaveBeenCalledWith(
+                Uri.file('/data/file/path')
+            )
+            expect(vscode.workspace.fs.readFile).toHaveBeenCalledWith(
+                Uri.file('/data/file/path')
+            )
         })
 
         it("throws during cache miss if model can't be extracted from file", async () => {
-            ;(fs.readFile as jest.Mock).mockResolvedValue('zip content')
+            ;(vscode.workspace.fs.readFile as jest.Mock).mockResolvedValue(
+                'zip content'
+            )
             ;(JSZip.loadAsync as jest.Mock).mockResolvedValue({
                 file: jest.fn().mockImplementation(() => {
                     return null
                 }),
             })
-            ;(fs.stat as jest.Mock).mockResolvedValue({
-                ctimeMs: 0,
+            ;(vscode.workspace.fs.stat as jest.Mock).mockResolvedValue({
+                ctime: 0,
             })
 
             await expect(
@@ -193,7 +214,9 @@ describe('FMU Parsing', () => {
         })
 
         it('returns the model during cache hit', async () => {
-            ;(fs.readFile as jest.Mock).mockResolvedValue('zip content')
+            ;(vscode.workspace.fs.readFile as jest.Mock).mockResolvedValue(
+                'zip content'
+            )
             ;(JSZip.loadAsync as jest.Mock).mockResolvedValue({
                 file: jest.fn().mockImplementation((fileName) => {
                     if (fileName === 'modelDescription.xml') {
@@ -207,8 +230,8 @@ describe('FMU Parsing', () => {
                     return null
                 }),
             })
-            ;(fs.stat as jest.Mock).mockResolvedValue({
-                ctimeMs: 1,
+            ;(vscode.workspace.fs.stat as jest.Mock).mockResolvedValue({
+                ctime: 1,
             })
 
             const result = await getFMUModelFromPath(
@@ -237,11 +260,13 @@ describe('FMU Parsing', () => {
                 'file/path'
             )
 
-            expect(secondResult).toBe(result)
+            expect(secondResult).toEqual(result)
         })
 
         it('returns the model during cache hit when the file has been modified', async () => {
-            ;(fs.readFile as jest.Mock).mockResolvedValue('zip content')
+            ;(vscode.workspace.fs.readFile as jest.Mock).mockResolvedValue(
+                'zip content'
+            )
             ;(JSZip.loadAsync as jest.Mock).mockResolvedValue({
                 file: jest.fn().mockImplementation((fileName) => {
                     if (fileName === 'modelDescription.xml') {
@@ -255,8 +280,8 @@ describe('FMU Parsing', () => {
                     return null
                 }),
             })
-            ;(fs.stat as jest.Mock).mockResolvedValue({
-                ctimeMs: 0,
+            ;(vscode.workspace.fs.stat as jest.Mock).mockResolvedValue({
+                ctime: 0,
             })
 
             const result = await getFMUModelFromPath(
@@ -279,9 +304,8 @@ describe('FMU Parsing', () => {
                     },
                 ],
             } satisfies FMUModel)
-
-            ;(fs.stat as jest.Mock).mockResolvedValue({
-                ctimeMs: 1,
+            ;(vscode.workspace.fs.stat as jest.Mock).mockResolvedValue({
+                ctime: 1,
             })
 
             const secondResult = await getFMUModelFromPath(
