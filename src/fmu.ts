@@ -97,9 +97,8 @@ export async function extractFMUModelFromPath(
     }
 
     const modelDescriptionObject = zipFile.file('modelDescription.xml')
-    const modelDescriptionContents = await modelDescriptionObject?.async(
-        'nodebuffer'
-    )
+    const modelDescriptionContents =
+        await modelDescriptionObject?.async('nodebuffer')
 
     if (modelDescriptionContents) {
         return parseXMLModelDescription(modelDescriptionContents)

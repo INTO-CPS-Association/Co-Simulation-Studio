@@ -186,7 +186,7 @@ export class CosimulationConfiguration implements ICosimulationConfiguration {
                     source.path
                 )
                 resolvedFMUModels.set(ident, fmuModel)
-            } catch { }
+            } catch {}
         }
 
         this.fmuModels = resolvedFMUModels

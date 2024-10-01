@@ -8,5 +8,5 @@ jest.mock('./src/logging.ts', () => {
             debug: jest.fn(),
             log: jest.fn(),
         })),
-    };
-});
+    }
+})
