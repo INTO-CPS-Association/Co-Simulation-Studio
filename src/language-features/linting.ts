@@ -80,11 +80,22 @@ export class SimulationConfigLinter implements vscode.Disposable {
             vscode.workspace.onDidChangeTextDocument((event) =>
                 this.documentQueueManager.queue(event.document)
             ),
+            vscode.window.onDidChangeActiveTextEditor((newActiveEditor) => {
+                if (newActiveEditor) {
+                    this.documentQueueManager.queue(newActiveEditor.document)
+                }
+            }),
             vscode.workspace.onDidCloseTextDocument((document) => {
                 this.documentQueueManager.dequeue(document)
                 this.lintingManager.clearDiagnostics(document)
             })
         )
+
+        if (vscode.window.activeTextEditor) {
+            this.documentQueueManager.queue(
+                vscode.window.activeTextEditor.document
+            )
+        }
     }
 
     private lint() {
