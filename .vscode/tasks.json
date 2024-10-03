@@ -22,7 +22,7 @@
             "type": "npm",
             "script": "maestro-up",
             "presentation": {
-                "reveal": "never",
+                "reveal": "never"
             },
             "isBackground": true,
             "problemMatcher": {
@@ -41,14 +41,11 @@
                     "endsPattern": "Starting ProtocolHandler"
                 }
             },
-            "label": "npm: maestro-up",
+            "label": "npm: maestro-up"
         },
         {
             "label": "esbuild-watch and maestro-up",
-            "dependsOn": [
-                "npm: esbuild:watch",
-                "npm: maestro-up"
-            ]
-        },
+            "dependsOn": ["npm: esbuild:watch", "npm: maestro-up"]
+        }
     ]
 }

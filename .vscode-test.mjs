@@ -1,20 +1,20 @@
-import { defineConfig } from "@vscode/test-cli";
-import { fileURLToPath } from "url";
-import { dirname, join } from "path";
+import { defineConfig } from '@vscode/test-cli'
+import { fileURLToPath } from 'url'
+import { dirname, join } from 'path'
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = dirname(__filename)
 
 export default defineConfig({
     tests: [
         {
-            files: "dist/test/**/*.spec.js",
+            files: 'dist/test/**/*.spec.js',
             extensionDevelopmentPath: __dirname,
-            srcDir: "dist/ext"
-        }
+            srcDir: 'dist/ext',
+        },
     ],
     coverage: {
         includeAll: true,
-        exclude: [join(__dirname, "dist/test")]
+        exclude: [join(__dirname, 'dist/test')],
     },
-});
+})
