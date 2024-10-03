@@ -123,9 +123,9 @@ describe('Util Functions', () => {
 
         expect(resolvedConfig).toEqual({
             fmus: {
-                fmu1: '/absolute/path',
-                fmu2: '/data/relative/path',
-                fmu3: '/data/relative/path2',
+                fmu1: 'file:///absolute/path',
+                fmu2: 'file:///data/relative/path',
+                fmu3: 'file:///data/relative/path2',
             },
         })
     })
