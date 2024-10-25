@@ -86,8 +86,6 @@ export class SimulationConfigCompletionItemProvider
     ): Promise<vscode.CompletionItem[]> {
         const completionNode = cosimConfig.getNodeAtPosition(position)
 
-        console.log(completionNode)
-
         if (
             !completionNode ||
             !isNodeString(completionNode) ||
