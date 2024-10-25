@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - cosimstudio_rework
-      - cosimstudio_rework_0.1.3
   pull_request:
 
 jobs:
@@ -17,10 +16,10 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
 
@@ -34,7 +33,7 @@ jobs:
         run: npx vsce package
 
       - name: Upload .vsix artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: vscode-extension-${{ matrix.os }}
           path: '*.vsix'
