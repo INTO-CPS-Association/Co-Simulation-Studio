@@ -1,105 +1,118 @@
 /* Custom Winston Transport */
-import Transport, { TransportStreamOptions } from "winston-transport";
-import vscode, { LogLevel } from "vscode";
-import { Logger, createLogger } from "winston";
+import Transport, { TransportStreamOptions } from 'winston-transport'
+import vscode, { LogLevel, OutputChannel } from 'vscode'
+import { Logger, createLogger } from 'winston'
 
 interface TransportOptions extends TransportStreamOptions {
-    name: string;
-    window: typeof vscode.window;
+    name: string
+    window: typeof vscode.window
 }
 
 interface LogInfo {
-    message: string;
-    level: OutputChannelFunction;
+    message: string
+    level: OutputChannelFunction
 }
 
 type OutputChannelFunction =
-    | "debug"
-    | "info"
-    | "warn"
-    | "error"
-    | "trace"
-    | "appendLine";
+    | 'debug'
+    | 'info'
+    | 'warn'
+    | 'error'
+    | 'trace'
+    | 'appendLine'
 
 class VSCTransport extends Transport {
-    public name: string;
-    public outputChannel: vscode.LogOutputChannel;
+    public name: string
+    public outputChannel: vscode.LogOutputChannel
 
     constructor(options: TransportOptions) {
-        super(options);
+        super(options)
 
-        this.name = options.name || this.constructor.name;
+        this.name = options.name || this.constructor.name
         this.outputChannel = options.window.createOutputChannel(this.name, {
             log: true,
-        });
-        this.outputChannel.clear();
-        this.outputChannel.show();
+        })
+        this.outputChannel.clear()
+        this.outputChannel.show()
     }
 
     levelToVSCMethod(level: OutputChannelFunction): OutputChannelFunction {
-        if (["debug", "info", "warn", "error", "trace"].includes(level))
-            return level;
+        if (['debug', 'info', 'warn', 'error', 'trace'].includes(level))
+            return level
 
-        return "appendLine";
+        return 'appendLine'
     }
 
     log(info: LogInfo, callback: CallableFunction) {
-        setImmediate(() => this.emit("logged", info));
-        const message = info["message"];
-        const vscMethod = this.levelToVSCMethod(info["level"]);
+        setImmediate(() => this.emit('logged', info))
+        const message = info['message']
+        const vscMethod = this.levelToVSCMethod(info['level'])
 
-        this.outputChannel[vscMethod](message);
+        this.outputChannel[vscMethod](message)
 
-        callback();
+        callback()
     }
 }
 
 function vsCodeLogLevelToString(logLevel: LogLevel): string {
     switch (logLevel) {
         case 0:
-            return "off";
+            return 'off'
         case 1:
-            return "trace";
+            return 'trace'
         case 2:
-            return "debug";
+            return 'debug'
         case 3:
-            return "info";
+            return 'info'
         case 4:
-            return "warning";
+            return 'warning'
         case 5:
-            return "error";
+            return 'error'
         default:
-            return "unknown";
+            return 'unknown'
     }
 }
 
-let logger: Logger;
+let logger: Logger
 
 export function getLogger(): Logger {
     if (logger) {
-        return logger;
+        return logger
     }
 
     const transport = new VSCTransport({
         window: vscode.window,
-        name: "Cosimulation Studio",
-    });
+        name: 'Cosimulation Studio',
+    })
 
     logger = createLogger({
         level: vsCodeLogLevelToString(vscode.env.logLevel),
         transports: [transport],
-    });
-    
-    logger.log("info", `Log level: ${LogLevel[vscode.env.logLevel]}.`);
-    
+    })
+
+    logger.log('info', `Log level: ${LogLevel[vscode.env.logLevel]}.`)
+
     vscode.env.onDidChangeLogLevel((newLevel) => {
         logger.configure({
             level: vsCodeLogLevelToString(newLevel),
             transports: [transport],
-        });
-        logger.log("info", `Log level: ${LogLevel[newLevel]}.`);
-    });
+        })
+        logger.log('info', `Log level: ${LogLevel[newLevel]}.`)
+    })
 
-    return logger;
+    return logger
 }
 
+export function getOutputChannelFromLogger(
+    logger: Logger
+): OutputChannel | undefined {
+    const outputChannelLogger = logger.transports.find(
+        (l) => l instanceof VSCTransport
+    )
+
+    if (!outputChannelLogger) {
+        return undefined
+    }
+
+    return outputChannelLogger.outputChannel
+}

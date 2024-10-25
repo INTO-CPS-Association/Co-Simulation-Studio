@@ -6,9 +6,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [0.1.2] - 2024-10-03
+
 ### Fixed
 
 - Linting: causality rule did not apply to inputs.
+- Linting: references to valid FMU files were detected as invalid on Windows.
+- Simulation: running a simulation on Windows would cause an error as the paths to the FMUs were invalid.
+
+### Changed
+
+- All error reporting and information about a running simulation has been moved to the output channel rather than a notification.
 
 ## [0.1.1] - 2024-08-30
 

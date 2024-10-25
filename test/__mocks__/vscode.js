@@ -1,1 +1,1 @@
-module.exports = require('jest-mock-vscode').createVSCodeMock(jest);
+module.exports = require('jest-mock-vscode').createVSCodeMock(jest)

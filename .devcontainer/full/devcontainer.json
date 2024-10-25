@@ -1,39 +1,37 @@
 // For format details, see https://aka.ms/devcontainer.json. For config options, see the
 // README at: https://github.com/devcontainers/templates/tree/main/src/typescript-node
 {
-	"name": "Full Dev w. Maestro",
-	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
-	// "image": "mcr.microsoft.com/devcontainers/typescript-node:1-22-bookworm",
-	"build": {
-		"dockerfile": "../Dockerfile",
-		"target": "cosim_with_maestro"
-	},
-	"containerEnv": {
-		"MAESTRO_WEBAPI_PATH": "/home/node/maestro_home/maestro-webapi.jar"
-	},
+    "name": "Full Dev w. Maestro",
+    // Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
+    // "image": "mcr.microsoft.com/devcontainers/typescript-node:1-22-bookworm",
+    "build": {
+        "dockerfile": "../Dockerfile",
+        "target": "cosim_with_maestro"
+    },
+    "containerEnv": {
+        "MAESTRO_WEBAPI_PATH": "/home/node/maestro_home/maestro-webapi.jar"
+    },
 
-	// Features to add to the dev container. More info: https://containers.dev/features.
-	"features": {
-		"ghcr.io/devcontainers/features/java:1": {
-			"java": "test"
-		}
-	},
+    // Features to add to the dev container. More info: https://containers.dev/features.
+    "features": {
+        "ghcr.io/devcontainers/features/java:1": {
+            "java": "test"
+        }
+    },
 
-	// Use 'forwardPorts' to make a list of ports inside the container available locally.
-	// "forwardPorts": [],
+    // Use 'forwardPorts' to make a list of ports inside the container available locally.
+    // "forwardPorts": [],
 
-	// Use 'postCreateCommand' to run commands after the container is created.
-	// "postCreateCommand": "java -version",
+    // Use 'postCreateCommand' to run commands after the container is created.
+    // "postCreateCommand": "java -version",
 
-	// Configure tool-specific properties.
-	"customizations": {
-		"vscode": {
-			"extensions": [
-				"connor4312.esbuild-problem-matchers"
-			]
-		}
-	}
+    // Configure tool-specific properties.
+    "customizations": {
+        "vscode": {
+            "extensions": ["connor4312.esbuild-problem-matchers"]
+        }
+    }
 
-	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
-	// "remoteUser": "root"
+    // Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
+    // "remoteUser": "root"
 }

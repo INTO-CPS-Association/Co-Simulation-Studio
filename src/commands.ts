@@ -1,63 +1,69 @@
-import * as vscode from "vscode";
-import { isSimulationConfiguration, resolveSimulationConfig } from "./utils";
-import fs from "node:fs/promises";
-import { getLogger } from "./logging";
-import { runSimulationWithConfig } from "./maestro";
+import * as vscode from 'vscode'
+import { isSimulationConfiguration, resolveSimulationConfig } from './utils'
+import fs from 'node:fs/promises'
+import { getLogger, getOutputChannelFromLogger } from './logging'
+import { getSessionStatus, runSimulationWithConfig } from './maestro'
 
-const extensionLogger = getLogger();
+const extensionLogger = getLogger()
 
 export const commandHandlers = {
-    "cosimstudio.runSimulation": handleRunSimulation,
-};
+    'cosimstudio.runSimulation': handleRunSimulation,
+}
 
 export function registerCommands(): vscode.Disposable[] {
     const registeredHandlers = Object.entries(commandHandlers).map(
         ([cmd, fn]) => registerCommand(cmd, fn)
-    );
+    )
 
-    return registeredHandlers;
+    return registeredHandlers
 }
 
 function registerCommand(
     cmd: string,
     fn: (...args: any[]) => unknown
 ): vscode.Disposable {
-    return vscode.commands.registerCommand(cmd, fn);
+    return vscode.commands.registerCommand(cmd, fn)
 }
 
 async function handleRunSimulation(uri: vscode.Uri) {
-    if (!uri) {
-        return;
+    const outputChannel = getOutputChannelFromLogger(extensionLogger)
+
+    if (outputChannel) {
+        outputChannel.show()
     }
 
-    const wsFolder = vscode.workspace.getWorkspaceFolder(uri);
+    if (!uri) {
+        return
+    }
+
+    const wsFolder = vscode.workspace.getWorkspaceFolder(uri)
 
     if (!wsFolder) {
-        return;
+        return
     }
 
-    const configUri = uri;
+    const configUri = uri
 
     if (!configUri) {
-        return;
+        return
     }
 
-    const config = JSON.parse((await fs.readFile(configUri.fsPath)).toString());
+    const config = JSON.parse((await fs.readFile(configUri.fsPath)).toString())
 
     if (!isSimulationConfiguration(config)) {
-        return;
+        return
     }
 
-    const resolvedConfig = resolveSimulationConfig(config, wsFolder);
+    const resolvedConfig = resolveSimulationConfig(config, wsFolder)
 
     vscode.window.withProgress(
         {
             cancellable: false,
             location: vscode.ProgressLocation.Notification,
-            title: "Running simulation",
+            title: 'Running simulation',
         },
         async () => runSimulationAndShowResults(resolvedConfig)
-    );
+    )
 }
 
 async function runSimulationAndShowResults(config: unknown) {
@@ -67,21 +73,31 @@ async function runSimulationAndShowResults(config: unknown) {
             null,
             2
         )}`
-    );
+    )
+
+    let result
     try {
-        const results = await runSimulationWithConfig(config, {
+        result = await runSimulationWithConfig(config, {
             startTime: 0,
             endTime: 10,
-        });
+        })
 
-        if (results) {
+        if (result?.data) {
             const td = await vscode.workspace.openTextDocument({
-                content: results,
-            });
-            await vscode.window.showTextDocument(td);
+                content: result.data,
+            })
+            await vscode.window.showTextDocument(td)
+        } else {
+            throw new Error('Simulation failed.')
         }
     } catch (error) {
-        extensionLogger.error(`Simulation failed: ${error}`);
-        vscode.window.showErrorMessage(`Simulation failed. ${error}`);
+        extensionLogger.error(`Simulation failed.`)
+    } finally {
+        if (result?.sessionId) {
+            const status = await getSessionStatus(result.sessionId)
+            extensionLogger.debug(
+                `Session status:\n${JSON.stringify(status, null, 2)}`
+            )
+        }
     }
 }
