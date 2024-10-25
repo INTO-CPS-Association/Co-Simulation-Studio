@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+### Changed
+
+- Variable completion items in cosimulation configuration files are now context-aware, only showing the relevant variables, i.e. either inputs, outputs or parameters.
+
 ## [0.1.2] - 2024-10-03
 
 ### Fixed

@@ -7,10 +7,10 @@
 - [x] Weird inconsistent spacing/tabs
 - [x] The cosim file is not linted when it is opened or when the extension starts. Meaning when the extension first loads it won't catch errors until the file has been edited. Also, if an FMU is ever deleted, it won't show up as an error in the configuration file.
 - [x] Remove dangling period in Axios error message.
-- [ ] Filter autocompletion items for connections to only show input/output/parameters depending on context.
+- [x] Filter autocompletion items for connections to only show input/output/parameters depending on context.
 - [ ] Setup Actions to build extension package
 - [ ] Additional testing - increase coverage in unit tests
-- [ ] Demo video showing basic functionality of extension.
+- [x] Demo video showing basic functionality of extension.
 - [ ] Documentation - MkDocs, for reference: <https://github.com/INTO-CPS-Association/DTaaS/blob/feature/distributed-demo/docs/PUBLISH.md>
 
 ## v0.2.0 development

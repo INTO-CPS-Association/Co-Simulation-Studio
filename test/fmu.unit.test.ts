@@ -27,9 +27,32 @@ const dummyModelDescription = `
                 </ScalarVariable>
                 <ScalarVariable name="v1" causality="output">
                 </ScalarVariable>
+                <ScalarVariable name="c1" causality="parameter">
+                </ScalarVariable>
             </ModelVariables>
             </fmiModelDescription>
         `
+
+const dummyModel: FMUModel = {
+    inputs: [
+        {
+            name: 'fk',
+        },
+    ],
+    outputs: [
+        {
+            name: 'x1',
+        },
+        {
+            name: 'v1',
+        },
+    ],
+    parameters: [
+        {
+            name: 'c1',
+        },
+    ],
+}
 
 describe('FMU Parsing', () => {
     afterEach(() => {
@@ -40,21 +63,7 @@ describe('FMU Parsing', () => {
     it('parses XML model description correctly', async () => {
         const result = parseXMLModelDescription(dummyModelDescription)
 
-        expect(result).toEqual({
-            inputs: [
-                {
-                    name: 'fk',
-                },
-            ],
-            outputs: [
-                {
-                    name: 'x1',
-                },
-                {
-                    name: 'v1',
-                },
-            ],
-        } satisfies FMUModel)
+        expect(result).toEqual(dummyModel)
     })
 
     it('throws when parsing invalid XML model description', async () => {
@@ -105,21 +114,7 @@ describe('FMU Parsing', () => {
 
             const result = await extractFMUModelFromPath(Uri.file('file/path'))
 
-            expect(result).toEqual({
-                inputs: [
-                    {
-                        name: 'fk',
-                    },
-                ],
-                outputs: [
-                    {
-                        name: 'x1',
-                    },
-                    {
-                        name: 'v1',
-                    },
-                ],
-            } satisfies FMUModel)
+            expect(result).toEqual(dummyModel)
         })
     })
     describe('getFMUModelFromPath', () => {
@@ -172,21 +167,7 @@ describe('FMU Parsing', () => {
                 'file/path'
             )
 
-            expect(result).toEqual({
-                inputs: [
-                    {
-                        name: 'fk',
-                    },
-                ],
-                outputs: [
-                    {
-                        name: 'x1',
-                    },
-                    {
-                        name: 'v1',
-                    },
-                ],
-            } satisfies FMUModel)
+            expect(result).toEqual(dummyModel)
             expect(vscode.workspace.fs.stat).toHaveBeenCalledWith(
                 Uri.file('/data/file/path')
             )
@@ -239,21 +220,7 @@ describe('FMU Parsing', () => {
                 'file/path'
             )
 
-            expect(result).toEqual({
-                inputs: [
-                    {
-                        name: 'fk',
-                    },
-                ],
-                outputs: [
-                    {
-                        name: 'x1',
-                    },
-                    {
-                        name: 'v1',
-                    },
-                ],
-            } satisfies FMUModel)
+            expect(result).toEqual(dummyModel)
 
             const secondResult = await getFMUModelFromPath(
                 workspaceFolder,
@@ -289,21 +256,7 @@ describe('FMU Parsing', () => {
                 'file/path'
             )
 
-            expect(result).toEqual({
-                inputs: [
-                    {
-                        name: 'fk',
-                    },
-                ],
-                outputs: [
-                    {
-                        name: 'x1',
-                    },
-                    {
-                        name: 'v1',
-                    },
-                ],
-            } satisfies FMUModel)
+            expect(result).toEqual(dummyModel)
             ;(vscode.workspace.fs.stat as jest.Mock).mockResolvedValue({
                 ctime: 1,
             })

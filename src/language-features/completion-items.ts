@@ -1,11 +1,12 @@
 import * as vscode from 'vscode'
-import { getNodePath } from 'jsonc-parser'
+import { getNodePath, Node } from 'jsonc-parser'
 import {
     CosimulationConfiguration,
     getFMUIdentifierFromConnectionString,
     getStringContentRange,
     isNodeString,
 } from './utils'
+import { ModelVariable } from 'fmu'
 
 export class SimulationConfigCompletionItemProvider
     implements vscode.CompletionItemProvider
@@ -85,6 +86,8 @@ export class SimulationConfigCompletionItemProvider
     ): Promise<vscode.CompletionItem[]> {
         const completionNode = cosimConfig.getNodeAtPosition(position)
 
+        console.log(completionNode)
+
         if (
             !completionNode ||
             !isNodeString(completionNode) ||
@@ -101,15 +104,38 @@ export class SimulationConfigCompletionItemProvider
             return []
         }
 
-        const validVariables =
-            await cosimConfig.getAllVariablesFromIdentifier(fmuIdentifier)
+        const fmuModel = await cosimConfig.getFMUModel(fmuIdentifier)
+
+        console.log(fmuModel)
+
+        if (!fmuModel) {
+            return []
+        }
+
+        const completionContext = this.getCompletionContext(completionNode)
+
+        console.log('Completion context', completionContext)
+
+        const completionVariables: ModelVariable[] = []
+
+        if (completionContext === 'input') {
+            completionVariables.push(...fmuModel.inputs)
+        } else if (completionContext === 'output') {
+            completionVariables.push(...fmuModel.outputs)
+        } else if (completionContext === 'parameter') {
+            completionVariables.push(...fmuModel.parameters)
+        }
+
+        const completionStrings = completionVariables.map(
+            (variable) => variable.name
+        )
 
         // Get range of the nearest word following a period
         const range = cosimConfig
             .getDocument()
             .getWordRangeAtPosition(position, /(?<=\.)\w+/)
 
-        const suggestions = validVariables.map((variable) => {
+        const suggestions = completionStrings.map((variable) => {
             const completionItem = new vscode.CompletionItem(
                 variable,
                 vscode.CompletionItemKind.Property
@@ -120,5 +146,26 @@ export class SimulationConfigCompletionItemProvider
         })
 
         return suggestions
+    }
+
+    getCompletionContext(
+        completionNode: Node
+    ): 'input' | 'output' | 'parameter' | null {
+        const nodePath = getNodePath(completionNode)
+
+        console.log('Node path:', nodePath)
+
+        if (nodePath.length === 2 && nodePath[0] === 'parameters') {
+            return 'parameter'
+        } else if (nodePath.length === 2 && nodePath[0] === 'connections') {
+            return 'output'
+        } else if (
+            nodePath.length === 3 &&
+            nodePath[0] === 'connections' &&
+            typeof nodePath[2] === 'number'
+        ) {
+            return 'input'
+        }
+        return null
     }
 }
