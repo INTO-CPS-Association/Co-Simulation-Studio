@@ -3,7 +3,8 @@ name: Build and Test VS Code Extension
 on:
   push:
     branches:
-      - main
+      - cosimstudio_rework
+      - cosimstudio_rework_0.1.3
   pull_request:
 
 jobs:
