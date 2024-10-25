@@ -34,7 +34,10 @@ function getErrorDetails(error: unknown): string {
               )}`
             : 'No response received from server.'
 
-        return `Axios error: ${error.message}. ${responseDetails}`
+        const messageParts = [error.message, responseDetails].filter(
+            (c) => c.length > 0
+        )
+        return messageParts.join('. ')
     } else {
         return `Unknown error: ${inspect(error)}`
     }

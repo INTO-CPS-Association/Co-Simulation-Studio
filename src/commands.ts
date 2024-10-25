@@ -95,7 +95,7 @@ async function runSimulationAndShowResults(config: unknown) {
     } finally {
         if (result?.sessionId) {
             const status = await getSessionStatus(result.sessionId)
-            extensionLogger.info(
+            extensionLogger.debug(
                 `Session status:\n${JSON.stringify(status, null, 2)}`
             )
         }
