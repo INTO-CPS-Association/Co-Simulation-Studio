@@ -1,0 +1,6 @@
+site_name: Cosimulation Studio Documentation
+theme: 
+  name: readthedocs
+nav:
+  - Home: index.md
+  - Developing: developing.md

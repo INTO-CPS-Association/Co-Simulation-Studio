@@ -1,0 +1,36 @@
+name: Build and deploy MkDocs to GitHub pages
+
+on:
+  push:
+    branches:
+      - cosimstudio_rework
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: 3.12
+      - run: pip install mkdocs
+      - name: Build static files
+        id: build
+        run: |
+          mkdocs build --config-file docs/mkdocs.yml
+      - name: Upload static files as artifact
+        id: deployment
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs/site/
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

@@ -8,14 +8,14 @@
 - [x] The cosim file is not linted when it is opened or when the extension starts. Meaning when the extension first loads it won't catch errors until the file has been edited. Also, if an FMU is ever deleted, it won't show up as an error in the configuration file.
 - [x] Remove dangling period in Axios error message.
 - [x] Filter autocompletion items for connections to only show input/output/parameters depending on context.
-- [ ] Setup Actions to build extension package
+- [x] Setup Actions to build extension package
 - [ ] Additional testing - increase coverage in unit tests
 - [x] Demo video showing basic functionality of extension.
 - [ ] Documentation - MkDocs, for reference: <https://github.com/INTO-CPS-Association/DTaaS/blob/feature/distributed-demo/docs/PUBLISH.md>
 
 ## v0.2.0 development
 
-1. (later) cosim_studio.json --> to  be used for one cosimulation workspace. It can refer to multiple cosimulation configs - maestro host and port is moved to here.
+1. (later) cosim_studio.json --> to be used for one cosimulation workspace. It can refer to multiple cosimulation configs - maestro host and port is moved to here.
 2. (later) extension configuration, i.e. where is Maestro running
 3. The project could benefit from a DI framework - consider this for a future release.
 4. Look at activation events and extension configuration with a fixed name.
