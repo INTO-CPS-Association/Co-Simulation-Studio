@@ -6,17 +6,14 @@ import { getLogger } from 'logging'
 
 const logger = getLogger()
 
-interface ModelInput {
-    name: string
-}
-
-interface ModelOutput {
+export interface ModelVariable {
     name: string
 }
 
 export interface FMUModel {
-    inputs: ModelInput[]
-    outputs: ModelOutput[]
+    inputs: ModelVariable[]
+    outputs: ModelVariable[]
+    parameters: ModelVariable[]
 }
 
 export interface FMUSource {
@@ -97,8 +94,9 @@ export async function extractFMUModelFromPath(
     }
 
     const modelDescriptionObject = zipFile.file('modelDescription.xml')
-    const modelDescriptionContents =
-        await modelDescriptionObject?.async('nodebuffer')
+    const modelDescriptionContents = await modelDescriptionObject?.async(
+        'nodebuffer'
+    )
 
     if (modelDescriptionContents) {
         return parseXMLModelDescription(modelDescriptionContents)
@@ -119,8 +117,9 @@ export function parseXMLModelDescription(source: string | Buffer): FMUModel {
         throw new Error('Failed to parse XML model description.')
     }
 
-    const inputs: ModelInput[] = []
-    const outputs: ModelOutput[] = []
+    const inputs: ModelVariable[] = []
+    const outputs: ModelVariable[] = []
+    const parameters: ModelVariable[] = []
 
     // TODO: update this code to use Zod schemas instead of optional chaining and nullish coalescing
     const modelVariables =
@@ -138,11 +137,16 @@ export function parseXMLModelDescription(source: string | Buffer): FMUModel {
             outputs.push({
                 name: mVar['@_name'],
             })
+        } else if (varCausality === 'parameter') {
+            parameters.push({
+                name: mVar['@_name'],
+            })
         }
     }
 
     return {
         inputs,
         outputs,
+        parameters,
     }
 }

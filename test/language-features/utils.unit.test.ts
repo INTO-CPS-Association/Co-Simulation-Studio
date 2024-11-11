@@ -59,6 +59,11 @@ const fmuModel1: FMUModel = {
             name: 'vo1',
         },
     ],
+    parameters: [
+        {
+            name: 'vp1',
+        },
+    ],
 }
 
 const fmuSource1: FMUSource = {
@@ -75,6 +80,11 @@ const fmuModel2: FMUModel = {
     outputs: [
         {
             name: 'vo2',
+        },
+    ],
+    parameters: [
+        {
+            name: 'vp2',
         },
     ],
 }
