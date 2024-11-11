@@ -70,13 +70,13 @@ The editor will generate an error if an FMU definition contains a reference to a
 
 Defining connections with incorrect causality will be detected as an error.
 
-![An animation illustrating the linting feature of the extension and how it ensure correct causality](https://odin.cps.digit.au.dk/into-cps/cosim-studio/v0.1/dark/fmu_causality_linting.gif)
+![An animation illustrating the linting feature of the extension and how it ensure correct causality](https://odin.cps.digit.au.dk/into-cps/cosim-studio/v0.1.3/dark/fmu_causality_linting.gif)
 
 ### Autocompletion
 
 When the configuration contains references to FMUs that the extension can resolve, the editor provides smart completions of input and output variables.
 
-![An animation illustrating the autocompletion feature of the extension](https://odin.cps.digit.au.dk/into-cps/cosim-studio/v0.1/dark/fmu_auto_completion.gif)
+![An animation illustrating the autocompletion feature of the extension](https://odin.cps.digit.au.dk/into-cps/cosim-studio/v0.1.3/dark/fmu_auto_completion.gif)
 
 ### Integration with Maestro
 
