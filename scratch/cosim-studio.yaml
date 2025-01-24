@@ -1,0 +1,17 @@
+maestro:
+  host: localhost
+  port: 8082
+
+cosimulations:
+  faults:
+    - ./project1/cosim.json
+    - ./project2/cosim.json
+  category2:
+    - ./project1/cosim.json
+    - ./project2/cosim.json
+  default:
+    - ./project1/cosim.json
+    - ./project2/cosim.json
+
+
+

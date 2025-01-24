@@ -30,4 +30,3 @@
 - [ ] The project could benefit from a DI framework - consider this for a future release.
 - [ ] Display the resulting data from running a simulation in a table (look at old branches in repo for inspiration).
 - [ ] Set up filesystem watchers to detect when FMUs are changed/moved/deleted etc.
-- [ ]
