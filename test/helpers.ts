@@ -1,4 +1,5 @@
 import fs from 'fs/promises'
+import { LintingError } from 'language-features/language-features.types'
 import path from 'path'
 
 const root = path.join(__dirname, '../')

@@ -1,4 +1,4 @@
-import { FMUModel, FMUModelMap, FMUSource, FMUSourceMap } from 'fmu'
+import { FMUModelMap, FMUSource, FMUSourceMap } from 'fmu'
 import { createTextDocument } from 'jest-mock-vscode'
 import { Node, parseTree } from 'jsonc-parser'
 import { RuleRegistry } from 'language-features/language-features.types'
@@ -11,88 +11,21 @@ import {
     visitTreeUsingRules,
 } from 'language-features/utils'
 import * as vscode from 'vscode'
+import {
+    dummyConfigDocument,
+    fmuModel1,
+    fmuModel2,
+    fmuSource1,
+    fmuSource2,
+    singleStringDocument,
+    withoutStringDocument,
+    workspaceFolder,
+    workspaceUri,
+} from '../data/dummy-data'
 
-const workspaceUri = vscode.Uri.file('/data')
-const workspaceFolder: vscode.WorkspaceFolder = {
-    uri: workspaceUri,
-    name: 'data',
-    index: 0,
-}
-
-const dummyCosimConfig = `
-{
-    "fmus": {
-        "{fmu1}": "${vscode.Uri.joinPath(workspaceUri, 'fmu1.fmu').path}",
-        "{fmu2}": "${vscode.Uri.joinPath(workspaceUri, 'fmu2.fmu').path}"
-    },
-    "connections": {
-        "{msd1}.msd1i.x1": ["{msd2}.msd2i.x1"],
-        "{msd1}.msd1i.v1": ["{msd2}.msd2i.v1"],
-    },
-}
-`
-
-const singleStringDocument = createTextDocument(
-    vscode.Uri.joinPath(workspaceUri, 'custom_cosim.json'),
-    '"{fmu1}"',
-    'json'
-)
-const withoutStringDocument = createTextDocument(
-    vscode.Uri.joinPath(workspaceUri, 'custom_cosim.json'),
-    '[1, 2, 3, 4]',
-    'json'
-)
-const dummyConfigDocument = createTextDocument(
-    vscode.Uri.joinPath(workspaceUri, 'custom_cosim.json'),
-    dummyCosimConfig,
-    'json'
-)
-
-const fmuModel1: FMUModel = {
-    inputs: [
-        {
-            name: 'vi1',
-        },
-    ],
-    outputs: [
-        {
-            name: 'vo1',
-        },
-    ],
-    parameters: [
-        {
-            name: 'vp1',
-        },
-    ],
-}
-
-const fmuSource1: FMUSource = {
-    identifier: '{fmu1}',
-    path: vscode.Uri.joinPath(workspaceUri, 'fmu1.fmu').path,
-}
-
-const fmuModel2: FMUModel = {
-    inputs: [
-        {
-            name: 'vi2',
-        },
-    ],
-    outputs: [
-        {
-            name: 'vo2',
-        },
-    ],
-    parameters: [
-        {
-            name: 'vp2',
-        },
-    ],
-}
-
-const fmuSource2: FMUSource = {
-    identifier: '{fmu2}',
-    path: vscode.Uri.joinPath(workspaceUri, 'fmu2.fmu').path,
-}
+const mockUri = vscode.Uri.parse('path/to/file')
+const mockDocument1 = createTextDocument(mockUri, '{}', 'json', 1)
+const fmuSourcesArray: FMUSource[] = [fmuSource1, fmuSource2]
 
 const fmuSources: FMUSourceMap = new Map([
     ['{fmu1}', fmuSource1],
@@ -103,10 +36,6 @@ const fmuModelMap: FMUModelMap = new Map([
     ['{fmu1}', fmuModel1],
     ['{fmu2}', fmuModel2],
 ])
-
-const mockUri = vscode.Uri.parse('path/to/file')
-const mockDocument1 = createTextDocument(mockUri, '{}', 'json', 1)
-const fmuSourcesArray: FMUSource[] = [fmuSource1, fmuSource2]
 
 jest.mock('../../src/fmu.ts', () => ({
     ...jest.requireActual('../../src/fmu.ts'),

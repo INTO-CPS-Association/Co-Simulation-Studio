@@ -9,17 +9,25 @@
 - [x] Remove dangling period in Axios error message.
 - [x] Filter autocompletion items for connections to only show input/output/parameters depending on context.
 - [x] Setup Actions to build extension package
-- [ ] Additional testing - increase coverage in unit tests
+- [x] Additional testing - increase coverage in unit tests
+  - [x] Linting error typing
+  - [x] Test data into data directory
+  - [x] Open preliminary PR
 - [x] Demo video showing basic functionality of extension.
-- [ ] Documentation - MkDocs, for reference: <https://github.com/INTO-CPS-Association/DTaaS/blob/feature/distributed-demo/docs/PUBLISH.md>
+- [x] Documentation - MkDocs, for reference: <https://github.com/INTO-CPS-Association/DTaaS/blob/feature/distributed-demo/docs/PUBLISH.md>
+- [x] Improve linting and autocompletion of parameters.
 
-## v0.2.0 development
+## v0.2.0 development - end of January
 
-1. (later) cosim_studio.json --> to be used for one cosimulation workspace. It can refer to multiple cosimulation configs - maestro host and port is moved to here.
-2. (later) extension configuration, i.e. where is Maestro running
-3. The project could benefit from a DI framework - consider this for a future release.
-4. Look at activation events and extension configuration with a fixed name.
-5. Display the resulting data from running a simulation in a table (look at old branches in repo for inspiration).
-6. Add JSON schemas over the configs.
-7. Improve linting and autocompletion of parameters.
-8. Set up filesystem watchers to detect when FMUs are changed/moved/deleted etc.
+- [ ] Save simulation results in file in workspace in `build`-directory that mirrors the `cosimulation` directory
+- [ ] (later) cosim_studio.json --> to be used for one cosimulation workspace. It can refer to multiple cosimulation configs - maestro host and port is moved to here.
+  - [ ] `cosimulation` top-level directory
+  - [ ] Add schemas for the validation of the config
+- [ ] Look at activation events and extension configuration with a fixed name.
+
+## v0.2.1 development
+
+- [ ] The project could benefit from a DI framework - consider this for a future release.
+- [ ] Display the resulting data from running a simulation in a table (look at old branches in repo for inspiration).
+- [ ] Set up filesystem watchers to detect when FMUs are changed/moved/deleted etc.
+- [ ]

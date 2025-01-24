@@ -2,8 +2,19 @@ import { Node, getNodePath } from 'jsonc-parser'
 import vscode from 'vscode'
 import { isValidFMUIdentifier } from '../../fmu'
 import { resolveAbsolutePath } from '../../utils'
-import { IRuleContext, LintRule } from '../language-features.types'
+import {
+    IRuleContext,
+    LintingError,
+    LintRule,
+} from '../language-features.types'
 import { getStringContentRange } from '../utils'
+
+export interface InvalidFMUIdentifierError extends LintingError {
+    type: 'INVALID_FMU_IDENTIFIER'
+}
+export interface InvalidFMUReferenceError extends LintingError {
+    type: 'INVALID_FMU_REFERENCE'
+}
 
 export class ValidFMUIdentifierRule implements LintRule {
     constructor() {}
@@ -36,7 +47,11 @@ export class ValidFMUIdentifierRule implements LintRule {
         )
         context.report(
             range,
-            `Invalid FMU identifier: '${possibleIdentifier.value}'`,
+            {
+                message: `Invalid FMU identifier: '${possibleIdentifier.value}'`,
+                type: 'INVALID_FMU_IDENTIFIER',
+            },
+
             vscode.DiagnosticSeverity.Error
         )
     }
@@ -80,7 +95,10 @@ export class ValidFMUPathRule implements LintRule {
         )
         context.report(
             range,
-            `Invalid FMU: the file at '${possibleFMUPath.value}' either doesn't exist or is not a well formed FMU.`,
+            {
+                message: `Invalid FMU: the file at '${possibleFMUPath.value}' either doesn't exist or is not a well formed FMU.`,
+                type: 'INVALID_FMU_REFERENCE',
+            },
             vscode.DiagnosticSeverity.Error
         )
     }

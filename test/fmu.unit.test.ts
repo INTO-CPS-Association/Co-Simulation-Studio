@@ -1,5 +1,4 @@
 import {
-    FMUModel,
     extractFMUModelFromPath,
     getFMUModelFromPath,
     modelCache,
@@ -8,6 +7,10 @@ import {
 import JSZip from 'jszip'
 import * as vscode from 'vscode'
 import { Uri } from 'vscode'
+import {
+    dummyModelMinimal,
+    dummyModelDescriptionMinimal,
+} from './data/dummy-data'
 
 jest.mock('jszip')
 
@@ -18,42 +21,6 @@ const workspaceFolder: vscode.WorkspaceFolder = {
     index: 0,
 }
 
-const dummyModelDescription = `
-            <fmiModelDescription>
-            <ModelVariables>
-                <ScalarVariable name="fk" causality="input">
-                </ScalarVariable>
-                <ScalarVariable name="x1" causality="output">
-                </ScalarVariable>
-                <ScalarVariable name="v1" causality="output">
-                </ScalarVariable>
-                <ScalarVariable name="c1" causality="parameter">
-                </ScalarVariable>
-            </ModelVariables>
-            </fmiModelDescription>
-        `
-
-const dummyModel: FMUModel = {
-    inputs: [
-        {
-            name: 'fk',
-        },
-    ],
-    outputs: [
-        {
-            name: 'x1',
-        },
-        {
-            name: 'v1',
-        },
-    ],
-    parameters: [
-        {
-            name: 'c1',
-        },
-    ],
-}
-
 describe('FMU Parsing', () => {
     afterEach(() => {
         jest.clearAllMocks()
@@ -61,9 +28,9 @@ describe('FMU Parsing', () => {
     })
 
     it('parses XML model description correctly', async () => {
-        const result = parseXMLModelDescription(dummyModelDescription)
+        const result = parseXMLModelDescription(dummyModelDescriptionMinimal)
 
-        expect(result).toEqual(dummyModel)
+        expect(result).toEqual(dummyModelMinimal)
     })
 
     it('throws when parsing invalid XML model description', async () => {
@@ -104,7 +71,9 @@ describe('FMU Parsing', () => {
                         return {
                             async: jest
                                 .fn()
-                                .mockResolvedValue(dummyModelDescription),
+                                .mockResolvedValue(
+                                    dummyModelDescriptionMinimal
+                                ),
                         }
                     }
 
@@ -114,7 +83,7 @@ describe('FMU Parsing', () => {
 
             const result = await extractFMUModelFromPath(Uri.file('file/path'))
 
-            expect(result).toEqual(dummyModel)
+            expect(result).toEqual(dummyModelMinimal)
         })
     })
     describe('getFMUModelFromPath', () => {
@@ -151,7 +120,9 @@ describe('FMU Parsing', () => {
                         return {
                             async: jest
                                 .fn()
-                                .mockResolvedValue(dummyModelDescription),
+                                .mockResolvedValue(
+                                    dummyModelDescriptionMinimal
+                                ),
                         }
                     }
 
@@ -167,7 +138,7 @@ describe('FMU Parsing', () => {
                 'file/path'
             )
 
-            expect(result).toEqual(dummyModel)
+            expect(result).toEqual(dummyModelMinimal)
             expect(vscode.workspace.fs.stat).toHaveBeenCalledWith(
                 Uri.file('/data/file/path')
             )
@@ -204,7 +175,9 @@ describe('FMU Parsing', () => {
                         return {
                             async: jest
                                 .fn()
-                                .mockResolvedValue(dummyModelDescription),
+                                .mockResolvedValue(
+                                    dummyModelDescriptionMinimal
+                                ),
                         }
                     }
 
@@ -220,7 +193,7 @@ describe('FMU Parsing', () => {
                 'file/path'
             )
 
-            expect(result).toEqual(dummyModel)
+            expect(result).toEqual(dummyModelMinimal)
 
             const secondResult = await getFMUModelFromPath(
                 workspaceFolder,
@@ -240,7 +213,9 @@ describe('FMU Parsing', () => {
                         return {
                             async: jest
                                 .fn()
-                                .mockResolvedValue(dummyModelDescription),
+                                .mockResolvedValue(
+                                    dummyModelDescriptionMinimal
+                                ),
                         }
                     }
 
@@ -256,7 +231,7 @@ describe('FMU Parsing', () => {
                 'file/path'
             )
 
-            expect(result).toEqual(dummyModel)
+            expect(result).toEqual(dummyModelMinimal)
             ;(vscode.workspace.fs.stat as jest.Mock).mockResolvedValue({
                 ctime: 1,
             })
