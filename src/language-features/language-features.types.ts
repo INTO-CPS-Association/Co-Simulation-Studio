@@ -21,7 +21,11 @@ export type RuleRegistry = Map<NodeType, RuleHandler[]>
 export interface IRuleContext {
     diagnostics: Diagnostic[]
     cosimConfig: ICosimulationConfiguration
-    report(range: Range, message: string, severity: DiagnosticSeverity): void
+    report(
+        range: Range,
+        message: LintingError,
+        severity: DiagnosticSeverity
+    ): void
 }
 
 export interface ICosimulationConfiguration {
@@ -37,4 +41,8 @@ export interface ICosimulationConfiguration {
     ): WorkspaceFolder | undefined
     getWorkspaceFolder(): WorkspaceFolder | undefined
     getAllVariablesFromIdentifier(fmuIdentifier: string): Promise<string[]>
+}
+
+export interface LintingError {
+    message: string
 }

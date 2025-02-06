@@ -104,15 +104,11 @@ export class SimulationConfigCompletionItemProvider
 
         const fmuModel = await cosimConfig.getFMUModel(fmuIdentifier)
 
-        console.log(fmuModel)
-
         if (!fmuModel) {
             return []
         }
 
         const completionContext = this.getCompletionContext(completionNode)
-
-        console.log('Completion context', completionContext)
 
         const completionVariables: ModelVariable[] = []
 
@@ -150,8 +146,6 @@ export class SimulationConfigCompletionItemProvider
         completionNode: Node
     ): 'input' | 'output' | 'parameter' | null {
         const nodePath = getNodePath(completionNode)
-
-        console.log('Node path:', nodePath)
 
         if (nodePath.length === 2 && nodePath[0] === 'parameters') {
             return 'parameter'

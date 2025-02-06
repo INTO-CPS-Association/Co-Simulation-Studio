@@ -1,10 +1,16 @@
 import { getNodePath, Node } from 'jsonc-parser'
 import * as vscode from 'vscode'
-import { IRuleContext, LintRule } from '../language-features.types'
+import {
+    IRuleContext,
+    LintingError,
+    LintRule,
+} from '../language-features.types'
 import { getStringContentRange } from '../utils'
 import { FMUModel } from '../../fmu'
 
 type Causality = 'input' | 'output'
+
+export interface IncorrectConnectionCausalityError extends LintingError {}
 
 export const correctCausalityConnectionsRule: LintRule = {
     onProperty: async (node, context) => {
@@ -19,6 +25,7 @@ export const correctCausalityConnectionsRule: LintRule = {
         // Verify connection output and input
         const possibleOutput = node.children[0]
         const possibleInputs = node.children[1].children ?? []
+
         await Promise.allSettled([
             verifyInputOrOutput(possibleOutput, context, 'output'),
             ...possibleInputs.map((possibleInput) =>
@@ -68,7 +75,9 @@ async function verifyInputOrOutput(
         )
         context.report(
             range,
-            `Expected ${causality}, but the identifier '${variableIdentifier}' does not refer to an ${causality}.`,
+            {
+                message: `Expected ${causality}, but the identifier '${variableIdentifier}' does not refer to an ${causality}.`,
+            },
             vscode.DiagnosticSeverity.Error
         )
     }

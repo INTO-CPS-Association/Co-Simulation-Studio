@@ -5,6 +5,7 @@ import { isDocumentCosimConfig } from '../utils'
 import {
     HandlerMethodName,
     IRuleContext,
+    LintingError,
     LintRule,
     RuleRegistry,
 } from './language-features.types'
@@ -49,10 +50,12 @@ export class RuleContext implements IRuleContext {
     constructor(public cosimConfig: CosimulationConfiguration) {}
     public report(
         range: vscode.Range,
-        message: string,
+        message: LintingError,
         severity: vscode.DiagnosticSeverity
     ): void {
-        this.diagnostics.push(new vscode.Diagnostic(range, message, severity))
+        this.diagnostics.push(
+            new vscode.Diagnostic(range, message.message, severity)
+        )
     }
 }
 
