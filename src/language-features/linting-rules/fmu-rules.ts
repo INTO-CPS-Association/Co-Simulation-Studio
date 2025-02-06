@@ -9,12 +9,8 @@ import {
 } from '../language-features.types'
 import { getStringContentRange } from '../utils'
 
-export interface InvalidFMUIdentifierError extends LintingError {
-    type: 'INVALID_FMU_IDENTIFIER'
-}
-export interface InvalidFMUReferenceError extends LintingError {
-    type: 'INVALID_FMU_REFERENCE'
-}
+export interface InvalidFMUIdentifierError extends LintingError {}
+export interface InvalidFMUReferenceError extends LintingError {}
 
 export class ValidFMUIdentifierRule implements LintRule {
     constructor() {}
@@ -49,7 +45,6 @@ export class ValidFMUIdentifierRule implements LintRule {
             range,
             {
                 message: `Invalid FMU identifier: '${possibleIdentifier.value}'`,
-                type: 'INVALID_FMU_IDENTIFIER',
             },
 
             vscode.DiagnosticSeverity.Error
@@ -97,7 +92,6 @@ export class ValidFMUPathRule implements LintRule {
             range,
             {
                 message: `Invalid FMU: the file at '${possibleFMUPath.value}' either doesn't exist or is not a well formed FMU.`,
-                type: 'INVALID_FMU_REFERENCE',
             },
             vscode.DiagnosticSeverity.Error
         )

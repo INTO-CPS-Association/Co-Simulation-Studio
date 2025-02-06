@@ -45,5 +45,4 @@ export interface ICosimulationConfiguration {
 
 export interface LintingError {
     message: string
-    type: string
 }

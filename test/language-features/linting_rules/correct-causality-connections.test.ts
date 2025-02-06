@@ -106,7 +106,7 @@ describe('correctCausalityConnectionsRule', () => {
 
         expect(context.report).toHaveBeenCalledWith(
             expect.anything(), // Range
-            expect.objectContaining({ type: 'INCORRECT_CONNECTION_CAUSALITY' }),
+            expect.objectContaining({ message: expect.anything() }),
             vscode.DiagnosticSeverity.Error
         )
     })
@@ -137,7 +137,7 @@ describe('correctCausalityConnectionsRule', () => {
 
         expect(context.report).toHaveBeenCalledWith(
             expect.anything(), // Range
-            expect.objectContaining({ type: 'INCORRECT_CONNECTION_CAUSALITY' }),
+            expect.objectContaining({ message: expect.anything() }),
             vscode.DiagnosticSeverity.Error
         )
     })
