@@ -92,6 +92,6 @@
         "jsonc-parser": "^3.2.1",
         "jszip": "^3.10.1",
         "winston": "^3.13.0",
-        "winston-transport": "^4.7.0"
+        "winston-transport": "^4.9.0"
     }
 }
