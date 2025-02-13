@@ -74,7 +74,7 @@ describe('Linting language feature', () => {
 
             ruleContext.report(
                 new vscode.Range(0, 0, 0, 0),
-                { message: 'test', type: 'GENERIC_ERROR' },
+                { message: 'test' },
                 DiagnosticSeverity.Error
             )
 
@@ -187,7 +187,7 @@ describe('Linting language feature', () => {
             visitTreeSpy.mockImplementation(async (_node, ruleContext) => {
                 ruleContext.report(
                     new vscode.Range(0, 0, 0, 0),
-                    { message: 'test', type: 'GENERIC_ERROR' },
+                    { message: 'test' },
                     DiagnosticSeverity.Error
                 )
             })

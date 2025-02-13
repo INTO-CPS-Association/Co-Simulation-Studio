@@ -10,9 +10,7 @@ import { FMUModel } from '../../fmu'
 
 type Causality = 'input' | 'output'
 
-export interface IncorrectConnectionCausalityError extends LintingError {
-    type: 'INCORRECT_CONNECTION_CAUSALITY'
-}
+export interface IncorrectConnectionCausalityError extends LintingError {}
 
 export const correctCausalityConnectionsRule: LintRule = {
     onProperty: async (node, context) => {
@@ -79,7 +77,6 @@ async function verifyInputOrOutput(
             range,
             {
                 message: `Expected ${causality}, but the identifier '${variableIdentifier}' does not refer to an ${causality}.`,
-                type: 'INCORRECT_CONNECTION_CAUSALITY',
             },
             vscode.DiagnosticSeverity.Error
         )

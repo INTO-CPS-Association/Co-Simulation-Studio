@@ -98,7 +98,7 @@ describe('ValidFMUIdentifierRule', () => {
 
         expect(context.report).toHaveBeenCalledWith(
             expect.anything(), // Range
-            expect.objectContaining({ type: 'INVALID_FMU_IDENTIFIER' }),
+            expect.objectContaining({ message: expect.anything() }),
             'Error'
         )
     })
@@ -160,7 +160,7 @@ describe('ValidFMUPathRule', () => {
 
         expect(context.report).toHaveBeenCalledWith(
             expect.anything(), // Range
-            expect.objectContaining({ type: 'INVALID_FMU_REFERENCE' }),
+            expect.objectContaining({ message: expect.anything() }),
             'Error'
         )
     })
