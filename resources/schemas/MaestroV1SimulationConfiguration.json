@@ -1,0 +1,176 @@
+{
+  "$schema" : "https://json-schema.org/draft/2020-12/schema",
+  "$defs" : {
+    "Map(String,List(String))" : {
+      "type" : "object",
+      "additionalProperties" : {
+        "type" : "array",
+        "items" : {
+          "type" : "string"
+        }
+      }
+    },
+    "Map(String,String)" : {
+      "type" : "object",
+      "additionalProperties" : {
+        "type" : "string"
+      }
+    }
+  },
+  "type" : "object",
+  "properties" : {
+    "algorithm" : {
+      "anyOf" : [ {
+        "type" : "object",
+        "properties" : {
+          "size" : {
+            "type" : "number"
+          },
+          "type" : {
+            "const" : "fixed-step"
+          }
+        },
+        "required" : [ "type" ],
+        "description" : "The step algorithm to be used, fixed or variable"
+      }, {
+        "type" : "object",
+        "properties" : {
+          "constraints" : {
+            "type" : "object"
+          },
+          "initsize" : {
+            "type" : "number"
+          },
+          "size" : {
+            "type" : "array",
+            "items" : {
+              "type" : "number"
+            }
+          },
+          "type" : {
+            "const" : "var-step"
+          }
+        },
+        "required" : [ "type" ],
+        "description" : "The step algorithm to be used, fixed or variable"
+      } ]
+    },
+    "connections" : {
+      "$ref" : "#/$defs/Map(String,List(String))",
+      "description" : "A map of connections where the key and value strings are on the form form \"{FMU}.instanceName.signal\". The mapping is from output to inputs. As a single output can be connected to multiple inputs"
+    },
+    "convergenceAttempts" : {
+      "type" : "integer"
+    },
+    "endTime" : {
+      "type" : "number",
+      "description" : "The duration of the simulation in seconds. This is used by the fmus to allocate memory."
+    },
+    "environmentParameters" : {
+      "description" : "A list of parameters which should be obtained from the environment. The strings are on the form form \"{FMU}.instanceName.signal\".",
+      "type" : "array",
+      "items" : {
+        "type" : "string"
+      }
+    },
+    "faultInjectConfigurationPath" : {
+      "type" : "string"
+    },
+    "faultInjectInstances" : {
+      "$ref" : "#/$defs/Map(String,String)"
+    },
+    "fmus" : {
+      "$ref" : "#/$defs/Map(String,String)",
+      "description" : "A map of from fmu names on the form \"{FMU}\" to the path of the .fmu file"
+    },
+    "global_absolute_tolerance" : {
+      "type" : "number",
+      "description" : "The global absolute tolerance."
+    },
+    "global_relative_tolerance" : {
+      "type" : "number",
+      "description" : "The global relative tolerance."
+    },
+    "logLevels" : {
+      "$ref" : "#/$defs/Map(String,List(String))",
+      "description" : "A map of enabled log levels for each FMU. The key is \"{FMU}.instanceName\" and the log levels are the categories specified for each FMU"
+    },
+    "logVariables" : {
+      "$ref" : "#/$defs/Map(String,List(String))",
+      "description" : "A map from fmu instance \"{FMU}.instanceName\" to a list of signal names."
+    },
+    "loggingOn" : {
+      "type" : "boolean",
+      "description" : "Enable logging."
+    },
+    "modelSwaps" : {
+      "type" : "object",
+      "additionalProperties" : {
+        "$schema" : "https://json-schema.org/draft/2020-12/schema",
+        "type" : "object",
+        "properties" : {
+          "stepCondition" : {
+            "type" : "string",
+            "description" : "The condition that should be true for the step to be allowed. It could be (true)"
+          },
+          "swapCondition" : {
+            "type" : "string",
+            "description" : "The condition that should be true for the model to be swapped in i.e. replacing the previous. The condition could look like (controller.valve ==true) if the instance controller exist and have value as a boolean signal"
+          },
+          "swapConnections" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "items" : {
+                "type" : "string"
+              }
+            },
+            "description" : "A map of new connections like the connections but only with the delta for this new instance. Keys and values are on the form  \"{FMU}.instanceName.signal\". The key is the output and values the inputs"
+          },
+          "swapInstance" : {
+            "type" : "string",
+            "description" : "The name of the instance swapped in"
+          }
+        }
+      },
+      "description" : "A map of from an instance name to its swap configuration. Thus the key is the instance name in this simulation."
+    },
+    "modelTransfers" : {
+      "$ref" : "#/$defs/Map(String,String)",
+      "description" : "A mapping from current instance name to the new instance name of that instance being transferred. i.e. A->A if A is transferred as is."
+    },
+    "overrideLogLevel" : {
+      "type" : "string",
+      "enum" : [ "OFF", "FATAL", "ERROR", "WARN", "INFO", "DEBUG", "TRACE", "ALL" ],
+      "description" : "Override global log level of the simulator"
+    },
+    "parallelSimulation" : {
+      "type" : "boolean",
+      "description" : "If true the dostep part of the algorithm is run in parallel."
+    },
+    "parameters" : {
+      "type" : "object",
+      "description" : "A map from signal to its value. The key must be on the form \"{FMU}.instanceName.signal\" and value can be any value matching the signal."
+    },
+    "reportProgress" : {
+      "type" : "boolean",
+      "description" : "If true the simulation will attempt to report progress."
+    },
+    "simulationProgramDelay" : {
+      "type" : "boolean",
+      "description" : "Delay simulation steps. i.e. steps are slowed down to near real time."
+    },
+    "stabalizationEnabled" : {
+      "type" : "boolean",
+      "description" : "Enable stabilization generation during initialization."
+    },
+    "startTime" : {
+      "type" : "number",
+      "description" : "The start time of the simulation. Usually 0."
+    },
+    "visible" : {
+      "type" : "boolean",
+      "description" : "The enable visible in FMI."
+    }
+  }
+}

@@ -1,8 +1,13 @@
 import * as vscode from 'vscode'
-import { isSimulationConfiguration, resolveSimulationConfig } from './utils'
+import {
+    isSimulationConfiguration,
+    resolveSimulationConfig,
+    SimulationConfiguration,
+} from './utils'
 import fs from 'node:fs/promises'
 import { getLogger, getOutputChannelFromLogger } from './logging'
-import { getSessionStatus, runSimulationWithConfig } from './maestro'
+import { MaestroClient } from './maestro'
+import { ConfigurationManager } from 'configuration'
 
 const extensionLogger = getLogger()
 
@@ -62,11 +67,22 @@ async function handleRunSimulation(uri: vscode.Uri) {
             location: vscode.ProgressLocation.Notification,
             title: 'Running simulation',
         },
-        async () => runSimulationAndShowResults(resolvedConfig)
+        async () => runSimulationAndShowResults(resolvedConfig, wsFolder)
     )
 }
 
-async function runSimulationAndShowResults(config: unknown) {
+function generateTimestamp(): string {
+    const now = new Date()
+    const pad = (num: number): string => num.toString().padStart(2, '0')
+    return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(
+        now.getDate()
+    )}_${pad(now.getHours())}-${pad(now.getMinutes())}-${pad(now.getSeconds())}`
+}
+
+async function runSimulationAndShowResults(
+    config: SimulationConfiguration,
+    wsFolder: vscode.WorkspaceFolder
+) {
     extensionLogger.info(
         `Running simulation with configuration:\n${JSON.stringify(
             config,
@@ -75,26 +91,46 @@ async function runSimulationAndShowResults(config: unknown) {
         )}`
     )
 
+    const configManager = new ConfigurationManager(wsFolder)
+    const cosimConfig = await configManager.getConfig()
+    configManager.dispose()
+    const maestroClient = new MaestroClient(
+        cosimConfig.maestro.host,
+        cosimConfig.maestro.port
+    )
+
     let result
     try {
-        result = await runSimulationWithConfig(config, {
-            startTime: 0,
-            endTime: 10,
+        result = await maestroClient.runSimulationWithConfig(config, {
+            startTime: config?.startTime ?? 0,
+            endTime: config?.endTime ?? 0,
         })
 
         if (result?.data) {
-            const td = await vscode.workspace.openTextDocument({
-                content: result.data,
-            })
+            const resultsDirUri = vscode.Uri.joinPath(wsFolder.uri, 'results')
+            const resultFileUri = vscode.Uri.joinPath(
+                resultsDirUri,
+                `${generateTimestamp()}.csv`
+            )
+
+            await vscode.workspace.fs.createDirectory(resultsDirUri)
+            await vscode.workspace.fs.writeFile(
+                resultFileUri,
+                Buffer.from(result.data)
+            )
+            const td = await vscode.workspace.openTextDocument(resultFileUri)
             await vscode.window.showTextDocument(td)
         } else {
+            extensionLogger.info('No data returned from simulation.')
             throw new Error('Simulation failed.')
         }
     } catch (error) {
         extensionLogger.error(`Simulation failed.`)
     } finally {
         if (result?.sessionId) {
-            const status = await getSessionStatus(result.sessionId)
+            const status = await maestroClient.getSessionStatus(
+                result.sessionId
+            )
             extensionLogger.debug(
                 `Session status:\n${JSON.stringify(status, null, 2)}`
             )

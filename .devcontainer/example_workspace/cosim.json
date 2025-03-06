@@ -22,5 +22,7 @@
         "size": 0.001
     },
     "loggingOn": false,
-    "overrideLogLevel": "INFO"
+    "overrideLogLevel": "INFO",
+    "startTime": 0,
+    "endTime": 10
 }

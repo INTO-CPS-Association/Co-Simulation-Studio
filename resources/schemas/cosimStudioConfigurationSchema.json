@@ -1,0 +1,27 @@
+{
+    "type": "object",
+    "properties": {
+        "maestro": {
+            "type": "object",
+            "properties": {
+                "host": {
+                    "type": "string",
+                    "default": "localhost",
+                    "description": "The hostname or IP address of the Maestro web service."
+                },
+                "port": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 65535,
+                    "default": 8082,
+                    "description": "The port number on which the Maestro web service is running (0-65535)."
+                }
+            },
+            "additionalProperties": false,
+            "default": { "host": "localhost", "port": 8082 },
+            "description": "Configuration for the Maestro web service."
+        }
+    },
+    "additionalProperties": false,
+    "$schema": "http://json-schema.org/draft-07/schema#"
+}

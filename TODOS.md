@@ -21,8 +21,8 @@
 
 > Reference: (<https://github.com/INTO-CPS-Association/Co-Simulation-Studio/discussions/197>)
 
-- [ ] Save simulation results in file in workspace in `results`-directory
-- [ ] (later) cosim_studio.json --> to be used for one cosimulation workspace. It can refer to multiple cosimulation configs - maestro host and port is moved to here.
+- [x] Save simulation results in file in workspace in `results`-directory
+- [x] (later) cosim_studio.json --> to be used for one cosimulation workspace. It can refer to multiple cosimulation configs - maestro host and port is moved to here.
   - [ ] `cosimulation` top-level directory
   - [ ] Add schemas for the validation of the config
 - [ ] Look at activation events and extension configuration with a fixed name.
