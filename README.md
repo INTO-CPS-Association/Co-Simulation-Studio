@@ -23,6 +23,9 @@ java -jar maestro-webapi-<version>-bundle.jar
 
 This will expose the API on port `8082` by default, which is the port expected by the extension. At this point, you should be able to launch simulations from within VS Code, as demonstrated in the [features overview](#integration-with-maestro).
 
+### Top-level workspace configuration
+For a workspace to be detected as a cosimulation workspace, a configuration file named `cosim-studio.yaml` must exist at the root of the workspace. It's important that the file exists, even if it is left empty, otherwise the features described in the remainder of the README will not be functional. The configuration file may be empty, in which case a default set of configurations are used. For further reference on the available configuration keys, refer to the [documentation](https://into-cps-association.github.io/Co-Simulation-Studio/config_reference/).
+
 ### Editing cosimulation configuration files
 
 With the extension installed, you're ready to create your first cosimulation configuration file. By default, any file named `cosim.json` within a workspace is considered a cosim configuration file by the tool and triggers IntelliSense features. The trigger path is configurable via the VS Code settings: <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd> > `Preferences: Open Settings (UI)` > `Cosimstudio: Cosim Path`.

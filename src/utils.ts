@@ -5,6 +5,8 @@ const DEFAULT_COSIM_CONFIG_FILE = 'cosim.json'
 
 export interface SimulationConfiguration {
     fmus: Record<string, string>
+    startTime?: number
+    endTime?: number
 }
 
 export function isSimulationConfiguration(

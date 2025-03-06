@@ -5,7 +5,7 @@
     "license": "SEE LICENSE IN LICENSE.md",
     "description": "Co-simulation in VS Code",
     "repository": "https://github.com/INTO-CPS-Association/Co-Simulation-Studio",
-    "version": "0.1.4",
+    "version": "0.1.5",
     "icon": "into_cps_logo.png",
     "engines": {
         "vscode": "^1.82.0"
@@ -19,7 +19,7 @@
         "cosimulation"
     ],
     "activationEvents": [
-        "onLanguage:json"
+        "workspaceContains:cosim-studio.yaml"
     ],
     "main": "./dist/ext/extension.js",
     "contributes": {
@@ -50,10 +50,23 @@
                     }
                 }
             }
+        ],
+        "jsonValidation": [
+            {
+                "fileMatch": "cosim.json",
+                "url": "./resources/schemas/MaestroV1SimulationConfiguration.json"
+            }
+        ],
+        "yamlValidation": [
+            {
+                "fileMatch": "cosim-studio.yaml",
+                "url": "./resources/schemas/cosimStudioConfigurationSchema.json"
+            }
         ]
     },
     "scripts": {
         "clean": "npx rimraf -rf dist coverage node_modules",
+        "esbuild:scripts": "esbuild ./scripts/*.ts --bundle --outdir=dist/scripts --platform=node",
         "esbuild:test": "esbuild ./test/*.test.ts --bundle --outdir=dist/test --external:vscode --sourcemap --platform=node",
         "esbuild:base": "esbuild ./src/extension.ts --bundle --outfile=dist/ext/extension.js --external:vscode --format=cjs --main-fields=module,main --platform=node",
         "esbuild": "npm run esbuild:base -- --sourcemap",
@@ -62,20 +75,22 @@
         "pretest:integration": "npm run esbuild:test && npm run esbuild",
         "test:integration": "vscode-test",
         "test:unit": "jest",
-        "vscode:prepublish": "npm run esbuild:base -- --minify"
+        "vscode:prepublish": "npm run esbuild:base -- --minify",
+        "preesbuild:base": "npm run esbuild:scripts && npm run generate-schemas",
+        "generate-schemas": "node dist/scripts/generateJsonSchemas.js"
     },
     "devDependencies": {
         "@types/jest": "^29.5.12",
-        "@types/mocha": "^10.0.6",
-        "@types/node": "18.x",
+        "@types/mocha": "^10.0.10",
+        "@types/node": "20.x",
         "@types/vscode": "^1.82.0",
         "@typescript-eslint/eslint-plugin": "^8.23.0",
         "@typescript-eslint/parser": "^8.23.0",
-        "@vscode/test-cli": "^0.0.8",
+        "@vscode/test-cli": "^0.0.10",
         "@vscode/test-electron": "^2.3.9",
         "axios-mock-adapter": "^1.22.0",
         "cross-env": "^7.0.3",
-        "esbuild": "^0.20.2",
+        "esbuild": "^0.25.0",
         "eslint": "^8.57.1",
         "eslint-config-airbnb-base": "^15.0.0",
         "eslint-plugin-import": "^2.31.0",
@@ -84,7 +99,8 @@
         "rfdc": "^1.4.1",
         "ts-jest": "^29.2.3",
         "ts-node": "^10.9.2",
-        "typescript": "^5.3.3"
+        "typescript": "^5.3.3",
+        "zod-to-json-schema": "^3.24.2"
     },
     "dependencies": {
         "axios": "^1.7.9",
@@ -92,6 +108,8 @@
         "jsonc-parser": "^3.3.1",
         "jszip": "^3.10.1",
         "winston": "^3.13.0",
-        "winston-transport": "^4.9.0"
+        "winston-transport": "^4.9.0",
+        "yaml": "^2.7.0",
+        "zod": "^3.24.2"
     }
 }
