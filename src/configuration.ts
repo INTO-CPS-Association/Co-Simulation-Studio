@@ -12,7 +12,7 @@ export class ConfigurationManager implements vscode.Disposable {
     private eventEmitter: vscode.EventEmitter<ExtensionConfiguration>
     private configLoaded: Promise<void>
 
-    constructor(private wsFolder: vscode.WorkspaceFolder) {
+    constructor(wsFolder: vscode.WorkspaceFolder) {
         this.configUri = vscode.Uri.joinPath(wsFolder.uri, 'cosim-studio.yaml')
         this.eventEmitter = new vscode.EventEmitter<ExtensionConfiguration>()
         this.config = CosimStudioConfigSchema.parse({})

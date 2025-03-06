@@ -1,14 +1,10 @@
 import MockAdapter from 'axios-mock-adapter'
-import {
-    createSession,
-    getSimulationResults,
-    initializeSession,
-    maestroClient,
-    runSimulationWithConfig,
-    simulateSession,
-} from 'maestro'
+import { MaestroClient } from 'maestro'
 
-const axiosMock = new MockAdapter(maestroClient)
+const host = 'http://localhost'
+const port = 8082
+const maestroClient = new MaestroClient(host, port)
+const axiosMock = new MockAdapter(maestroClient.getHttpClient())
 
 describe('Maestro API Client', () => {
     afterEach(axiosMock.restore)
@@ -17,7 +13,7 @@ describe('Maestro API Client', () => {
         const sessionId = 'test-session-id'
         axiosMock.onGet('/createSession').replyOnce(200, { sessionId })
 
-        const result = await createSession()
+        const result = await maestroClient.createSession()
         expect(result).toEqual(sessionId)
     })
 
@@ -27,7 +23,10 @@ describe('Maestro API Client', () => {
             .onPost(`/initialize/${sessionId}`)
             .replyOnce(200, { status: 'initialized' })
 
-        const result = await initializeSession(sessionId, undefined)
+        const result = await maestroClient.initializeSession(
+            sessionId,
+            undefined
+        )
         expect(result).toBe(true)
     })
 
@@ -37,7 +36,10 @@ describe('Maestro API Client', () => {
             .onPost(`/initialize/${sessionId}`)
             .replyOnce(200, { status: 'not-initialized' })
 
-        const result = await initializeSession(sessionId, undefined)
+        const result = await maestroClient.initializeSession(
+            sessionId,
+            undefined
+        )
         expect(result).toBe(false)
     })
 
@@ -47,7 +49,7 @@ describe('Maestro API Client', () => {
             .onPost(`/simulate/${sessionId}`)
             .replyOnce(200, { status: 'Simulation completed' })
 
-        const result = await simulateSession(sessionId, undefined)
+        const result = await maestroClient.simulateSession(sessionId, undefined)
         expect(result).toBe(true)
     })
 
@@ -57,7 +59,7 @@ describe('Maestro API Client', () => {
             .onPost(`/simulate/${sessionId}`)
             .replyOnce(200, { status: 'not-Finished' })
 
-        const result = await simulateSession(sessionId, undefined)
+        const result = await maestroClient.simulateSession(sessionId, undefined)
         expect(result).toBe(false)
     })
 
@@ -66,7 +68,7 @@ describe('Maestro API Client', () => {
         const data = Symbol('data')
         axiosMock.onGet(`/result/${sessionId}/plain`).reply(200, data)
 
-        const result = await getSimulationResults(sessionId)
+        const result = await maestroClient.getSimulationResults(sessionId)
         expect(result).toBe(data)
     })
 
@@ -83,7 +85,10 @@ describe('Maestro API Client', () => {
             .replyOnce(200, { status: 'Simulation completed' })
         axiosMock.onGet(`/result/${sessionId}/plain`).reply(200, data)
 
-        const result = await runSimulationWithConfig(undefined, undefined)
+        const result = await maestroClient.runSimulationWithConfig(
+            undefined,
+            undefined
+        )
 
         expect(result?.data).toBe(data)
     })

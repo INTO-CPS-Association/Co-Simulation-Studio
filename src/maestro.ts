@@ -215,4 +215,8 @@ export class MaestroClient {
             throw new Error(errMsg)
         }
     }
+
+    public getHttpClient(): AxiosInstance {
+        return this.client
+    }
 }

@@ -19,7 +19,7 @@
         "cosimulation"
     ],
     "activationEvents": [
-        "onLanguage:json"
+        "workspaceContains:cosim-studio.yaml"
     ],
     "main": "./dist/ext/extension.js",
     "contributes": {
